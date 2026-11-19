@@ -7,9 +7,7 @@ class AboutController {
         View::render('public/about', ['title' => t('about.title'), 'bodyClass' => 'about', 'html' => Settings::get('about', '')]);
     }
     public function editorialTeam(): void {
-        $jid = (int)Settings::journal()['id'];
-        $sp = DB::one("SELECT * FROM static_pages WHERE journal_id=? AND path='editorialboard'", [$jid]);
-        $html = $sp ? $sp['content'] : Settings::get('editorialTeam', '');
+        $html = Settings::get('editorialTeam', '');
         View::render('public/page_simple', ['title' => t('about.editorial'), 'bodyClass' => 'about', 'crumb' => t('about.editorial'), 'html' => $html, 'cls' => 'page_editorial_team']);
     }
     public function privacy(): void {
@@ -25,6 +23,6 @@ class AboutController {
             'sections' => DB::all('SELECT title,policy FROM sections WHERE journal_id=? AND policy IS NOT NULL AND policy<>"" ORDER BY seq', [$jid])]);
     }
     public function aboutThisPublishingSystem(): void {
-        View::render('public/page_simple', ['title' => t('about.platform'), 'bodyClass' => 'about', 'crumb' => t('about.platform'), 'html' => '<p>' . e(t('about.platform_text')) . '</p>', 'cls' => 'page_about_platform']);
+        View::render('public/page_simple', ['title' => t('about.platform'), 'crumb' => t('about.platform'), 'html' => Settings::get('aboutPlatform', '<p>' . e(t('about.platform_text')) . '</p>'), 'cls' => 'page_about_publishing_system']);
     }
 }

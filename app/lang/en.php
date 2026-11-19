@@ -2,17 +2,17 @@
 return [
     // navigation / chrome
     'nav.jump' => 'Jump to content links', 'nav.skip_main' => 'Skip to main content', 'nav.skip_nav' => 'Skip to main navigation menu',
-    'nav.skip_footer' => 'Skip to site footer', 'nav.site' => 'Site Navigation', 'nav.open_menu' => 'Open Menu',
+    'nav.skip_footer' => 'Skip to site footer', 'nav.skip_about' => 'Skip to about the journal', 'nav.skip_issue' => 'Skip to the current issue', 'nav.site' => 'Site Navigation', 'nav.open_menu' => 'Open Menu',
     'nav.current' => 'Current', 'nav.archives' => 'Archives', 'nav.submissions' => 'Submissions', 'nav.announcements' => 'Announcements',
     'nav.search' => 'Search', 'nav.register' => 'Register', 'nav.login' => 'Login', 'nav.logout' => 'Logout', 'nav.dashboard' => 'Dashboard',
     'crumb.home' => 'Home', 'crumb.you_are_here' => 'You are here:',
-    'footer.platform' => 'Journal platform', 'page.showing' => 'Showing %d - %d of %d',
+    'footer.platform' => 'Journal platform', 'footer.platform_alt' => 'More information about the publishing system, Platform and Workflow by OJS/PKP.', 'page.label' => 'View additional pages', 'page.prev' => 'Previous', 'page.next' => 'Next',
     'sidebar.label' => 'Sidebar', 'sidebar.information' => 'Information', 'sidebar.readers' => 'For Readers',
     'sidebar.authors' => 'For Authors', 'sidebar.librarians' => 'For Librarians', 'sidebar.current_issue' => 'Current Issue',
     // about
-    'about.title' => 'About the Journal', 'about.editorial' => 'Editorial Board', 'about.privacy' => 'Privacy Statement', 'about.contact' => 'Contact',
-    'about.platform' => 'About This Publishing System', 'about.platform_text' => 'This journal site runs on a custom-built journal publishing platform.',
-    'contact.principal' => 'Principal Contact', 'contact.phone' => 'Phone',
+    'about.title' => 'About the Journal', 'about.editorial' => 'Editorial Team', 'about.privacy' => 'Privacy Statement', 'about.contact' => 'Contact',
+    'about.platform' => 'About Open Journal Systems', 'about.platform_text' => 'This journal site runs on a custom-built journal publishing platform.',
+    'contact.principal' => 'Principal Contact', 'contact.support' => 'Support Contact', 'contact.phone' => 'Phone',
     // home / issues
     'home.about' => 'About the Journal', 'home.current_issue' => 'Current Issue', 'home.no_issue' => 'No issue has been published yet.',
     'home.read_more' => 'Read more', 'home.all_issues' => 'View All Issues',
@@ -20,7 +20,7 @@ return [
     // announcements
     'ann.signup' => 'Sign up', 'ann.signup_tail' => 'to stay up to date on new publications and announcements!', 'ann.none' => 'No announcements have been published.',
     // submissions page
-    'subm.make' => 'Make a new submission', 'subm.or' => 'or', 'subm.to_make' => 'to make a submission.', 'subm.checklist' => 'Submission Preparation Checklist',
+    'subm.make' => 'Make a new submission', 'subm.make_block' => 'Make a Submission', 'subm.or' => 'or', 'subm.to_make' => 'to make a submission.', 'subm.checklist' => 'Submission Preparation Checklist',
     'subm.checklist_intro' => 'As part of the submission process, authors are required to check off their submission\'s compliance with all of the following items, and submissions may be returned to authors that do not adhere to these guidelines.',
     'subm.guidelines' => 'Author Guidelines', 'subm.copyright' => 'Copyright Notice',
     // information
@@ -30,11 +30,11 @@ return [
     'art.downloads' => 'Downloads', 'art.published' => 'Published', 'art.how_to_cite' => 'How to Cite', 'art.cite_format' => 'Citation format',
     'art.issue' => 'Issue', 'art.section' => 'Section', 'art.license' => 'License', 'art.license_text' => '%s is published Open Access under a',
     'art.metrics' => 'Metrics', 'art.views' => 'Abstract views: %d', 'art.downloads_count' => 'Downloads: %d',
-    'galley.return' => 'Return to Article Details', 'galley.download' => 'Download',
+    'galley.return' => 'Return to Article Details', 'galley.download' => 'Download', 'galley.download_label' => 'Download %s', 'galley.title' => '%s of %s',
     // search
     'search.year' => 'Year', 'search.month' => 'Month', 'search.day' => 'Day', 'search.for' => 'Search articles for', 'search.advanced' => 'Advanced filters',
-    'search.after' => 'Published After', 'search.before' => 'Published Before', 'search.authors' => 'Authors', 'search.results' => 'Search Results',
-    'search.none' => 'No results were found for your search.', 'search.count' => '%d result(s) found.',
+    'search.after' => 'Published After', 'search.before' => 'Published Before', 'search.authors' => 'By Author', 'search.results' => 'Search Results',
+    'search.none' => 'No results were found for your search.', 'search.count' => 'Found %d items.',
     // account pages built in Phase 3
     'pending.text' => 'This page is built in Phase 3 (accounts).', 'pending.lost' => 'Lost Password', 'pending.dashboard' => 'Dashboard',
     // errors / upload

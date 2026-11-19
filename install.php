@@ -51,7 +51,7 @@ $blocking = array_filter($checks, fn($ok, $k) => !$ok && (str_starts_with($k, 'P
 
 $errors = []; $done = false;
 $v = $_POST + ['db_host' => 'localhost', 'db_name' => '', 'db_user' => '', 'db_pass' => '', 'files_dir' => dirname($root) . '/journal_files',
-    'site_title' => 'Journal of Interdisciplinary Research Sciences', 'admin_user' => 'admin', 'admin_email' => '', 'admin_pass' => '', 'demo' => '1'];
+    'site_title' => 'Journal of Intelligent Decision Making and Information Science', 'admin_user' => 'admin', 'admin_email' => '', 'admin_pass' => '', 'demo' => '1'];
 if (empty($_SESSION['tok'])) $_SESSION['tok'] = bin2hex(random_bytes(16));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $run('schema.sql');
             $run('seed.sql');
             $pdo->prepare("UPDATE journal_settings SET value=? WHERE journal_id=1 AND name='name'")->execute([trim($v['site_title'])]);
-            $pdo->prepare("UPDATE journal_settings SET value=? WHERE journal_id=1 AND name='contactEmail'")->execute([$v['admin_email']]);
+            $pdo->prepare("UPDATE journal_settings SET value=? WHERE journal_id=1 AND name='mailFrom'")->execute([$v['admin_email']]);
             // admin: site admin + manager + reader
             $pdo->prepare("INSERT INTO users (username,email,password_hash,given_name,family_name,affiliation,created_at) VALUES (?,?,?,?,?,?,NOW())")
                 ->execute([$v['admin_user'], $v['admin_email'], password_hash($v['admin_pass'], PASSWORD_DEFAULT), 'Site', 'Administrator', '']);
@@ -87,14 +87,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 foreach ($pdo->query('SELECT f.id,f.submission_id,f.stored_name,p.title FROM submission_files f JOIN galleys g ON g.submission_file_id=f.id JOIN publications p ON p.id=g.publication_id') as $f) {
                     $dir = "$fd/journals/1/submissions/{$f['submission_id']}/galley";
                     if (!is_dir($dir)) mkdir($dir, 0775, true);
-                    $bytes = tiny_pdf($f['title']);
+                    $gid = (string)preg_replace('/\D/', '', $f['stored_name']);
+                    $real = $root . '/install/seed_files/galley-' . $gid . '.pdf';
+                    $bytes = is_file($real) ? file_get_contents($real) : tiny_pdf($f['title']);
                     file_put_contents("$dir/{$f['stored_name']}", $bytes);
                     $pdo->prepare('UPDATE submission_files SET size=? WHERE id=?')->execute([strlen($bytes), $f['id']]);
                 }
             }
             $cfg = [
                 'db' => ['host' => $v['db_host'], 'name' => $v['db_name'], 'user' => $v['db_user'], 'pass' => $v['db_pass'], 'charset' => 'utf8mb4'],
-                'files_dir' => $fd, 'url_mode' => 'path', 'pretty_urls' => false, 'default_journal' => 'jirs', 'timezone' => 'Africa/Lagos',
+                'files_dir' => $fd, 'url_mode' => 'path', 'pretty_urls' => false, 'default_journal' => 'jidmis', 'timezone' => 'Africa/Lagos',
                 'debug' => false, 'demo_mode' => !empty($v['demo']),
                 'smtp' => ['host' => '', 'port' => 587, 'user' => '', 'pass' => '', 'secure' => 'tls', 'from' => ''],
             ];
@@ -111,7 +113,7 @@ h1{font-family:Inter,Arial,sans-serif;color:#1f2a44;border-left:4px solid #d79f2
 <h1>Journal installer</h1>
 <?php if ($done): ?>
   <p class="ok"><strong>Installation complete.</strong></p>
-  <p><a href="index.php/jirs">Open the journal home page</a> or <a href="index.php/jirs/login">log in</a>.</p>
+  <p><a href="index.php/jidmis">Open the journal home page</a> or <a href="index.php/jidmis/login">log in</a>.</p>
   <?php if (!empty($v['demo'])): ?><p>Demo accounts (editor, sectioneditor, reviewer1, reviewer2, author, reader) use the password <code>Demo@12345</code>. Change them before going live.</p><?php endif; ?>
   <p>For safety, delete <code>install.php</code> now (it is also locked by <code>install.lock</code>).</p>
 <?php else: ?>

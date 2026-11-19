@@ -40,7 +40,8 @@ class UserController {
                 redirect(url('user', 'registrationComplete'));
             }
         }
-        View::render('public/register', ['title' => t('nav.register'), 'bodyClass' => 'register', 'errors' => $errors, 'v' => $v]);
+        View::render('public/register', ['title' => t('nav.register'), 'errors' => $errors, 'v' => $v,
+            'reviewerGroupId' => (int)DB::val("SELECT id FROM user_groups WHERE journal_id=? AND role_key='reviewer'", [(int)Settings::journal()['id']])]);
     }
     public function registrationComplete(): void {
         Auth::requireLogin();

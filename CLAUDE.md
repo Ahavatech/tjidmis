@@ -12,12 +12,14 @@ It covers:
 2. The **logged-in back end**: the author submission wizard, the editor/reviewer
    workflow, the journal manager settings and the site admin.
 
-## Branding rule (important)
-Match the layout, structure, menus, colours and behaviour. The journal name, logo,
-ISSN, DOI prefix, editorial board and articles must be **our own placeholders**,
-stored in settings and editable from the admin. Never hard-code the reference
-journal's name, logos, ISSN/DOI or article content.
-Seed name: "Journal of Interdisciplinary Research Sciences (JIRS)". Change it in settings.
+## Branding rule (UPDATED by the project owner)
+This is a school project: a pixel-for-pixel clone of https://jidmis.org/index.php/jidmis as an
+OJS 3.3 site (a Figma-interpretation exercise). It is NOT hosted publicly. The owner explicitly
+wants the real journal name, logos, ISSN/DOI, CSS, fonts, images, editors and article content used
+exactly as on the live site, so nothing needs swapping later. We still do not install OJS; the
+platform is our own PHP/MySQL code. All of it is stored in settings/DB and stays editable from the admin.
+Do not deploy this publicly under the real journal's identity.
+(Earlier placeholder rule superseded: seed name "JIRS" is replaced by the real journal values.)
 
 ## Scraping the reference site (do this in Phase 0, before writing code)
 Get everything structural straight from https://jidmis.org/index.php/jidmis. Don't

@@ -3,9 +3,9 @@
 return [
     'db' => ['host' => 'localhost', 'name' => 'journal', 'user' => 'root', 'pass' => '', 'charset' => 'utf8mb4'],
     'files_dir'       => dirname(__DIR__) . '/journal_files', // OUTSIDE the web root
-    'url_mode'        => 'path',   // 'path' = index.php/jirs/about ; 'query' = index.php?route=jirs/about
-    'pretty_urls'     => false,    // true = /jirs/about (needs mod_rewrite + .htaccess)
-    'default_journal' => 'jirs',
+    'url_mode'        => 'path',   // 'path' = index.php/jidmis/about ; 'query' = index.php?route=jirs/about
+    'pretty_urls'     => false,    // true = /jidmis/about (needs mod_rewrite + .htaccess)
+    'default_journal' => 'jidmis',
     'timezone'        => 'Africa/Lagos',
     'debug'           => false,
     'demo_mode'       => false,    // shows demo credentials on the login page

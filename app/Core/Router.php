@@ -9,6 +9,7 @@ class Router {
         'about'        => [P\AboutController::class, 'index'],
         'issue'        => [P\IssueController::class, 'current'],
         'article'      => [P\ArticleController::class, 'view'],
+        'libraryFiles' => [P\LibraryController::class, 'downloadPublic'],
         'announcement' => [P\AnnouncementController::class, 'index'],
         'information'  => [P\InformationController::class, 'readers'],
         'search'       => [P\SearchController::class, 'search'],
@@ -16,6 +17,8 @@ class Router {
         'user'         => [P\UserController::class, 'register'],
         'login'        => [P\LoginController::class, 'index'],
         'submissions'  => [B\DashboardController::class, 'index'],
+        'submission'   => [B\SubmissionWizardController::class, 'wizard'],
+        'workflow'     => [B\WorkflowController::class, 'index'],
         'notification' => [B\NotificationController::class, 'index'],
         'management'   => [B\ManagementController::class, 'users'],
     ];
@@ -26,10 +29,11 @@ class Router {
         if (Request::isPost() && !Csrf::check()) { http_response_code(400); echo t('error.csrf'); return; }
         if (!$journal) {
             if (($seg[0] ?? '') === 'index' || !$seg) redirect(url(null, null, [], [], config('default_journal')));
-            $this->notFound(); return;
+            http_response_code(404); header('Content-Type: text/plain; charset=utf-8'); echo 'Not found'; return;
         }
         $page = $seg[1] ?? 'index';
         $op = $seg[2] ?? null;
+        $GLOBALS['pkp'] = ['page' => $page, 'op' => $op ?: 'index'];
         $args = array_slice($seg, 3);
         if (isset($this->routes[$page])) {
             [$cls, $def] = $this->routes[$page];

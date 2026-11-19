@@ -1,9 +1,11 @@
 <?php use App\Core\Settings; use App\Models\Catalog; $img = Settings::get('homepageImage', ''); ?>
 <div class="page_index_journal">
-  <?php if ($img): ?><div class="homepage_image"><img src="<?= e(public_url($img)) ?>" alt=""></div><?php endif; ?>
+  <?php if ($img): ?><div class="homepage_image">
+	<img src="<?= e(public_url($img)) ?>">
+</div><?php endif; ?>
   <section class="homepage_about"><a id="homepageAbout"></a>
     <h2><?= e(t('home.about')) ?></h2>
-    <?= Settings::get('description', '') ?>
+    <?= rich(Settings::get('description', '')) ?>
   </section>
   <?php if ($announcements): ?>
   <section class="cmp_announcements highlight_first"><a id="homepageAnnouncements"></a>
@@ -23,4 +25,7 @@
     <a href="<?= e(url('issue', 'archive')) ?>" class="read_more"><?= e(t('home.all_issues')) ?></a>
   </section>
   <?php endif; ?>
+  <?php if ($extra = Settings::get('additionalHomeContent', '')): ?><div class="additional_content">
+    <?= rich($extra) ?>
+  </div><?php endif; ?>
 </div>

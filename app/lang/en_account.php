@@ -1,7 +1,7 @@
 <?php
 return [
     // generic form text
-    'form.required' => 'Required', 'form.required_note' => 'Required fields are marked with an asterisk:', 'form.required_field' => 'This field is required.',
+    'form.required' => 'Required', 'form.required_title' => 'required', 'form.required_note' => 'Required fields are marked with an asterisk:', 'form.required_field' => 'This field is required.',
     'form.fix_errors' => 'Please correct the following:', 'form.email_invalid' => 'Enter a valid email address.',
     'form.password_short' => 'The password must be at least %d characters.', 'form.password_long' => 'The password must be 72 characters or fewer.',
     'form.password_mismatch' => 'The passwords do not match.',

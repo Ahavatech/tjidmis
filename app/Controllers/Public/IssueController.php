@@ -4,10 +4,12 @@ use App\Core\{View, Settings};
 use App\Models\Catalog;
 class IssueController {
     public function current(): void {
+        $GLOBALS['pkp']['op'] = 'view';
         $jid = (int)Settings::journal()['id'];
         $issue = Catalog::currentIssue($jid);
         if (!$issue) { View::render('public/issue', ['title' => t('nav.current'), 'issue' => null, 'toc' => [], 'crumbs' => [[t('nav.current'), null]], 'bodyClass' => 'issue']); return; }
-        View::render('public/issue', ['title' => Catalog::issueLabel($issue), 'issue' => $issue, 'toc' => Catalog::toc((int)$issue['id']), 'crumbs' => [[t('nav.current'), null]], 'bodyClass' => 'issue']);
+        View::render('public/issue', ['title' => Catalog::issueLabel($issue), 'issue' => $issue, 'toc' => Catalog::toc((int)$issue['id']),
+            'crumbs' => [[t('nav.archives'), url('issue', 'archive')], [Catalog::issueLabel($issue), null]], 'bodyClass' => 'issue']);
     }
     public function archive(string $page = '1'): void {
         $jid = (int)Settings::journal()['id'];

@@ -11,7 +11,7 @@ $items = MenuService::items(); $uname = trim($u['given_name'] . ' ' . $u['family
 <?= \App\Core\View::partial('partials/loginas_banner') ?>
 <div class="be_shell">
   <aside class="be_sidebar" id="beSidebar" aria-label="<?= e(t('menu.label')) ?>">
-    <a class="be_brand" href="<?= e(url('submissions')) ?>"><?php if ($logo): ?><img src="<?= e(public_url($logo)) ?>" alt="<?= e($name) ?>"><?php else: ?><span><?= e(Settings::get('abbreviation', $name)) ?></span><?php endif; ?></a>
+    <a class="be_brand" href="<?= e(url('submissions')) ?>"><span><?= e(Settings::get('abbreviation', $name)) ?></span></a>
     <nav><ul class="be_menu"><?php foreach ($items as $it): ?>
       <li class="<?= ($menu ?? '') === $it['key'] ? 'active' : '' ?>"><a href="<?= e($it['href']) ?>"><?= e($it['label']) ?></a>
         <?php if (!empty($it['children']) && ($menu ?? '') === $it['key']): ?><ul><?php foreach ($it['children'] as $c): ?><li><a href="<?= e($c['href']) ?>"><?= e($c['label']) ?></a></li><?php endforeach; ?></ul><?php endif; ?></li>

@@ -9,7 +9,7 @@ class Request {
         self::$seg = array_map('rawurldecode', self::$seg);
     }
     public static function segments(): array { return self::$seg; }
-    public static function journalPath(): string { return self::$seg[0] ?? config('default_journal', 'jirs'); }
+    public static function journalPath(): string { return self::$seg[0] ?? config('default_journal', 'jidmis'); }
     public static function method(): string { return strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET'); }
     public static function isPost(): bool { return self::method() === 'POST'; }
     public static function input(string $k, $d = null) { return $_POST[$k] ?? $_GET[$k] ?? $d; }

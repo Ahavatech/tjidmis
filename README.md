@@ -1,21 +1,35 @@
-# JIRS journal platform (OJS 3.3 style, custom PHP)
+# JIDMIS journal site: OJS 3.3 clone (custom PHP)
 
-PHP 8.1 + MySQL 5.7+/MariaDB 10.4+, PDO, no framework. URLs mirror OJS: `/index.php/jirs/about`.
+A school-project clone of https://jidmis.org/index.php/jidmis built as our own PHP 8.1 + MySQL app (no OJS install, no framework, PDO only).
+It reproduces the OJS 3.3 markup, URLs (`/index.php/jidmis/article/view/182`), CSS, fonts and content of the reference site.
+Not for public hosting under the real journal's identity.
 
-## Deploy to cPanel
-1. Zip the project (include `vendor/` if you add Composer libraries) and upload to `public_html` (or a subdomain folder), then Extract.
-2. cPanel > MySQL Databases: create a database and user, add the user with ALL PRIVILEGES.
-3. cPanel > Select PHP Version: 8.1, enable `pdo_mysql`, `mbstring`, `fileinfo`, `dom`, `gd`.
-4. Create `/home/USER/journal_files` OUTSIDE `public_html` (writable).
-5. Visit `https://yourdomain/install.php`, fill in the form, tick "Load demo data" for the demo.
-6. Delete `install.php` afterwards (it also locks itself through `install.lock`).
-7. If PATH_INFO URLs 404, set `'url_mode' => 'query'` in `config.php`. With mod_rewrite use `'pretty_urls' => true`.
-
-## Local development
+## Run it locally
 ```
 php -S localhost:8000 router.php
 ```
-then open http://localhost:8000/install.php
+Open http://localhost:8000/install.php, enter a MySQL/MariaDB database and an admin account, tick "Load demo data" (issues, articles, demo users).
+Then visit http://localhost:8000/index.php/jidmis
+
+## Deploy to cPanel
+1. Upload the project (Extract in `public_html`).
+2. cPanel > MySQL Databases: create a DB and user (ALL PRIVILEGES).
+3. cPanel > Select PHP Version: 8.1 with `pdo_mysql`, `mbstring`, `fileinfo`, `dom`, `gd`. Raise `upload_max_filesize` / `post_max_size` to at least 20M for manuscript uploads.
+4. Create `/home/USER/journal_files` OUTSIDE `public_html` (writable); `public/` must be writable for profile photos.
+5. Visit `/install.php`, finish the form, then delete `install.php` (it also locks itself with `install.lock`).
+6. If PATH_INFO URLs 404, set `'url_mode' => 'query'` in `config.php`; with mod_rewrite use `'pretty_urls' => true`.
+
+## What is where
+- `app/` controllers, services, views (`Views/layouts/public.php` mirrors the OJS page template), `lang/en*.php` (all UI strings)
+- `assets/css/theme.css` + `fontawesome.css` + `public/journals/1/styleSheet.css`: the reference site's CSS, loaded in the same order; `assets/js/lib/` is its jQuery/Bootstrap-dropdown/main.js
+- `install/seed.sql`, `install/seed_demo.sql`: generated from the saved reference site by `python tools/import_reference.py`
+- `tools/diff_page.py`: compares our rendered HTML with the saved original page, tag by tag
+- `tools/crawl_reference.md`: how to fetch more article pages (about 30% have abstracts so far, the rest show title/authors/pages)
 
 ## Demo accounts (demo data only), password `Demo@12345`
 editor, sectioneditor, reviewer1, reviewer2, author, reader. The admin account is the one you create in the installer.
+Set `'demo_mode' => false` in `config.php` to hide the credentials box on the login page.
+
+## Status by phase
+1 core + installer, 2 public site, 3 accounts, 4 dashboard + author submission wizard: done.
+5 editorial workflow + review, 6 production/publication, 7 settings/admin, 8 polish: next.

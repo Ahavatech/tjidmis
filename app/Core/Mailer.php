@@ -4,7 +4,7 @@ namespace App\Core;
 class Mailer {
     public static function send(string $to, string $subject, string $body, ?int $submissionId = null, ?string $cc = null): bool {
         $jid = Settings::journal()['id'] ?? null;
-        $from = Settings::get('contactEmail') ?: (config('smtp')['from'] ?? '');
+        $from = Settings::get('mailFrom') ?: (config('smtp')['from'] ?? '');
         $smtp = config('smtp', []); $sent = 0; $err = null;
         if (!empty($smtp['host']) && class_exists('PHPMailer\PHPMailer\PHPMailer')) {
             try {
