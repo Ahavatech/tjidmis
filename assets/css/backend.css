@@ -116,3 +116,9 @@ details.be_user ul a:hover{background:#fdf6e6;color:var(--gold-dark)}
 .be_note{border-bottom:1px solid var(--line);padding:.8rem 0}.be_notehead{margin-bottom:.3rem}
 .be_list li.unread a{font-weight:700}
 .be_danger{background:#a80000!important;color:#fff!important;border-color:#a80000!important}
+
+/* ---------- Publication / issues ---------- */
+.be_tabs_wrap{flex-wrap:wrap}
+fieldset.be_plain{border:0;padding:0;margin:0}fieldset.be_plain[disabled]{opacity:.6}
+.be_sectionhead{display:flex;justify-content:space-between;align-items:center;font-size:1rem;border-bottom:2px solid var(--theme-color);padding-bottom:.3rem}
+hr{border:0;border-top:1px solid var(--line);margin:1.5rem 0}

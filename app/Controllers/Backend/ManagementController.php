@@ -7,7 +7,7 @@ class ManagementController {
         Auth::require($roles);
         View::render('backend/stub', ['title' => $title, 'menu' => $key, 'phase' => $phase], 'backend');
     }
-    public function issues(): void { $this->stub('issues', t('menu.issues'), ['editor', 'manager', 'site_admin'], '6'); }
+    public function issues(): void { redirect(url('manageIssues')); }
     public function announcements(): void { $this->stub('announcements', t('menu.announcements'), ['editor', 'manager', 'site_admin'], '7'); }
     public function settings(string $tab = ''): void { $this->stub('settings', t('menu.settings'), ['manager', 'site_admin'], '7'); }
     public function statistics(): void { $this->stub('tools', t('menu.statistics'), ['editor', 'manager', 'site_admin'], '7'); }

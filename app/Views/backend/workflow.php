@@ -57,8 +57,23 @@ $isReviewStage = $stage === 3; $mgr = $manage; ?>
 <?php if ($roundDecisions): ?><h2><?= e(t('wf.decisions')) ?></h2><ul class="be_list"><?php foreach ($roundDecisions as $d): ?><li><span><?= e(t('dec.' . $d['decision'])) ?> <span class="muted">&mdash; <?= e($mgr ? $d['who'] : t('wf.editor')) ?></span></span><span class="muted"><?= e(fmt_date($d['date_decided'])) ?></span></li><?php endforeach; ?></ul><?php endif; ?>
 <?php endif; ?>
 
-<?php else: ?>
-<div class="be_notice"><?= e(t('wf.later_stage')) ?></div>
+<?php elseif ($stage === 4): ?>
+<h2><?= e(t('wf.copyedit_files')) ?></h2>
+<table class="be_table"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wizard.component')) ?></th><th><?= e(t('wf.uploaded')) ?></th><th></th></tr></thead><tbody>
+<?php foreach ($draftFiles as $f): ?><tr><td><a href="<?= e(url('workflow', 'download', [$sid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e($f['genre']) ?></td><td><?= e(fmt_date($f['created_at'])) ?></td><td class="be_actions"><?php if ($canWork): ?><form class="be_inline" method="post" action="<?= e(url('workflow', 'deleteFile', [$sid, $f['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form><?php endif; ?></td></tr><?php endforeach; ?>
+<?php if (!$draftFiles): ?><tr><td colspan="4" class="muted"><?= e(t('wf.no_copyedit_files')) ?></td></tr><?php endif; ?></tbody></table>
+<?php if ($canWork && $sub['status'] === 'queued'): ?><form class="be_upload be_inline_form" method="post" enctype="multipart/form-data" action="<?= e(url('workflow', 'uploadStageFile', [$sid, 4])) ?>"><?= csrf_field() ?><select name="genre"><option value="Draft"><?= e(t('wf.genre_draft')) ?></option><option value="Copyedited"><?= e(t('wf.genre_copyedited')) ?></option></select><input type="file" name="file" required><button class="be_btn" type="submit"><?= e(t('wf.upload_file')) ?></button></form><?php endif; ?>
+<?php if ($mgr && $candidates && $sub['status'] === 'queued'): ?><h2><?= e(t('wf.select_files')) ?></h2><table class="be_table"><tbody><?php foreach ($candidates as $f): ?><tr><td><?= e($f['original_name']) ?> <span class="muted">(<?= e($f['genre']) ?>)</span></td><td class="be_actions"><form class="be_inline" method="post" action="<?= e(url('workflow', 'promote', [$sid, $f['id'], 'copyedit'])) ?>"><?= csrf_field() ?><button class="be_btn" type="submit"><?= e(t('wf.add_to_copyediting')) ?></button></form></td></tr><?php endforeach; ?></tbody></table><?php endif; ?>
+
+<?php elseif ($stage === 5): ?>
+<h2><?= e(t('wf.prod_files')) ?></h2>
+<table class="be_table"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wf.uploaded')) ?></th><th></th></tr></thead><tbody>
+<?php foreach ($prodFiles as $f): ?><tr><td><a href="<?= e(url('workflow', 'download', [$sid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e(fmt_date($f['created_at'])) ?></td><td class="be_actions"><?php if ($canWork && $sub['status'] !== 'published'): ?><form class="be_inline" method="post" action="<?= e(url('workflow', 'deleteFile', [$sid, $f['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form><?php endif; ?></td></tr><?php endforeach; ?>
+<?php if (!$prodFiles): ?><tr><td colspan="3" class="muted"><?= e(t('wf.no_prod_files')) ?></td></tr><?php endif; ?></tbody></table>
+<?php if ($canWork && !in_array($sub['status'], ['published', 'declined'], true)): ?><form class="be_upload be_inline_form" method="post" enctype="multipart/form-data" action="<?= e(url('workflow', 'uploadStageFile', [$sid, 5])) ?>"><?= csrf_field() ?><input type="file" name="file" required><button class="be_btn" type="submit"><?= e(t('wf.upload_file')) ?></button></form><?php endif; ?>
+<h2><?= e(t('wf.galleys')) ?> <?php if ($mgr): ?><a class="be_btn be_small" href="<?= e(url('publication', 'index', [$sid, 'galleys'])) ?>"><?= e(t('wf.manage_galleys')) ?></a><?php endif; ?></h2>
+<ul class="be_list"><?php foreach ($galleys as $g): ?><li><span><?= e($g['label']) ?> <span class="muted"><?= e($g['original_name'] ?: $g['remote_url']) ?></span></span></li><?php endforeach; ?><?php if (!$galleys): ?><li class="muted"><?= e(t('pub.no_galleys')) ?></li><?php endif; ?></ul>
+<?php if ($mgr): ?><p><a class="be_btn be_btn_primary" href="<?= e(url('publication', 'index', [$sid, 'issue'])) ?>"><?= e(in_array($sub['status'], ['scheduled', 'published'], true) ? t('wf.open_publication') : t('pub.schedule')) ?></a></p><?php endif; ?>
 <?php endif; ?>
 
 <h2><?= e(t('wf.discussions')) ?> <?php if ($sub['status'] === 'queued' || $mgr): ?><a class="be_btn be_small" href="<?= e(url('discussion', 'create', [$sid, $stage])) ?>"><?= e(t('disc.add')) ?></a><?php endif; ?></h2>

@@ -6,7 +6,7 @@ class MenuService {
     public static function items(): array {
         $r = Auth::roles(); $has = fn(array $k) => (bool)array_intersect($k, $r);
         $m = [['key' => 'submissions', 'label' => t('menu.submissions'), 'href' => url('submissions')]];
-        if ($has(['editor', 'manager', 'site_admin'])) $m[] = ['key' => 'issues', 'label' => t('menu.issues'), 'href' => url('management', 'issues')];
+        if ($has(['editor', 'manager', 'site_admin'])) $m[] = ['key' => 'issues', 'label' => t('menu.issues'), 'href' => url('manageIssues')];
         if ($has(['editor', 'manager', 'site_admin'])) $m[] = ['key' => 'announcements', 'label' => t('menu.announcements'), 'href' => url('management', 'announcements')];
         if ($has(['manager', 'site_admin'])) $m[] = ['key' => 'settings', 'label' => t('menu.settings'), 'href' => url('management', 'settings'), 'children' => [
             ['label' => t('menu.settings_journal'), 'href' => url('management', 'settings', ['journal'])], ['label' => t('menu.settings_website'), 'href' => url('management', 'settings', ['website'])],

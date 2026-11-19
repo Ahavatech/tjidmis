@@ -24,6 +24,8 @@ class Router {
         'review'       => [B\ReviewController::class, 'search'],
         'reviewer'     => [B\ReviewerController::class, 'submission'],
         'discussion'   => [B\DiscussionController::class, 'view'],
+        'publication'  => [B\PublicationController::class, 'index'],
+        'manageIssues' => [B\IssueManageController::class, 'index'],
         'notification' => [B\NotificationController::class, 'index'],
         'management'   => [B\ManagementController::class, 'users'],
     ];

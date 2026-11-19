@@ -20,7 +20,7 @@ class DecisionController {
             'authorName' => $names, 'submissionTitle' => $sub['title'], 'submissionUrl' => abs_url(url('workflow', 'index', [$sid])),
             'reviewerComments' => WorkflowService::reviewerCommentsText($sid, $round ? (int)$round['id'] : null)]) : null;
         View::render('backend/decision', ['title' => t('dec.' . $decision), 'menu' => 'submissions', 'sub' => $sub, 'decision' => $decision, 'recipients' => $recips, 'mail' => $rendered,
-            'files' => in_array($decision, [WorkflowService::SEND_REVIEW, WorkflowService::RESUBMIT, WorkflowService::NEW_ROUND], true) ? WorkflowService::candidateFiles($sub, $decision) : []], 'backend');
+            'files' => in_array($decision, [WorkflowService::SEND_REVIEW, WorkflowService::RESUBMIT, WorkflowService::NEW_ROUND, WorkflowService::SEND_PRODUCTION], true) ? WorkflowService::candidateFiles($sub, $decision) : []], 'backend');
     }
     public function save(string $id = '', string $decision = ''): void {
         $sub = $this->ctx($id, $decision); if (!Request::isPost()) redirect(url('decision', 'index', [$id, $decision]));
@@ -32,7 +32,7 @@ class DecisionController {
             foreach ($recips as $r) Mailer::send($r['email'], trim((string)$_POST['subject']) ?: t('dec.' . $decision), (string)$_POST['body'], $sid);
         foreach ($recips as $r) NotificationService::add((int)$r['id'], $jid, 'decision', t('notif.decision', t('dec.' . $decision), $sub['title']), 'submission', $sid);
         flash(t('dec.recorded', t('dec.' . $decision)));
-        $next = $decision === WorkflowService::DECLINE ? (int)$sub['stage_id'] : (in_array($decision, [WorkflowService::SEND_REVIEW, WorkflowService::RESUBMIT, WorkflowService::NEW_ROUND], true) ? 3 : ($decision === WorkflowService::REVISIONS ? 3 : 4));
+        $next = $decision === WorkflowService::DECLINE ? (int)$sub['stage_id'] : (in_array($decision, [WorkflowService::SEND_REVIEW, WorkflowService::RESUBMIT, WorkflowService::NEW_ROUND], true) ? 3 : ($decision === WorkflowService::REVISIONS ? 3 : ($decision === WorkflowService::SEND_PRODUCTION ? 5 : 4)));
         redirect(url('workflow', 'index', [$sid, $next]));
     }
 }

@@ -446,6 +446,21 @@ INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom
 There is a new message in the discussion "{$discussionSubject}" on "{$submissionTitle}": {$submissionUrl}
 
 {$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'EDITOR_DECISION_SEND_TO_PRODUCTION','Editor decision: sent to production','Dear {$authorName},
+
+Your submission "{$submissionTitle}" has been sent to production. We will let you know when it is published.
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'PUBLICATION_NOTIFY','Your article has been published','Dear {$authorName},
+
+"{$submissionTitle}" is now published: {$submissionUrl}
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'ISSUE_PUBLISHED','New issue published: {$issueName}','Dear {$recipientName},
+
+A new issue of {$journalName} is available: {$issueUrl}
+
+{$signature}',1,0);
 INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'EDITOR_DECISION_DECLINE','Editor decision: declined','Dear {$authorName},
 
 We regret that "{$submissionTitle}" cannot be accepted.

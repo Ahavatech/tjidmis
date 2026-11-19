@@ -17,6 +17,15 @@ INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,6 FROM use
 INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,10 FROM users WHERE username='author';
 INSERT INTO users (username,email,password_hash,given_name,family_name,affiliation,country,created_at) VALUES ('reader','reader@example.com','{{HASH}}','Rex','Reader','Example University','NG',NOW());
 INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,10 FROM users WHERE username='reader';
+INSERT INTO users (username,email,password_hash,given_name,family_name,affiliation,country,created_at) VALUES ('copyeditor','copyeditor@example.com','{{HASH}}','Cora','Copyeditor','Example University','NG',NOW());
+INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,7 FROM users WHERE username='copyeditor';
+INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,10 FROM users WHERE username='copyeditor';
+INSERT INTO users (username,email,password_hash,given_name,family_name,affiliation,country,created_at) VALUES ('layouteditor','layouteditor@example.com','{{HASH}}','Lee','Layouteditor','Example University','NG',NOW());
+INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,8 FROM users WHERE username='layouteditor';
+INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,10 FROM users WHERE username='layouteditor';
+INSERT INTO users (username,email,password_hash,given_name,family_name,affiliation,country,created_at) VALUES ('proofreader','proofreader@example.com','{{HASH}}','Pat','Proofreader','Example University','NG',NOW());
+INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,9 FROM users WHERE username='proofreader';
+INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,10 FROM users WHERE username='proofreader';
 INSERT IGNORE INTO user_user_groups (user_id,user_group_id) SELECT id,6 FROM users WHERE username IN ('editor','sectioneditor');
 INSERT INTO section_editors (section_id,user_id) SELECT s.id,u.id FROM sections s, users u WHERE u.username='sectioneditor' AND s.id=1;
 INSERT INTO issues (id,journal_id,volume,number,year,show_volume,show_number,show_year,show_title,published,date_published,is_current,seq,created_at) VALUES (37,1,3,'19s',2026,1,1,1,0,1,'2026-09-15 00:00:00',0,1,NOW());

@@ -5,9 +5,9 @@ use App\Models\SubmissionRepo;
 
 /** Stage transitions and review rounds. Stage ids follow OJS: 1 submission, 3 review, 4 copyediting, 5 production. */
 class WorkflowService {
-    const SEND_REVIEW = 'send_to_review', SKIP = 'accept_skip_review', DECLINE = 'decline', REVISIONS = 'request_revisions', RESUBMIT = 'resubmit', ACCEPT = 'accept', NEW_ROUND = 'new_round';
+    const SEND_REVIEW = 'send_to_review', SKIP = 'accept_skip_review', DECLINE = 'decline', REVISIONS = 'request_revisions', RESUBMIT = 'resubmit', ACCEPT = 'accept', NEW_ROUND = 'new_round', SEND_PRODUCTION = 'send_to_production';
     const EMAIL_KEY = [self::SEND_REVIEW => 'EDITOR_DECISION_SEND_TO_EXTERNAL', self::SKIP => 'EDITOR_DECISION_ACCEPT', self::DECLINE => 'EDITOR_DECISION_DECLINE',
-        self::REVISIONS => 'EDITOR_DECISION_REVISIONS', self::RESUBMIT => 'EDITOR_DECISION_RESUBMIT', self::ACCEPT => 'EDITOR_DECISION_ACCEPT'];
+        self::REVISIONS => 'EDITOR_DECISION_REVISIONS', self::RESUBMIT => 'EDITOR_DECISION_RESUBMIT', self::ACCEPT => 'EDITOR_DECISION_ACCEPT', self::SEND_PRODUCTION => 'EDITOR_DECISION_SEND_TO_PRODUCTION'];
 
     public static function currentRound(int $sid): ?array { return DB::one('SELECT * FROM review_rounds WHERE submission_id=? ORDER BY round DESC LIMIT 1', [$sid]); }
     public static function rounds(int $sid): array { return DB::all('SELECT * FROM review_rounds WHERE submission_id=? ORDER BY round', [$sid]); }
@@ -24,6 +24,7 @@ class WorkflowService {
             if ($last && $last['decision'] === self::REVISIONS) array_unshift($d, self::NEW_ROUND);
             return $d;
         }
+        if ((int)$sub['stage_id'] === 4) return [self::SEND_PRODUCTION];
         return [];
     }
     public static function createRound(int $sid, array $fileIds): int {
@@ -37,6 +38,7 @@ class WorkflowService {
     public static function candidateFiles(array $sub, string $decision): array {
         $sid = (int)$sub['id'];
         if ($decision === self::SEND_REVIEW) return SubmissionRepo::files($sid, 'submission');
+        if ($decision === self::SEND_PRODUCTION) return SubmissionRepo::files($sid, 'copyedit');
         $r = self::currentRound($sid);
         $rev = $r ? DB::all("SELECT f.*, 'review_revision' src FROM submission_files f WHERE f.submission_id=? AND f.file_stage='review_revision' AND f.review_round_id=?", [$sid, $r['id']]) : [];
         $prev = $r ? DB::all("SELECT f.*, 'review_file' src FROM submission_files f JOIN review_round_files rf ON rf.submission_file_id=f.id WHERE rf.review_round_id=?", [$r['id']]) : [];
@@ -49,6 +51,9 @@ class WorkflowService {
             case self::SEND_REVIEW:
                 $roundId = self::createRound($sid, $opts['files'] ?? []);
                 DB::exec('UPDATE submissions SET stage_id=3 WHERE id=?', [$sid]); $stage = 3; break;
+            case self::SEND_PRODUCTION:
+                foreach (array_map('intval', $opts['files'] ?? []) as $fid) { $f = DB::one("SELECT * FROM submission_files WHERE id=? AND submission_id=? AND file_stage='copyedit'", [$fid, $sid]); if ($f) self::copyFile($sub, $f, 'production_ready', 'Production Ready', $editorId); }
+                DB::exec('UPDATE submissions SET stage_id=5 WHERE id=?', [$sid]); $stage = 4; break;
             case self::SKIP: case self::ACCEPT:
                 DB::exec('UPDATE submissions SET stage_id=4 WHERE id=?', [$sid]); break;
             case self::DECLINE:
@@ -82,5 +87,15 @@ class WorkflowService {
             u.id IN (SELECT a.user_id FROM stage_assignments a JOIN user_groups g ON g.id=a.user_group_id WHERE a.submission_id=? AND g.role_key IN ('editor','manager','section_editor'))
             OR (NOT EXISTS (SELECT 1 FROM stage_assignments a JOIN user_groups g ON g.id=a.user_group_id WHERE a.submission_id=? AND g.role_key IN ('editor','manager','section_editor'))
                 AND u.id IN (SELECT x.user_id FROM user_user_groups x JOIN user_groups g ON g.id=x.user_group_id WHERE g.role_key IN ('editor','manager') AND g.journal_id=?)))", [$exceptUser, $sid, $sid, $jid]);
+    }
+    /** Copies a stored file into another file stage (the physical file is duplicated so stages stay independent). Returns the new file id. */
+    public static function copyFile(array $sub, array $f, string $toStage, string $genre, int $uploader): ?int {
+        $base = \App\Core\Upload::baseDir() . "/journals/{$sub['journal_id']}/submissions/{$sub['id']}";
+        $src = "$base/{$f['file_stage']}/{$f['stored_name']}"; if (!is_file($src)) return null;
+        $dir = "$base/$toStage"; if (!is_dir($dir)) mkdir($dir, 0775, true);
+        $stored = bin2hex(random_bytes(16)) . '.' . pathinfo($f['stored_name'], PATHINFO_EXTENSION);
+        if (!copy($src, "$dir/$stored")) return null;
+        return DB::insert('submission_files', ['submission_id' => $sub['id'], 'file_stage' => $toStage, 'genre' => $genre, 'original_name' => $f['original_name'], 'stored_name' => $stored, 'mime' => $f['mime'],
+            'size' => $f['size'], 'uploader_user_id' => $uploader, 'viewable' => 0, 'created_at' => date('Y-m-d H:i:s')]);
     }
 }
