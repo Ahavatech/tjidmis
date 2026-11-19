@@ -1,0 +1,9 @@
+files/
+journal_files/
+config.php
+install.lock
+.claude/
+homepageImage_en_US.png
+pageHeaderLogoImage_en_US.png
+reference/html/
+reference/css/

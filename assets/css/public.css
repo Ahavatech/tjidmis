@@ -1,0 +1,44 @@
+/* Public theme. Values (fonts, colours, sizes) match the reference site; rules are written from scratch.
+   --theme-color is overridden inline from journal settings. Full page styling is built in Phase 2. */
+:root{
+  --theme-color:#d79f24;
+  --gold-light:#e6b54a;
+  --navy:#1f2a44;
+  --ink:#1e2430;
+  --muted:#5b6475;
+  --line:#e5e7eb;
+  --page-bg:#f4f5f7;
+  --link:#1d5f8a;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.06);
+  --font-body:"Noto Serif",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --font-head:"Inter",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-body);font-size:14px;line-height:1.43rem;color:rgba(0,0,0,.87);background:var(--page-bg)}
+a{color:var(--link);transition:color .15s ease}a:hover,a:focus{color:#b9851a}
+h1,h2,h3,h4{font-family:var(--font-head);color:var(--navy);letter-spacing:-.01em}
+.pkp_screen_reader,.cmp_skip_to_content a:not(:focus){position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.pkp_structure_page{max-width:1100px;margin:0 auto}
+/* header */
+.pkp_structure_head{background:linear-gradient(135deg,var(--theme-color) 0%,var(--gold-light) 100%)}
+.pkp_site_name_wrapper{padding:1rem 1.4rem}
+.pkp_site_name a{font-family:var(--font-head);font-weight:700;font-size:1.6rem;color:var(--navy);text-decoration:none}
+.pkp_navigation_user{list-style:none;margin:0;padding:0 1.4rem .5rem;display:flex;gap:1rem;justify-content:flex-end}
+#navigationUser>li>a{font-family:var(--font-head);font-weight:600;color:var(--navy);text-decoration:none}#navigationUser>li>a:hover{color:#fff}
+/* nav bar */
+.pkp_navigation_primary_row{background:var(--navy)}
+.pkp_navigation_primary_wrapper{display:flex;justify-content:space-between;align-items:center;padding:0 1rem}
+.pkp_navigation_primary{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap}
+.pkp_navigation_primary>li>a,.pkp_navigation_search_wrapper a{display:block;padding:.85rem .9rem .55rem;font-family:var(--font-head);font-weight:600;font-size:.82rem;letter-spacing:.06em;color:#fff;text-decoration:none;border-bottom:3px solid transparent}
+.pkp_navigation_primary>li>a:hover,.pkp_navigation_search_wrapper a:hover{color:var(--theme-color);border-bottom-color:var(--theme-color)}
+/* content */
+.pkp_structure_content{display:flex;gap:2rem;background:#fff;border-radius:0 0 var(--radius) var(--radius);box-shadow:var(--shadow)}
+.pkp_structure_main{flex:1 1 0;min-width:0;padding:1.43rem 2.143rem 3rem}
+.pkp_structure_sidebar{flex:0 0 300px}
+.homepage_about h2,.current_issue>h2{font-size:1.05rem;text-transform:uppercase;letter-spacing:.08em;padding-left:.75rem;border-left:4px solid var(--theme-color);color:var(--navy)}
+.current_issue_title{font-family:var(--font-head);font-weight:700;color:var(--navy)}
+.stub_note,.image_placeholder{color:var(--muted);font-style:italic}
+.flash{padding:.6rem 1rem;margin-bottom:1rem;border-left:4px solid var(--theme-color);background:#fdf6e6}
+.pkp_structure_footer_wrapper{padding:1.4rem;color:var(--muted);font-size:.93rem}
+@media (max-width:991px){.pkp_structure_content{flex-direction:column;gap:0}.pkp_structure_sidebar{flex:1 1 auto}}

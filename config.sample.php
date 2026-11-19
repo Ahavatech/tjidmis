@@ -1,0 +1,13 @@
+<?php
+// Copied to config.php by install.php. Do not commit real credentials.
+return [
+    'db' => ['host' => 'localhost', 'name' => 'journal', 'user' => 'root', 'pass' => '', 'charset' => 'utf8mb4'],
+    'files_dir'       => dirname(__DIR__) . '/journal_files', // OUTSIDE the web root
+    'url_mode'        => 'path',   // 'path' = index.php/jirs/about ; 'query' = index.php?route=jirs/about
+    'pretty_urls'     => false,    // true = /jirs/about (needs mod_rewrite + .htaccess)
+    'default_journal' => 'jirs',
+    'timezone'        => 'Africa/Lagos',
+    'debug'           => false,
+    'demo_mode'       => false,    // shows demo credentials on the login page
+    'smtp'            => ['host' => '', 'port' => 587, 'user' => '', 'pass' => '', 'secure' => 'tls', 'from' => ''],
+];
