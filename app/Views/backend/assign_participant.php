@@ -1,0 +1,8 @@
+<?php $er = fn($k) => $errors[$k] ?? ''; ?>
+<div class="be_page"><div class="be_pagehead"><h1><?= e(t('part.assign')) ?> <span class="muted">#<?= (int)$sub['id'] ?></span></h1></div><div class="be_card"><?= errors_summary($errors) ?>
+<form class="cmp_form be_form" method="get" action="<?= e(url('participant', 'assign', [$sub['id']])) ?>"><div class="fields"><div><label><span class="label"><?= e(t('part.role')) ?></span><select name="group" onchange="this.form.submit()"><?php foreach ($groups as $g): ?><option value="<?= (int)$g['id'] ?>"<?= $role === (int)$g['id'] ? ' selected' : '' ?>><?= e($g['name']) ?></option><?php endforeach; ?></select></label><noscript><button class="be_btn" type="submit"><?= e(t('part.choose_role')) ?></button></noscript></div></div></form>
+<form class="cmp_form be_form" method="post" action="<?= e(url('participant', 'assign', [$sub['id']])) ?>"><?= csrf_field() ?><input type="hidden" name="group" value="<?= (int)$role ?>"><div class="fields">
+<?= field(t('part.user'), 'user', '', ['type' => 'select', 'options' => array_reduce($candidates, function ($c, $u) { $c[$u['id']] = trim($u['given_name'] . ' ' . $u['family_name']) . ' <' . $u['email'] . '>'; return $c; }, []), 'required' => true, 'error' => $er('user')]) ?>
+<?= checkbox('recommend_only', e(t('part.recommend_only_label')), false) ?><?= checkbox('can_change_metadata', e(t('part.can_change_metadata')), false) ?>
+<?= field(t('part.message'), 'message', '', ['type' => 'textarea', 'rows' => 4]) ?><?= checkbox('no_email', e(t('dec.skip_email')), false) ?></div>
+<div class="buttons"><button class="submit" type="submit"><?= e(t('part.assign')) ?></button><a href="<?= e(url('workflow', 'index', [$sub['id']])) ?>"><?= e(t('wizard.cancel')) ?></a></div></form></div></div>

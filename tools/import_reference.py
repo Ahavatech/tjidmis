@@ -215,7 +215,17 @@ emails = {
     'REVIEW_REQUEST': ('Request to review a manuscript', 'Dear {$reviewerName},\n\nWe invite you to review "{$submissionTitle}". Please respond by {$responseDueDate}: {$reviewUrl}\n\n{$signature}'),
     'REVIEW_ACK': ('Thank you for your review', 'Dear {$reviewerName},\n\nThank you for reviewing "{$submissionTitle}".\n\n{$signature}'),
     'EDITOR_DECISION_ACCEPT': ('Editor decision: accepted', 'Dear {$authorName},\n\nWe are pleased to accept "{$submissionTitle}" for publication.\n\n{$signature}'),
-    'EDITOR_DECISION_REVISIONS': ('Editor decision: revisions required', 'Dear {$authorName},\n\nRevisions are required for "{$submissionTitle}". Reviewer comments follow.\n\n{$signature}'),
+    'EDITOR_DECISION_REVISIONS': ('Editor decision: revisions required', 'Dear {$authorName},\n\nRevisions are required for "{$submissionTitle}". Reviewer comments follow.\n\n{$reviewerComments}\n\n{$signature}'),
+    'EDITOR_DECISION_RESUBMIT': ('Editor decision: resubmit for review', 'Dear {$authorName},\n\nWe ask you to revise "{$submissionTitle}" and resubmit it for a new round of review.\n\n{$reviewerComments}\n\n{$signature}'),
+    'EDITOR_DECISION_SEND_TO_EXTERNAL': ('Editor decision: sent to review', 'Dear {$authorName},\n\nYour submission "{$submissionTitle}" has been sent for peer review. We will contact you when the reviews are in.\n\n{$signature}'),
+    'EDITOR_ASSIGN': ('You have been assigned to a submission', 'Dear {$recipientName},\n\nYou have been assigned to "{$submissionTitle}" as {$roleName}: {$submissionUrl}\n\n{$message}\n\n{$signature}'),
+    'REVIEW_CONFIRM': ('Review request accepted', 'Dear {$editorName},\n\n{$reviewerName} has accepted the request to review "{$submissionTitle}".\n\n{$signature}'),
+    'REVIEW_DECLINE': ('Review request declined', 'Dear {$editorName},\n\n{$reviewerName} has declined the request to review "{$submissionTitle}".\n\n{$declineReason}\n\n{$signature}'),
+    'REVIEW_REMIND': ('Reminder: review request', 'Dear {$reviewerName},\n\nThis is a reminder about your review of "{$submissionTitle}", due {$reviewDueDate}: {$reviewUrl}\n\n{$signature}'),
+    'REVIEW_CANCEL': ('Review request cancelled', 'Dear {$reviewerName},\n\nWe no longer need your review of "{$submissionTitle}". Thank you for your willingness to help.\n\n{$signature}'),
+    'REVIEW_COMPLETE': ('Review submitted', 'Dear {$editorName},\n\n{$reviewerName} has submitted a review of "{$submissionTitle}": {$submissionUrl}\n\n{$signature}'),
+    'REVISED_VERSION_NOTIFY': ('Revised version uploaded', 'Dear {$editorName},\n\nThe author has uploaded a revised version of "{$submissionTitle}": {$submissionUrl}\n\n{$signature}'),
+    'DISCUSSION_NOTIFICATION': ('New discussion message: {$discussionSubject}', 'Dear {$recipientName},\n\nThere is a new message in the discussion "{$discussionSubject}" on "{$submissionTitle}": {$submissionUrl}\n\n{$signature}'),
     'EDITOR_DECISION_DECLINE': ('Editor decision: declined', 'Dear {$authorName},\n\nWe regret that "{$submissionTitle}" cannot be accepted.\n\n{$signature}'),
 }
 for k, (s_, b_) in emails.items():

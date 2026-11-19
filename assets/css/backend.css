@@ -99,3 +99,20 @@ details.be_user ul a:hover{background:#fdf6e6;color:var(--gold-dark)}
 .be_wfgrid{display:grid;grid-template-columns:1fr 260px;gap:1.5rem;border-radius:0 var(--radius) var(--radius) var(--radius)}
 .be_wfside h2,.be_wfmain h2{font-size:1rem;margin:1.2rem 0 .5rem}
 @media (max-width:991px){.be_wfgrid{grid-template-columns:1fr}.be_subitem{flex-wrap:wrap}.be_subright{width:100%;justify-content:flex-end}}
+
+/* ---------- Workflow, review, discussions ---------- */
+.be_headright{display:flex;gap:.6rem;align-items:center}
+.be_stagetabs{list-style:none;margin:0;padding:0;display:flex;gap:.2rem;position:relative;top:1px}
+.be_stagetabs a,.be_stagetabs span{display:block;padding:.55rem 1.1rem;font-family:var(--font-head);font-weight:600;font-size:.85rem;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;background:#f4f5f7}
+.be_stagetabs li.active a{background:#fff;color:var(--navy);border-top:3px solid var(--theme-color)}.be_stagetabs li.future span{opacity:.5}
+.be_roundtabs{list-style:none;margin:0 0 1rem;padding:0;display:flex;gap:.4rem}.be_roundtabs a{display:block;padding:.3rem .9rem;border-radius:20px;background:var(--line);color:var(--muted);text-decoration:none;font-family:var(--font-head);font-size:.82rem;font-weight:600}.be_roundtabs li.active a{background:var(--navy);color:#fff}
+.be_small{font-size:.78rem}.be_btn.be_small{padding:.15rem .6rem}
+.be_decisions{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem}.be_decisions .be_btn{text-align:center;padding:.5rem .8rem}
+.be_chip{display:inline-block;padding:.1rem .55rem;border-radius:10px;background:var(--line);font-family:var(--font-head);font-size:.72rem;font-weight:600}
+.be_chip_accepted{background:#e8edf5;color:var(--navy)}.be_chip_review_submitted,.be_chip_thanked{background:#e3f4e8;color:#1a6b34}.be_chip_declined,.be_chip_cancelled{background:#fde8e8;color:#a80000}.be_chip_awaiting_response{background:#fdf6e6;color:var(--gold-dark)}
+.be_overdue td:first-child{border-left:3px solid #a80000}.be_muted_row{opacity:.6}
+.be_reviewers .be_actions{white-space:normal}.be_reviewers .be_actions .be_btn{margin:.1rem}
+.be_inline_form{display:flex;gap:.6rem;align-items:center;margin:.8rem 0}
+.be_note{border-bottom:1px solid var(--line);padding:.8rem 0}.be_notehead{margin-bottom:.3rem}
+.be_list li.unread a{font-weight:700}
+.be_danger{background:#a80000!important;color:#fff!important;border-color:#a80000!important}

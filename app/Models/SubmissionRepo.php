@@ -23,6 +23,13 @@ class SubmissionRepo {
         if ($r['status'] === 'declined') return t('status.declined');
         if ($r['status'] === 'scheduled') return t('status.scheduled');
         if ((int)$r['stage_id'] === 1) return !empty($r['editors']) ? t('status.sub_inprogress') : t('status.awaiting_assignment');
+        if ((int)$r['stage_id'] === 3) {
+            if (($r['last_decision'] ?? '') === 'request_revisions') return !empty($r['revisions_in']) ? t('status.rev_revised') : t('status.rev_revisions');
+            if (empty($r['ra_active'])) return t('status.rev_pending');
+            return (int)$r['ra_submitted'] >= (int)$r['ra_active'] ? t('status.rev_ready') : t('status.rev_waiting');
+        }
+        if ((int)$r['stage_id'] === 4) return t('status.copyediting');
+        if ((int)$r['stage_id'] === 5) return t('status.production');
         return t('status.in_stage');
     }
 
@@ -59,7 +66,14 @@ class SubmissionRepo {
         $rows = DB::all("SELECT s.id, s.stage_id, s.status, s.submission_progress, s.date_submitted, s.date_last_activity, s.created_by, p.title, sec.title section_title,
             (SELECT GROUP_CONCAT(a.family_name ORDER BY a.seq SEPARATOR ', ') FROM authors a WHERE a.publication_id=p.id) authors_short,
             (SELECT COUNT(*) FROM queries q WHERE q.submission_id=s.id AND q.closed=0) open_discussions,
-            (SELECT COUNT(*) FROM stage_assignments sa JOIN user_groups g ON g.id=sa.user_group_id WHERE sa.submission_id=s.id AND g.role_key IN ('editor','manager','section_editor')) editors
+            (SELECT COUNT(*) FROM stage_assignments sa JOIN user_groups g ON g.id=sa.user_group_id WHERE sa.submission_id=s.id AND g.role_key IN ('editor','manager','section_editor')) editors,
+            (SELECT COUNT(*) FROM review_assignments ra WHERE ra.submission_id=s.id AND ra.review_round_id=(SELECT MAX(id) FROM review_rounds WHERE submission_id=s.id) AND ra.status NOT IN ('cancelled','declined')) ra_active,
+            (SELECT COUNT(*) FROM review_assignments ra WHERE ra.submission_id=s.id AND ra.review_round_id=(SELECT MAX(id) FROM review_rounds WHERE submission_id=s.id) AND ra.status IN ('review_submitted','thanked')) ra_submitted,
+            (SELECT d.decision FROM edit_decisions d WHERE d.submission_id=s.id AND d.stage_id=3 ORDER BY d.id DESC LIMIT 1) last_decision,
+            (SELECT COUNT(*) FROM submission_files f WHERE f.submission_id=s.id AND f.file_stage='review_revision' AND f.review_round_id=(SELECT MAX(id) FROM review_rounds WHERE submission_id=s.id)) revisions_in,
+            (SELECT ra.id FROM review_assignments ra WHERE ra.submission_id=s.id AND ra.reviewer_id=$uid AND ra.status NOT IN ('cancelled') ORDER BY ra.id DESC LIMIT 1) my_review_id,
+            (SELECT ra.status FROM review_assignments ra WHERE ra.submission_id=s.id AND ra.reviewer_id=$uid AND ra.status NOT IN ('cancelled') ORDER BY ra.id DESC LIMIT 1) my_review_status,
+            (SELECT ra.date_due FROM review_assignments ra WHERE ra.submission_id=s.id AND ra.reviewer_id=$uid AND ra.status NOT IN ('cancelled') ORDER BY ra.id DESC LIMIT 1) my_review_due
             $from WHERE $where ORDER BY COALESCE(s.date_last_activity, s.date_submitted) DESC, s.id DESC LIMIT $per OFFSET $off", $p);
         return [$total, $rows];
     }

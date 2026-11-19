@@ -1,0 +1,6 @@
+<?php use App\Services\ReviewService; $er = fn($k) => $errors[$k] ?? ''; ?>
+<div class="be_page"><div class="be_pagehead"><h1><?= e(t('rev.edit_deadlines')) ?>: <?= e(trim($ra['given_name'] . ' ' . $ra['family_name'])) ?></h1></div><div class="be_card"><?= errors_summary($errors) ?>
+<form class="cmp_form be_form" method="post" action="<?= e(url('review', 'edit', [$sub['id'], $ra['id']])) ?>"><?= csrf_field() ?><div class="fields">
+<div class="method"><label><span class="label"><?= e(t('rev.method')) ?></span><select name="method"><?php foreach (ReviewService::METHODS as $k => $l): ?><option value="<?= e($k) ?>"<?= $ra['review_method'] === $k ? ' selected' : '' ?>><?= e(t($l)) ?></option><?php endforeach; ?></select></label></div>
+<?= field(t('rev.response_due'), 'response_due', substr((string)$ra['date_response_due'], 0, 10), ['type' => 'date', 'required' => true, 'error' => $er('response_due')]) ?><?= field(t('rev.review_due'), 'review_due', substr((string)$ra['date_due'], 0, 10), ['type' => 'date', 'required' => true, 'error' => $er('review_due')]) ?>
+</div><div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button><a href="<?= e(url('workflow', 'index', [$sub['id'], 3])) ?>"><?= e(t('wizard.cancel')) ?></a></div></form></div></div>

@@ -11,6 +11,7 @@ class DB {
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
+            self::$pdo->exec("SET time_zone='" . date('P') . "'");   // NOW() must agree with the timestamps PHP writes
         }
         return self::$pdo;
     }

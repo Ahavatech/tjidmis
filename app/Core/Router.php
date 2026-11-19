@@ -19,6 +19,11 @@ class Router {
         'submissions'  => [B\DashboardController::class, 'index'],
         'submission'   => [B\SubmissionWizardController::class, 'wizard'],
         'workflow'     => [B\WorkflowController::class, 'index'],
+        'participant'  => [B\ParticipantController::class, 'assign'],
+        'decision'     => [B\DecisionController::class, 'index'],
+        'review'       => [B\ReviewController::class, 'search'],
+        'reviewer'     => [B\ReviewerController::class, 'submission'],
+        'discussion'   => [B\DiscussionController::class, 'view'],
         'notification' => [B\NotificationController::class, 'index'],
         'management'   => [B\ManagementController::class, 'users'],
     ];

@@ -12,15 +12,15 @@ $qs = fn(array $o = []) => url('submissions', null, [], array_filter(array_merge
   <button class="be_btn" type="submit"><?= e(t('dash.filter')) ?></button><?php if ($f['q'] || $f['stage'] || $f['section'] || $f['incomplete']): ?><a href="<?= e(url('submissions', null, [], ['tab' => $tab])) ?>"><?= e(t('dash.clear')) ?></a><?php endif; ?>
 </form>
 <?php if (!$rows): ?><p class="be_empty muted"><?= e(t('dash.empty')) ?></p><?php else: ?>
-<ul class="be_sublist"><?php foreach ($rows as $r): $mineDraft = $r['status'] === 'incomplete' && (int)$r['created_by'] === \App\Core\Auth::id(); ?>
+<ul class="be_sublist"><?php foreach ($rows as $r): $rev = !empty($r['review_only']); $revUrl = $rev ? url('reviewer', 'submission', [$r['my_review_id']]) : ''; $mineDraft = $r['status'] === 'incomplete' && (int)$r['created_by'] === \App\Core\Auth::id(); ?>
 <li class="be_subitem"><div class="be_subid">#<?= (int)$r['id'] ?></div>
-  <div class="be_subbody"><div class="be_subtitle"><a href="<?= e($mineDraft ? url('submission', 'wizard', [$r['id']]) : url('workflow', 'index', [$r['id']])) ?>"><?= e($r['title'] ?: t('dash.untitled')) ?></a></div>
-    <div class="be_submeta"><?= e($r['authors_short'] ?: '-') ?><?= $r['section_title'] ? ' &middot; ' . e($r['section_title']) : '' ?><?= $r['open_discussions'] ? ' &middot; <span class="be_disc">' . e(t('dash.discussions', (int)$r['open_discussions'])) . '</span>' : '' ?></div>
-    <div class="be_substatus"><?= e(SubmissionRepo::statusText($r)) ?></div></div>
-  <div class="be_subright"><?php if ($r['status'] === 'incomplete'): ?><span class="be_badge_stage be_badge_incomplete"><?= e(t('dash.incomplete_badge')) ?></span>
+  <div class="be_subbody"><div class="be_subtitle"><a href="<?= e($rev ? $revUrl : ($mineDraft ? url('submission', 'wizard', [$r['id']]) : url('workflow', 'index', [$r['id']]))) ?>"><?= e($rev ? t('dash.review_assignment', $r['title']) : ($r['title'] ?: t('dash.untitled'))) ?></a></div>
+    <div class="be_submeta"><?= $rev ? e(t('dash.review_due', fmt_date($r['my_review_due']))) : e($r['authors_short'] ?: '-') ?><?= $r['section_title'] ? ' &middot; ' . e($r['section_title']) : '' ?><?= $r['open_discussions'] ? ' &middot; <span class="be_disc">' . e(t('dash.discussions', (int)$r['open_discussions'])) . '</span>' : '' ?></div>
+    <div class="be_substatus"><?= $rev ? e(t('review.status_' . $r['my_review_status'])) : e(SubmissionRepo::statusText($r)) ?></div></div>
+  <div class="be_subright"><?php if ($rev): ?><span class="be_badge_stage"><?= e(t('stage.review')) ?></span><a class="be_btn" href="<?= e($revUrl) ?>"><?= e(in_array($r['my_review_status'], ['review_submitted', 'thanked'], true) ? t('dash.view_review') : ($r['my_review_status'] === 'awaiting_response' ? t('dash.begin_review') : t('dash.continue_review'))) ?></a><?php elseif ($r['status'] === 'incomplete'): ?><span class="be_badge_stage be_badge_incomplete"><?= e(t('dash.incomplete_badge')) ?></span>
     <?php elseif (in_array($r['status'], ['published', 'declined'], true)): ?><span class="be_badge_stage be_badge_<?= e($r['status']) ?>"><?= e(t('status.' . $r['status'])) ?></span>
     <?php else: ?><span class="be_badge_stage"><?= e(t(SubmissionRepo::STAGES[$r['stage_id']] ?? 'stage.submission')) ?></span><?php endif; ?>
-    <a class="be_btn" href="<?= e($mineDraft ? url('submission', 'wizard', [$r['id']]) : url('workflow', 'index', [$r['id']])) ?>"><?= e($mineDraft ? t('dash.continue') : t('dash.view')) ?></a></div></li>
+    <?php if (!$rev): ?><a class="be_btn" href="<?= e($mineDraft ? url('submission', 'wizard', [$r['id']]) : url('workflow', 'index', [$r['id']])) ?>"><?= e($mineDraft ? t('dash.continue') : t('dash.view')) ?></a><?php endif; ?></div></li>
 <?php endforeach; ?></ul>
 <?= paginate($total, $page, $per, fn($n) => $qs(['page' => $n])) ?>
 <?php endif; ?></div></div>

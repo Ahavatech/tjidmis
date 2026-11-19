@@ -33,7 +33,18 @@ class PermissionService {
         if (!self::canViewSubmission($sub)) return false;
         $u = Auth::user(); $jid = (int)$sub['journal_id'];
         if (self::isStaff($jid) || (Auth::hasRole(['section_editor'], $jid) && self::isAssigned((int)$u['id'], (int)$sub['id']))) return true;
-        return $file['file_stage'] === 'submission' || (int)$file['viewable'] === 1;
+        return $file['file_stage'] === 'submission' || (int)$file['viewable'] === 1 || (int)$file['uploader_user_id'] === (int)$u['id'];
+    }
+    /** Staff always; a section editor only when assigned to the submission. */
+    public static function canManage(array $sub): bool {
+        $u = Auth::user(); if (!$u) return false; $jid = (int)$sub['journal_id'];
+        return self::isStaff($jid) || (Auth::hasRole(['section_editor'], $jid) && self::isAssigned((int)$u['id'], (int)$sub['id']));
+    }
+    /** Recording decisions: editors/managers/admins, or an assigned section editor who is not recommend-only. */
+    public static function canDecide(array $sub): bool {
+        $u = Auth::user(); if (!$u) return false; $jid = (int)$sub['journal_id'];
+        if (self::isStaff($jid)) return true;
+        return Auth::hasRole(['section_editor'], $jid) && (bool)DB::val('SELECT 1 FROM stage_assignments WHERE submission_id=? AND user_id=? AND recommend_only=0 LIMIT 1', [$sub['id'], $u['id']]);
     }
     public static function submissionRoleIds(int $jid, string $roleKey): ?int {
         $id = DB::val('SELECT id FROM user_groups WHERE journal_id=? AND role_key=?', [$jid, $roleKey]); return $id ? (int)$id : null;

@@ -1,0 +1,7 @@
+<?php use App\Services\ReviewService; $er = fn($k) => $errors[$k] ?? ''; ?>
+<div class="be_page"><div class="be_pagehead"><h1><?= e(t('rev.invite', trim($rv['given_name'] . ' ' . $rv['family_name']))) ?></h1></div><div class="be_card"><?= errors_summary($errors) ?>
+<form class="cmp_form be_form" method="post" action="<?= e(url('review', 'add', [$sub['id'], $rv['id']])) ?>"><?= csrf_field() ?><div class="fields">
+<div class="method"><label><span class="label"><?= e(t('rev.method')) ?></span><select name="method"><?php foreach (ReviewService::METHODS as $k => $l): ?><option value="<?= e($k) ?>"<?= $method === $k ? ' selected' : '' ?>><?= e(t($l)) ?></option><?php endforeach; ?></select></label></div>
+<?= field(t('rev.response_due'), 'response_due', $respDue, ['type' => 'date', 'required' => true, 'error' => $er('response_due')]) ?><?= field(t('rev.review_due'), 'review_due', $revDue, ['type' => 'date', 'required' => true, 'error' => $er('review_due')]) ?>
+<?php if ($mail): ?><fieldset class="be_fs"><legend><?= e(t('dec.email')) ?></legend><?= field(t('wf.subject'), 'subject', $_POST['subject'] ?? $mail[0], ['maxlength' => 255]) ?><?= field(t('dec.body'), 'body', $_POST['body'] ?? $mail[1], ['type' => 'textarea', 'rows' => 10]) ?><?= checkbox('skip_email', e(t('dec.skip_email')), false) ?></fieldset><?php endif; ?>
+</div><div class="buttons"><button class="submit" type="submit"><?= e(t('rev.send_request')) ?></button><a href="<?= e(url('review', 'search', [$sub['id']])) ?>"><?= e(t('wizard.cancel')) ?></a></div></form></div></div>

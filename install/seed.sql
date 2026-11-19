@@ -387,6 +387,64 @@ INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom
 
 Revisions are required for "{$submissionTitle}". Reviewer comments follow.
 
+{$reviewerComments}
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'EDITOR_DECISION_RESUBMIT','Editor decision: resubmit for review','Dear {$authorName},
+
+We ask you to revise "{$submissionTitle}" and resubmit it for a new round of review.
+
+{$reviewerComments}
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'EDITOR_DECISION_SEND_TO_EXTERNAL','Editor decision: sent to review','Dear {$authorName},
+
+Your submission "{$submissionTitle}" has been sent for peer review. We will contact you when the reviews are in.
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'EDITOR_ASSIGN','You have been assigned to a submission','Dear {$recipientName},
+
+You have been assigned to "{$submissionTitle}" as {$roleName}: {$submissionUrl}
+
+{$message}
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'REVIEW_CONFIRM','Review request accepted','Dear {$editorName},
+
+{$reviewerName} has accepted the request to review "{$submissionTitle}".
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'REVIEW_DECLINE','Review request declined','Dear {$editorName},
+
+{$reviewerName} has declined the request to review "{$submissionTitle}".
+
+{$declineReason}
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'REVIEW_REMIND','Reminder: review request','Dear {$reviewerName},
+
+This is a reminder about your review of "{$submissionTitle}", due {$reviewDueDate}: {$reviewUrl}
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'REVIEW_CANCEL','Review request cancelled','Dear {$reviewerName},
+
+We no longer need your review of "{$submissionTitle}". Thank you for your willingness to help.
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'REVIEW_COMPLETE','Review submitted','Dear {$editorName},
+
+{$reviewerName} has submitted a review of "{$submissionTitle}": {$submissionUrl}
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'REVISED_VERSION_NOTIFY','Revised version uploaded','Dear {$editorName},
+
+The author has uploaded a revised version of "{$submissionTitle}": {$submissionUrl}
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'DISCUSSION_NOTIFICATION','New discussion message: {$discussionSubject}','Dear {$recipientName},
+
+There is a new message in the discussion "{$discussionSubject}" on "{$submissionTitle}": {$submissionUrl}
+
 {$signature}',1,0);
 INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'EDITOR_DECISION_DECLINE','Editor decision: declined','Dear {$authorName},
 
