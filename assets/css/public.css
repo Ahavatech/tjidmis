@@ -217,3 +217,23 @@ table{border-collapse:collapse}
   .obj_article_details .page_title,.page h1{font-size:1.3rem}
 }
 @media print{.pkp_structure_head,.pkp_structure_sidebar,.pkp_structure_footer_wrapper{display:none}}
+
+/* ---------- Account forms (login, register, reset, profile) ---------- */
+.cmp_form .fields>div,.cmp_form fieldset.fields>div{margin-bottom:1rem}
+.cmp_form label{display:block}
+.cmp_form .label{display:block;font-family:var(--font-head);font-weight:600;font-size:.88rem;color:var(--navy);margin-bottom:.25rem}
+.cmp_form input[type=text],.cmp_form input[type=email],.cmp_form input[type=password],.cmp_form select,.cmp_form textarea{width:100%;max-width:520px;padding:.5rem .65rem;border:1px solid #ccc;border-radius:4px;font:inherit;background:#fff}
+.cmp_form input:focus,.cmp_form select:focus,.cmp_form textarea:focus{outline:2px solid var(--theme-color);outline-offset:1px;border-color:var(--theme-color)}
+.cmp_form .required{color:#a80000}
+.cmp_form .help{display:block;font-size:.82rem;color:var(--muted);margin-top:.2rem}
+.cmp_form .optin label,.cmp_form .remember label{display:flex;gap:.5rem;align-items:flex-start;font-weight:400}
+.cmp_form .buttons{display:flex;align-items:center;gap:1rem;margin-top:1.2rem}
+.cmp_form .buttons a{font-family:var(--font-head);font-weight:600}
+.has_error input,.has_error select,.has_error textarea{border-color:#a80000}
+.field_error{display:block;color:#a80000;font-size:.85rem;margin-top:.25rem}
+.cmp_notification.error{background:#fde8e8;border-left-color:#a80000}
+.cmp_notification.error ul{margin:.3rem 0 0;padding-left:1.2rem}
+.demo_note{margin-top:1.5rem;font-size:.88rem}
+.page_register_complete .actions{list-style:none;padding:0}
+.page_register_complete .actions li{margin:.4rem 0}
+.loginas_banner{background:#fdf6e6;border-bottom:2px solid var(--theme-color);padding:.5rem 1.2rem;font-family:var(--font-head);font-size:.88rem;text-align:center}

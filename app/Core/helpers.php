@@ -46,3 +46,38 @@ function paginate(int $total, int $page, int $per, callable $urlFor): string {
     return $h . '</div>';
 }
 function abs_url(string $path): string { $s = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; return $s . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $path; }
+
+/** Only allow same-site relative paths as post-login redirect targets (prevents open redirects). */
+function safe_source(?string $s): string {
+    $s = (string)$s;
+    return ($s !== '' && $s[0] === '/' && !preg_match('#^//|\\\\|[\r\n]#', $s)) ? $s : '';
+}
+/** OJS-style form field. $o: type, required, maxlength, autocomplete, error (string), options (for select), class. */
+function field(string $label, string $name, $value = '', array $o = []): string {
+    $type = $o['type'] ?? 'text'; $req = !empty($o['required']); $err = $o['error'] ?? '';
+    $h = '<div class="' . e($o['class'] ?? $name) . ($err ? ' has_error' : '') . '"><label><span class="label">' . e($label)
+        . ($req ? ' <span class="required" aria-hidden="true">*</span><span class="pkp_screen_reader"> ' . e(t('form.required')) . '</span>' : '') . '</span>';
+    if ($type === 'select') {
+        $h .= '<select name="' . e($name) . '" id="' . e($name) . '"' . ($req ? ' required aria-required="true"' : '') . '><option value=""></option>';
+        foreach ($o['options'] ?? [] as $v => $l) $h .= '<option value="' . e($v) . '"' . ((string)$value === (string)$v ? ' selected' : '') . '>' . e($l) . '</option>';
+        $h .= '</select>';
+    } elseif ($type === 'textarea') {
+        $h .= '<textarea name="' . e($name) . '" id="' . e($name) . '" rows="' . (int)($o['rows'] ?? 5) . '">' . e($value) . '</textarea>';
+    } else {
+        $h .= '<input type="' . e($type) . '" name="' . e($name) . '" id="' . e($name) . '" value="' . ($type === 'password' ? '' : e($value)) . '"'
+            . (isset($o['maxlength']) ? ' maxlength="' . (int)$o['maxlength'] . '"' : '') . (isset($o['autocomplete']) ? ' autocomplete="' . e($o['autocomplete']) . '"' : '')
+            . ($req ? ' required aria-required="true"' : '') . '>';
+    }
+    if (!empty($o['help'])) $h .= '<span class="help">' . e($o['help']) . '</span>';
+    return $h . '</label>' . ($err ? '<span class="field_error" role="alert">' . e($err) . '</span>' : '') . '</div>';
+}
+function checkbox(string $name, string $labelHtml, bool $checked = false, string $value = '1', string $err = ''): string {
+    return '<div class="optin"><label><input type="checkbox" name="' . e($name) . '" value="' . e($value) . '"' . ($checked ? ' checked' : '') . '> ' . $labelHtml . '</label>'
+        . ($err ? '<span class="field_error" role="alert">' . e($err) . '</span>' : '') . '</div>';
+}
+function errors_summary(array $errors): string {
+    if (!$errors) return '';
+    $h = '<div class="cmp_notification error" role="alert"><strong>' . e(t('form.fix_errors')) . '</strong><ul>';
+    foreach ($errors as $m) $h .= '<li>' . e($m) . '</li>';
+    return $h . '</ul></div>';
+}

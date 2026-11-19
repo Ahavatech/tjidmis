@@ -1,6 +1,7 @@
 <?php
 namespace App\Core;
 use App\Controllers\Public as P;
+use App\Controllers\Backend as B;
 class Router {
     /** page => [Controller class, default op]. Later phases add rows. */
     private array $routes = [
@@ -12,9 +13,11 @@ class Router {
         'information'  => [P\InformationController::class, 'readers'],
         'search'       => [P\SearchController::class, 'search'],
         'gateway'      => [P\GatewayController::class, 'plugin'],
-        'user'         => [P\PendingController::class, 'register'],
-        'login'        => [P\PendingController::class, 'index'],
-        'submissions'  => [P\PendingController::class, 'dashboard'],
+        'user'         => [P\UserController::class, 'register'],
+        'login'        => [P\LoginController::class, 'index'],
+        'submissions'  => [B\DashboardController::class, 'index'],
+        'notification' => [B\NotificationController::class, 'index'],
+        'management'   => [B\ManagementController::class, 'users'],
     ];
     public function dispatch(): void {
         Request::parse();

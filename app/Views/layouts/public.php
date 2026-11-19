@@ -14,6 +14,7 @@ $nav = NavService::primary($jid); ?>
 <?= $headExtra ?? '' ?>
 </head>
 <body class="pkp_page_<?= e($bodyClass ?? 'index') ?>" dir="ltr">
+<?= \App\Core\View::partial('partials/loginas_banner') ?>
 <div class="pkp_structure_page">
 <header class="pkp_structure_head" id="headerNavigationContainer" role="banner">
   <nav class="cmp_skip_to_content" aria-label="<?= e(t('nav.jump')) ?>">

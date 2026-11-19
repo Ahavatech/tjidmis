@@ -30,4 +30,18 @@ class Upload {
         if (!move_uploaded_file($file['tmp_name'], $dir . '/' . $stored)) throw new \RuntimeException(t('upload.error'));
         return ['stored_name' => $stored, 'original_name' => $orig, 'mime' => $mime, 'size' => (int)$file['size'], 'path' => trim($subdir, '/') . '/' . $stored];
     }
+
+    /** Public images (profile photos, logos): validated by extension + real MIME, random name, saved under /public/. */
+    public static function storePublic(array $file, string $subdir, int $maxBytes = 2097152): string {
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) throw new \RuntimeException(t('upload.error'));
+        if ($file['size'] > $maxBytes) throw new \RuntimeException(t('upload.too_big'));
+        $map = ['jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!isset($map[$ext]) || (new \finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']) !== $map[$ext] || !@getimagesize($file['tmp_name'])) throw new \RuntimeException(t('upload.bad_type'));
+        $dir = ROOT . '/public/' . trim($subdir, '/');
+        if (!is_dir($dir) && !@mkdir($dir, 0775, true)) throw new \RuntimeException(t('upload.error'));
+        $name = bin2hex(random_bytes(16)) . '.' . $ext;
+        if (!move_uploaded_file($file['tmp_name'], $dir . '/' . $name)) throw new \RuntimeException(t('upload.error'));
+        return trim($subdir, '/') . '/' . $name;
+    }
 }
