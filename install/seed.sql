@@ -40,7 +40,7 @@ INSERT INTO journal_settings (journal_id,name,value) VALUES (1,'logo','');
 INSERT INTO journal_settings (journal_id,name,value) VALUES (1,'favicon','');
 INSERT INTO journal_settings (journal_id,name,value) VALUES (1,'homepageImage','');
 INSERT INTO journal_settings (journal_id,name,value) VALUES (1,'description','<p>The <em>Journal of Interdisciplinary Research Sciences</em> is a peer-reviewed, open access journal that publishes original research across disciplines. This text is placeholder content and can be edited under Settings.</p>');
-INSERT INTO journal_settings (journal_id,name,value) VALUES (1,'about','<p>Placeholder text describing the aims and scope, frequency, peer review, open access, archiving and indexing policies of the journal.</p>');
+INSERT INTO journal_settings (journal_id,name,value) VALUES (1,'about','<h2>Aims and Scope</h2><p>Placeholder text describing the aims and scope of the journal.</p><h2>Publication Frequency</h2><p>Placeholder text describing how often issues are published.</p><h2>Peer Review Process</h2><p>Placeholder text describing the peer review process.</p><h2>Open Access Policy</h2><p>Placeholder text describing the open access policy.</p><h2>Archiving</h2><p>Placeholder text describing archiving and indexing.</p>');
 INSERT INTO journal_settings (journal_id,name,value) VALUES (1,'editorialTeam','<p>Placeholder editorial board. Add the real editors under Settings.</p>');
 INSERT INTO journal_settings (journal_id,name,value) VALUES (1,'contactName','Editorial Office');
 INSERT INTO journal_settings (journal_id,name,value) VALUES (1,'contactEmail','editor@example.com');

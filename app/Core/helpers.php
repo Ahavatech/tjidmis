@@ -25,3 +25,24 @@ function flash(?string $msg = null, string $type = 'success') {
     $f = $_SESSION['flash'] ?? []; unset($_SESSION['flash']); return $f;
 }
 function old(string $k, $d = '') { return $_SESSION['old'][$k] ?? $d; }
+
+function public_url(string $file): string { $b = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/'), '/\\'); return $b . '/public/' . ltrim($file, '/'); }
+function fmt_date(?string $d): string { return $d ? date('Y-m-d', strtotime($d)) : ''; }
+/** $crumbs: list of [label, url|null]; the last item is the current page. Home is added automatically. */
+function breadcrumb(array $crumbs): string {
+    array_unshift($crumbs, [t('crumb.home'), url()]);
+    $h = '<nav class="cmp_breadcrumbs" role="navigation" aria-label="' . e(t('crumb.you_are_here')) . '"><ol>';
+    $last = count($crumbs) - 1;
+    foreach ($crumbs as $i => [$label, $href]) {
+        if ($i === $last) $h .= '<li class="current" aria-current="page"><span aria-current="page">' . e($label) . '</span></li>';
+        else $h .= '<li><a href="' . e($href) . '">' . e($label) . '</a> <span class="separator">/</span></li>';
+    }
+    return $h . '</ol></nav>';
+}
+function paginate(int $total, int $page, int $per, callable $urlFor): string {
+    $pages = (int)ceil($total / max(1, $per)); if ($pages <= 1) return '';
+    $h = '<div class="cmp_pagination"><span class="showing">' . e(t('page.showing', ($page - 1) * $per + 1, min($total, $page * $per), $total)) . '</span> ';
+    for ($i = 1; $i <= $pages; $i++) $h .= $i === $page ? '<strong class="current">' . $i . '</strong> ' : '<a href="' . e($urlFor($i)) . '">' . $i . '</a> ';
+    return $h . '</div>';
+}
+function abs_url(string $path): string { $s = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; return $s . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $path; }

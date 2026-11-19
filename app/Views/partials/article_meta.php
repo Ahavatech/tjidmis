@@ -1,0 +1,20 @@
+<?php use App\Models\Catalog;
+$meta = function (string $n, $v) { if ($v !== null && $v !== '') echo '<meta name="' . e($n) . '" content="' . e($v) . '">' . "\n"; };
+$d = $a['date_published'] ? str_replace('-', '/', $a['date_published']) : '';
+$pg = $a['pages'] ? preg_split('/\s*[-–]\s*/', $a['pages']) : []; $iss = $a['issue'];
+$kw = json_decode($a['keywords'] ?? '[]', true) ?: [];
+$abs = abs_url(url('article', 'view', [$a['sid']]));
+$pdf = $a['galleys'] ? abs_url(url('article', 'view', [$a['sid'], $a['galleys'][0]['id']])) : '';
+$meta('citation_title', $a['title']);
+foreach ($a['authors'] as $au) { $meta('citation_author', trim($au['family_name'] . ', ' . $au['given_name'], ' ,')); $meta('citation_author_institution', $au['affiliation']); }
+$meta('citation_publication_date', $d); $meta('citation_date', $d);
+$meta('citation_journal_title', $j['name']); $meta('citation_journal_abbrev', $j['abbrev']); $meta('citation_issn', $j['issn']);
+$meta('citation_volume', $iss['volume'] ?? ''); $meta('citation_issue', $iss['number'] ?? '');
+$meta('citation_firstpage', $pg[0] ?? ''); $meta('citation_lastpage', $pg[1] ?? '');
+$meta('citation_doi', $a['doi']); $meta('citation_abstract_html_url', $abs); $meta('citation_pdf_url', $pdf);
+$meta('citation_keywords', implode('; ', $kw)); $meta('citation_language', 'en');
+$meta('DC.Title', $a['title']); foreach ($a['authors'] as $au) $meta('DC.Creator.PersonalName', trim($au['given_name'] . ' ' . $au['family_name']));
+$meta('DC.Date.issued', $a['date_published']); $meta('DC.Description', strip_tags((string)$a['abstract']));
+$meta('DC.Identifier', (string)$a['sid']); $meta('DC.Identifier.DOI', $a['doi']); $meta('DC.Identifier.URI', $abs); $meta('DC.Identifier.pageNumber', $a['pages']);
+foreach ($kw as $k) $meta('DC.Subject', $k);
+$meta('DC.Source', $j['name']); $meta('DC.Source.ISSN', $j['issn']); $meta('DC.Language', 'en'); $meta('DC.Rights', $a['license_url']); $meta('DC.Type', 'Text.Serial.Journal');

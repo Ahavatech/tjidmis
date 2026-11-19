@@ -5,7 +5,16 @@ class Router {
     /** page => [Controller class, default op]. Later phases add rows. */
     private array $routes = [
         'index'        => [P\IndexController::class, 'index'],
-        'about'        => [P\IndexController::class, 'index'],   // Phase 2 replaces with AboutController
+        'about'        => [P\AboutController::class, 'index'],
+        'issue'        => [P\IssueController::class, 'current'],
+        'article'      => [P\ArticleController::class, 'view'],
+        'announcement' => [P\AnnouncementController::class, 'index'],
+        'information'  => [P\InformationController::class, 'readers'],
+        'search'       => [P\SearchController::class, 'search'],
+        'gateway'      => [P\GatewayController::class, 'plugin'],
+        'user'         => [P\PendingController::class, 'register'],
+        'login'        => [P\PendingController::class, 'index'],
+        'submissions'  => [P\PendingController::class, 'dashboard'],
     ];
     public function dispatch(): void {
         Request::parse();
@@ -22,8 +31,9 @@ class Router {
         if (isset($this->routes[$page])) {
             [$cls, $def] = $this->routes[$page];
             $op = $op ?: $def;
-            if (!preg_match('/^[a-zA-Z]\w*$/', $op) || !method_exists($cls, $op)) { $this->notFound(); return; }
-            (new $cls())->$op(...$args);
+            $obj = new $cls();
+            if (!preg_match("/^[a-zA-Z]\w*$/", $op) || !is_callable([$obj, $op])) { $this->notFound(); return; }
+            $obj->$op(...$args);
             return;
         }
         // Unknown page: try a static page whose path matches (e.g. /pes, /APCharges)

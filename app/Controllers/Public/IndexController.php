@@ -1,10 +1,15 @@
 <?php
 namespace App\Controllers\Public;
-use App\Core\{View, Settings, DB};
+use App\Core\{View, Settings};
+use App\Models\Catalog;
 class IndexController {
     public function index(): void {
-        $j = Settings::journal();
-        $issue = DB::one('SELECT * FROM issues WHERE journal_id=? AND is_current=1', [$j['id']]);
-        View::render('public/home', ['issue' => $issue]);
+        $jid = (int)Settings::journal()['id'];
+        $issue = Catalog::currentIssue($jid);
+        View::render('public/home', [
+            'issue' => $issue, 'toc' => $issue ? Catalog::toc((int)$issue['id']) : [],
+            'announcements' => Settings::get('numAnnouncementsHomepage', '3') > 0 ? Catalog::announcements($jid, (int)Settings::get('numAnnouncementsHomepage', '3')) : [],
+            'bodyClass' => 'index',
+        ]);
     }
 }

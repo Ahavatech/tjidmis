@@ -1,0 +1,30 @@
+<?php
+namespace App\Controllers\Public;
+use App\Core\{View, Settings, DB};
+use App\Models\Catalog;
+class AboutController {
+    public function index(): void {
+        View::render('public/about', ['title' => t('about.title'), 'bodyClass' => 'about', 'html' => Settings::get('about', '')]);
+    }
+    public function editorialTeam(): void {
+        $jid = (int)Settings::journal()['id'];
+        $sp = DB::one("SELECT * FROM static_pages WHERE journal_id=? AND path='editorialboard'", [$jid]);
+        $html = $sp ? $sp['content'] : Settings::get('editorialTeam', '');
+        View::render('public/page_simple', ['title' => t('about.editorial'), 'bodyClass' => 'about', 'crumb' => t('about.editorial'), 'html' => $html, 'cls' => 'page_editorial_team']);
+    }
+    public function privacy(): void {
+        View::render('public/page_simple', ['title' => t('about.privacy'), 'bodyClass' => 'about', 'crumb' => t('about.privacy'), 'html' => Settings::get('privacyStatement', ''), 'cls' => 'page_privacy']);
+    }
+    public function contact(): void {
+        View::render('public/contact', ['title' => t('about.contact'), 'bodyClass' => 'contact']);
+    }
+    public function submissions(): void {
+        $jid = (int)Settings::journal()['id'];
+        View::render('public/submissions', ['title' => t('nav.submissions'), 'bodyClass' => 'about',
+            'checklist' => Settings::json('submissionChecklist', []),
+            'sections' => DB::all('SELECT title,policy FROM sections WHERE journal_id=? AND policy IS NOT NULL AND policy<>"" ORDER BY seq', [$jid])]);
+    }
+    public function aboutThisPublishingSystem(): void {
+        View::render('public/page_simple', ['title' => t('about.platform'), 'bodyClass' => 'about', 'crumb' => t('about.platform'), 'html' => '<p>' . e(t('about.platform_text')) . '</p>', 'cls' => 'page_about_platform']);
+    }
+}
