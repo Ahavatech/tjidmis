@@ -8,7 +8,7 @@ class IndexController {
         $issue = Catalog::currentIssue($jid);
         View::render('public/home', [
             'issue' => $issue, 'toc' => $issue ? Catalog::toc((int)$issue['id']) : [],
-            'announcements' => Settings::get('numAnnouncementsHomepage', '3') > 0 ? Catalog::announcements($jid, (int)Settings::get('numAnnouncementsHomepage', '3')) : [],
+            'announcements' => Settings::get('announcementsEnabled', '1') === '1' && Settings::get('numAnnouncementsHomepage', '3') > 0 ? Catalog::announcements($jid, (int)Settings::get('numAnnouncementsHomepage', '3')) : [],
             'bodyClass' => 'index',
         ]);
     }

@@ -18,7 +18,7 @@ $kw = json_decode($a['keywords'] ?? '[]', true) ?: []; ?>
 						<?php foreach ($a['authors'] as $au): ?><li>
 							<span class="name"><?= e(trim($au['given_name'] . ' ' . $au['family_name'])) ?></span>
 							<?php if ($au['affiliation']): ?><span class="affiliation"><?= e($au['affiliation']) ?></span><?php endif; ?>
-							<?php if ($au['orcid']): ?><span class="orcid"><a href="<?= e($au['orcid']) ?>" target="_blank"><?= e($au['orcid']) ?></a></span><?php endif; ?>
+							<?php if ($au['orcid'] && feature('orcid')): ?><span class="orcid"><a href="<?= e($au['orcid']) ?>" target="_blank"><?= e($au['orcid']) ?></a></span><?php endif; ?>
 						</li><?php endforeach; ?>
 					</ul>
 				</section><?php endif; ?>

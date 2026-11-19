@@ -31,5 +31,5 @@ editor, sectioneditor, reviewer1, reviewer2, author, reader, copyeditor, layoute
 Set `'demo_mode' => false` in `config.php` to hide the credentials box on the login page.
 
 ## Status by phase
-1 core + installer, 2 public site, 3 accounts, 4 dashboard + author submission wizard, 5 editorial workflow + peer review, 6 copyediting/production/publication/issues: done.
-7 settings/admin, 8 polish: next.
+1 core + installer, 2 public site, 3 accounts, 4 dashboard + author submission wizard, 5 editorial workflow + peer review, 6 copyediting/production/publication/issues, 7 settings/users/statistics/admin: done.
+8 polish and hardening: next.

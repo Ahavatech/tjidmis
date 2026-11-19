@@ -31,9 +31,9 @@ $su = fn($i) => url('reviewer', 'submission', [$aid, $i]); $blind = $ra['review_
 <?= field(t('rflow.comments_editor'), 'comments_editor', strip_tags(str_replace(['</p>', '<br>'], "\n\n", (string)$ra['comments_editor'])), ['type' => 'textarea', 'rows' => 5]) ?>
 <?= field(t('wf.recommendation'), 'recommendation', $ra['recommendation'], ['type' => 'select', 'options' => array_map(fn($k) => t($k), ReviewService::RECOMMENDATIONS)]) ?></div>
 <div class="buttons"><a class="be_btn" href="<?= e($su(2)) ?>"><?= e(t('wizard.back')) ?></a><button class="be_btn" type="submit" name="action" value="save"><?= e(t('rflow.save_later')) ?></button><button class="submit" type="submit" name="action" value="submit" onclick="return confirm('<?= e(t('rflow.confirm_submit')) ?>')"><?= e(t('rflow.submit')) ?></button></div></form>
-<h2><?= e(t('rflow.attachments')) ?></h2>
+<?php if (\App\Core\Settings::get('reviewerUploads', '1') === '1'): ?><h2><?= e(t('rflow.attachments')) ?></h2>
 <table class="be_table"><tbody><?php foreach ($attachments as $f): ?><tr><td><a href="<?= e(url('reviewer', 'download', [$aid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td class="be_actions"><form class="be_inline" method="post" action="<?= e(url('reviewer', 'deleteAttachment', [$aid, $f['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?></tbody></table>
-<form class="be_upload be_inline_form" method="post" enctype="multipart/form-data" action="<?= e(url('reviewer', 'uploadAttachment', [$aid])) ?>"><?= csrf_field() ?><input type="file" name="file" required><button class="be_btn" type="submit"><?= e(t('wizard.upload')) ?></button></form>
+<form class="be_upload be_inline_form" method="post" enctype="multipart/form-data" action="<?= e(url('reviewer', 'uploadAttachment', [$aid])) ?>"><?= csrf_field() ?><input type="file" name="file" required><button class="be_btn" type="submit"><?= e(t('wizard.upload')) ?></button></form><?php endif; ?>
 
 <?php else: ?>
 <h2><?= e(t('rflow.complete')) ?></h2><p><?= e(t('rflow.complete_text')) ?></p>

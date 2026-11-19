@@ -20,7 +20,7 @@ class ArticleController {
         MetricsService::hit($jid, (int)$a['sid'], 'abstract_view');
         $j = ['name' => Settings::get('name'), 'issn' => Settings::get('eissn'), 'abbrev' => Settings::get('abbreviation')];
         View::render('public/article', ['a' => $a, 'title' => $a['title'], 'bodyClass' => 'article', 'j' => $j,
-            'cites' => CitationService::all($a, $j), 'metrics' => Catalog::metrics((int)$a['sid']), 'headExtra' => View::partial('partials/article_meta', ['a' => $a, 'j' => $j])]);
+            'cites' => CitationService::all($a, $j), 'metrics' => Catalog::metrics((int)$a['sid']), 'headExtra' => feature('googleScholar') ? View::partial('partials/article_meta', ['a' => $a, 'j' => $j]) : '']);
     }
     /** Streams a published galley file. Permission rule: only galleys of published articles are public. */
     public function download(string $id = '', string $galleyId = '', string $fileId = ''): void {

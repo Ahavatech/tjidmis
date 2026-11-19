@@ -7,7 +7,7 @@ class EmailTemplateService {
         $jid = (int)(Settings::journal()['id'] ?? 0);
         $t = DB::one('SELECT subject, body FROM email_templates WHERE journal_id=? AND email_key=? AND enabled=1', [$jid, $key]);
         if (!$t) return null;
-        $vars += ['journalName' => Settings::get('name', ''), 'signature' => "--\n" . Settings::get('name', '') . "\n" . Settings::get('mailFrom', '')];
+        $vars += ['journalName' => Settings::get('name', ''), 'signature' => Settings::get('emailSignature', '') ?: ("--\n" . Settings::get('name', '') . "\n" . Settings::get('mailFrom', ''))];
         $rep = []; foreach ($vars as $k => $v) $rep['{$' . $k . '}'] = (string)$v;
         return [strtr($t['subject'], $rep), strtr($t['body'], $rep)];
     }

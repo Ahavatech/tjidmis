@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><?= e($a['title']) ?></title>
-	<link rel="stylesheet" href="<?= e(asset('css/theme.css')) ?>" type="text/css" /><link rel="stylesheet" href="<?= e(asset('css/fontawesome.css')) ?>" type="text/css" /><link rel="stylesheet" href="<?= e(asset('css/google-fonts.css')) ?>" type="text/css" /><?php if ($css): ?><link rel="stylesheet" href="<?= e(public_url($css)) ?>" type="text/css" /><?php endif; ?>
+	<?= theme_css_links() ?>
 </head>
 <body class="pkp_page_article pkp_op_view">
 	<header class="header_view">

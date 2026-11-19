@@ -461,6 +461,11 @@ INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom
 A new issue of {$journalName} is available: {$issueUrl}
 
 {$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'ANNOUNCEMENT','New announcement: {$announcementTitle}','Dear {$recipientName},
+
+{$announcementTitle}: {$announcementUrl}
+
+{$signature}',1,0);
 INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'EDITOR_DECISION_DECLINE','Editor decision: declined','Dear {$authorName},
 
 We regret that "{$submissionTitle}" cannot be accepted.

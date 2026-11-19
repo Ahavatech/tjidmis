@@ -229,11 +229,13 @@ emails = {
     'EDITOR_DECISION_SEND_TO_PRODUCTION': ('Editor decision: sent to production', 'Dear {$authorName},\n\nYour submission "{$submissionTitle}" has been sent to production. We will let you know when it is published.\n\n{$signature}'),
     'PUBLICATION_NOTIFY': ('Your article has been published', 'Dear {$authorName},\n\n"{$submissionTitle}" is now published: {$submissionUrl}\n\n{$signature}'),
     'ISSUE_PUBLISHED': ('New issue published: {$issueName}', 'Dear {$recipientName},\n\nA new issue of {$journalName} is available: {$issueUrl}\n\n{$signature}'),
+    'ANNOUNCEMENT': ('New announcement: {$announcementTitle}', 'Dear {$recipientName},\n\n{$announcementTitle}: {$announcementUrl}\n\n{$signature}'),
     'EDITOR_DECISION_DECLINE': ('Editor decision: declined', 'Dear {$authorName},\n\nWe regret that "{$submissionTitle}" cannot be accepted.\n\n{$signature}'),
 }
 for k, (s_, b_) in emails.items():
     w(f"INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,{q(k)},{q(s_)},{q(b_)},1,0);")
 open(os.path.join(ROOT, 'install', 'seed.sql'), 'w', encoding='utf-8').write('\n'.join(out) + '\n')
+open(os.path.join(ROOT, 'install', 'email_defaults.json'), 'w', encoding='utf-8').write(json.dumps({k: [a, b] for k, (a, b) in emails.items()}, ensure_ascii=False, indent=1))
 
 # ---------------- demo seed: users, issues, articles ----------------
 out = []

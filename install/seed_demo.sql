@@ -1324,7 +1324,7 @@ INSERT INTO submissions (id,journal_id,section_id,stage_id,status,submission_pro
 (3662,1,1,5,'published',0,'2026-08-17 09:00:00',NOW(),NULL),
 (3694,1,1,5,'published',0,'2026-08-17 09:00:00',NOW(),NULL),
 (3695,1,1,5,'published',0,'2026-08-17 09:00:00',NOW(),NULL),
-(3696,1,1,5,'published',0,'2026-08-17 09:00:00',NOW(),NULL),
+(3696,1,1,5,'published',0,'2026-09-17 09:00:00',NOW(),NULL),
 (3697,1,1,5,'published',0,'2026-08-17 09:00:00',NOW(),NULL),
 (3698,1,1,5,'published',0,'2026-08-17 09:00:00',NOW(),NULL),
 (3699,1,1,5,'published',0,'2026-08-17 09:00:00',NOW(),NULL),
@@ -4094,7 +4094,7 @@ INSERT INTO publications (id,submission_id,version,title,abstract,keywords,refer
 (3662,3662,1,'Optimization of Renewable Energy Integration Using Data-Driven Techniques',NULL,NULL,NULL,29,1,'2526 - 2549',NULL,'The Authors',2026,'https://creativecommons.org/licenses/by/4.0/','published','2026-08-17',134),
 (3694,3694,1,'The Role of IT Service Management in Enhancing Business Performance: A Statistical Analysis',NULL,NULL,NULL,29,1,'2550 - 2565',NULL,'The Authors',2026,'https://creativecommons.org/licenses/by/4.0/','published','2026-08-17',135),
 (3695,3695,1,'Association Between Metabolic Activity and Morphological Characteristics of Non-Small Cell Lung Cancer on 18F-FDG PET/CT',NULL,NULL,NULL,29,1,'2566 - 2574',NULL,'The Authors',2026,'https://creativecommons.org/licenses/by/4.0/','published','2026-08-17',136),
-(3696,3696,1,'Web-Based Artificial Intelligence Model for Predicting Complications After CT-Guided Transthoracic Lung Tumor Biopsy',NULL,NULL,NULL,29,1,'2575 - 2584',NULL,'The Authors',2026,'https://creativecommons.org/licenses/by/4.0/','published','2026-08-17',137),
+(3696,3696,1,'Web-Based Artificial Intelligence Model for Predicting Complications After CT-Guided Transthoracic Lung Tumor Biopsy','<p>Computed tomography-guided transthoracic lung biopsy is an important minimally invasive technique for obtaining tissue from peripheral pulmonary lesions. However, pneumothorax and pulmonary parenchymal hemorrhage remain frequent complications, and accurately estimating an individual patient’s risk before and during the procedure remains challenging. This study aimed to develop a web-based artificial intelligence-enabled prediction model for estimating the risks of pneumothorax and pulmonary parenchymal hemorrhage after computed tomography-guided transthoracic lung biopsy. A retrospective dataset of 141 patients who underwent the procedure at Binh Dan Hospital between June 2019 and June 2023 was analyzed. Multivariable logistic regression models incorporating lesion size, lesion depth from the pleural surface, and number of needle passes were developed and implemented in a web-based clinical decision-support tool to provide individualized complication-risk estimates. The mean patient age was 63.87 years, 70.9% were male, and 65.2% had a history of smoking. Pneumothorax occurred in 29.7% of patients, with chest drainage required in 2.1%, while pulmonary parenchymal hemorrhage occurred in 46.1% and hemoptysis in 7.8%. The prediction models achieved accuracies of 79.4% for pneumothorax and 85.1% for pulmonary parenchymal hemorrhage. Smaller lesions, greater lesion depth, and a higher number of needle passes were associated with increased complication risk. The developed web-based model converts readily available anatomical and procedural variables into immediate individualized risk estimates. It may support patient counseling, procedural planning, optimization of needle sampling, and postbiopsy monitoring; however, external and prospective validation is required before routine clinical implementation.</p>','["Artificial intelligence", "Clinical decision support", "Computed tomography-guided transthoracic lung biopsy", "Pneumothorax", "Prediction model", "Pulmonary parenchymal hemorrhage"]',NULL,29,1,'2575 - 2584',NULL,'The Authors',2026,'https://creativecommons.org/licenses/by/4.0/','published','2026-09-17',137),
 (3697,3697,1,'Artificial Intelligence-Based Parkinson’s Disease Analysis Using Speech, Hand Draw Patterns, MRI, and Cognitive Assessment',NULL,NULL,NULL,29,1,'2585 - 2600',NULL,'The Authors',2026,'https://creativecommons.org/licenses/by/4.0/','published','2026-08-17',138),
 (3698,3698,1,'A Permissioned Blockchain–IoT Framework for Transparent, Auditable, and Incentive-Driven Municipal Waste Management in Smart Cities',NULL,NULL,NULL,29,1,'2601 - 2626',NULL,'The Authors',2026,'https://creativecommons.org/licenses/by/4.0/','published','2026-08-17',139),
 (3699,3699,1,'Personalizing Cybersecurity Training Through AI-Augmented Reality: The SmartLearnSec Framework',NULL,NULL,NULL,29,1,'2627 - 2651',NULL,'The Authors',2026,'https://creativecommons.org/licenses/by/4.0/','published','2026-08-17',140),
@@ -10547,10 +10547,7 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3695,'Nguyen Xuan','Canh',NULL,NULL,2);
 INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3695,'Quang Huy','Huynh',NULL,NULL,3),
-(3696,'Vinh Hung','Tran',NULL,NULL,1),
-(3696,'Van Viet Thanh','Nguyen',NULL,NULL,2),
-(3696,'Quang Huy','Huynh',NULL,NULL,3),
-(3696,'Lam','Phuc',NULL,NULL,4),
+(3696,'Vinh Hung Tran, Van Viet Thanh Nguyen, Quang Huy Huynh, Lam','Phuc',NULL,NULL,1),
 (3697,'Gokul','Jadhav',NULL,NULL,1),
 (3697,'Sushila','Palwe',NULL,NULL,2),
 (3698,'Rana Muhammad Amir','Latif',NULL,NULL,1),
@@ -10605,11 +10602,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3705,'Ameer','El-Sayed',NULL,NULL,2),
 (3707,'Krishnamurthy','Umesh',NULL,NULL,1),
 (3707,'Farhat Ali','Syed',NULL,NULL,2),
-(3708,'Muneera M.','Al-Dossary',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3708,'Muneera M.','Al-Dossary',NULL,NULL,1),
 (3708,'Sunday O.','Olatunji',NULL,NULL,2),
 (3708,'Atta-ur','Rahman',NULL,NULL,3),
-(3708,'Rami Mustafa A.','Mohammad',NULL,NULL,4),
+(3708,'Rami Mustafa A.','Mohammad',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3708,'Tahir','Iqbal',NULL,NULL,5),
 (3708,'Aghiad','Bakry',NULL,NULL,6),
 (3708,'Faris','Mustafa',NULL,NULL,7),
@@ -10666,11 +10663,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3022,'Chayanika','Talukdar',NULL,NULL,2),
 (3022,'Ashish Kumar','Mishra',NULL,NULL,3),
 (3022,'Veena','Yadav',NULL,NULL,4),
-(3022,'R. Raja','Sudharsan',NULL,NULL,5);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3022,'R. Raja','Sudharsan',NULL,NULL,5),
 (3022,'Prachee','Dewangan',NULL,NULL,6),
 (3026,'Tuti','Dharmawati',NULL,NULL,1),
-(3026,'Cindy','Rahmawati',NULL,NULL,2),
+(3026,'Cindy','Rahmawati',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3028,'Amrita','Priyam',NULL,NULL,1),
 (3028,'Devashish','Sahay',NULL,NULL,2),
 (3028,'Archana','Singh',NULL,NULL,3),
@@ -10727,11 +10724,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3041,'Ashraf M. T.','Alfandi',NULL,NULL,4),
 (3041,'Faraj Salman','Alfawareh',NULL,NULL,5),
 (3041,'Mohammadnour','Aljarrah',NULL,NULL,6),
-(3041,'Nahed Habis','Alrawashedh',NULL,NULL,7);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3041,'Nahed Habis','Alrawashedh',NULL,NULL,7),
 (3042,'Nitin S.','Shrirao',NULL,NULL,1),
 (3042,'Snehankita','Majalekar',NULL,NULL,2),
-(3042,'Anuradha','Kanade',NULL,NULL,3),
+(3042,'Anuradha','Kanade',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3042,'Laxman','Doiphode',NULL,NULL,4),
 (3042,'Vaishali Dhanaji','Nikam',NULL,NULL,5),
 (3042,'Rajesh Kumar','Kashyap',NULL,NULL,6),
@@ -10788,11 +10785,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3063,'K','Shravani',NULL,NULL,3),
 (3063,'Suneetha','Vazrala',NULL,NULL,4),
 (3063,'Areddy Divya','Reddy',NULL,NULL,5),
-(3063,'A. lakshmi','Bhargav',NULL,NULL,6);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3063,'A. lakshmi','Bhargav',NULL,NULL,6),
 (3063,'Bokinala','Lokesh',NULL,NULL,7),
 (3064,'Tilottama','Dhake',NULL,NULL,1),
-(3064,'Namrata','Ansari',NULL,NULL,2),
+(3064,'Namrata','Ansari',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3065,'Rama Shankar','Yadav',NULL,NULL,1),
 (3065,'Shipra','Saraswat',NULL,NULL,2),
 (3065,'Santosh','Kumar',NULL,NULL,3),
@@ -10849,11 +10846,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3079,'Lester Lou B.','Segumpan',NULL,NULL,8),
 (3079,'Shiela Mae I.','Segumpan',NULL,NULL,9),
 (3079,'Jessel T.','Torres',NULL,NULL,10),
-(3080,'David','Ricardo',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3080,'David','Ricardo',NULL,NULL,1),
 (3080,'Prasasto','Satwiko',NULL,NULL,2),
 (3080,'Paulus Wisnu','Anggoro',NULL,NULL,3),
-(3081,'Bhavya N','P',NULL,NULL,1),
+(3081,'Bhavya N','P',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3081,'Gayathri M','S',NULL,NULL,2),
 (3081,'Dinesh P','A',NULL,NULL,3),
 (3081,'Manoharkumar K','N',NULL,NULL,4),
@@ -10910,11 +10907,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3115,'Gudisela Ravi','Kanth',NULL,NULL,5),
 (3115,'Priscilla','Whitin',NULL,NULL,6),
 (3115,'N. Dinesh','Kumar',NULL,NULL,7),
-(3115,'Sai K','Oruganti',NULL,NULL,8);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3115,'Sai K','Oruganti',NULL,NULL,8),
 (3118,'Mohammed Amin','Almaiah',NULL,NULL,1),
 (3118,'Azizbek','Qaraqulov',NULL,NULL,2),
-(3118,'Ilkhom','Rakhmatullayev',NULL,NULL,3),
+(3118,'Ilkhom','Rakhmatullayev',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3118,'Zarnigor','Yunusova',NULL,NULL,4),
 (3118,'Amer','Alqutaish',NULL,NULL,5),
 (3118,'Edrees','Hussien',NULL,NULL,6),
@@ -10971,11 +10968,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3145,'S. Senthil','Kumar',NULL,NULL,4),
 (3145,'Mayank','Choubey',NULL,NULL,5),
 (3145,'Arti','',NULL,NULL,6),
-(3145,'Raman','Chadha',NULL,NULL,7);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3145,'Raman','Chadha',NULL,NULL,7),
 (3145,'Imran','Hussain',NULL,NULL,8),
 (3146,'Xiomara Paola','Carrera-Herrera',NULL,NULL,1),
-(3146,'Jonathan Juan Manuel','Gonzalez-Carias',NULL,NULL,2),
+(3146,'Jonathan Juan Manuel','Gonzalez-Carias',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3147,'Prathap D','L',NULL,NULL,1),
 (3147,'Thimmaraju S','N',NULL,NULL,2),
 (3148,'Guguloth.','Lachiram',NULL,NULL,1),
@@ -11032,11 +11029,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3206,'Mustafa','Bayram',NULL,NULL,2),
 (3206,'Aseel','Smerat',NULL,NULL,3),
 (3206,'Wing-Keung','Wong',NULL,NULL,4),
-(3207,'Ace C.','Lagman',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3207,'Ace C.','Lagman',NULL,NULL,1),
 (3207,'Jeneffer A.','Sabonsolin',NULL,NULL,2),
 (3207,'Shaneth C.','Ambat',NULL,NULL,3),
-(3207,'May Florence D. San','Pablo',NULL,NULL,4),
+(3207,'May Florence D. San','Pablo',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3207,'Joselito Eduard E.','Goh',NULL,NULL,5),
 (3207,'Keno','Piad',NULL,NULL,6),
 (3208,'Fatima Zohra','Zouhri',NULL,NULL,1),
@@ -11093,11 +11090,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3225,'Dinesh','Murugan',NULL,NULL,3),
 (3225,'Sowmyashree M','S',NULL,NULL,4),
 (3225,'Preveena','Sindagi',NULL,NULL,5),
-(3226,'Ambika Prasad','Pandey',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3226,'Ambika Prasad','Pandey',NULL,NULL,1),
 (3226,'Rahul','Kapoor',NULL,NULL,2),
 (3226,'Shabana','Azami',NULL,NULL,3),
-(3226,'Amit','Kumar',NULL,NULL,4),
+(3226,'Amit','Kumar',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3226,'P. Praba','Devi',NULL,NULL,5),
 (3226,'Kanak','Wadhwani',NULL,NULL,6),
 (3226,'A. Jagdish Mohan','Rao',NULL,NULL,7),
@@ -11154,11 +11151,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3269,'Maad Kamal','Al-anni',NULL,NULL,4),
 (3269,'Omer Ahmed Osman','Elnageeb',NULL,NULL,5),
 (3269,'Saqr Mohammed Hamood','Almansob',NULL,NULL,6),
-(3269,'Majharoddin','Kazi',NULL,NULL,7);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3269,'Majharoddin','Kazi',NULL,NULL,7),
 (3269,'Shazia','Shaikh',NULL,NULL,8),
 (3269,'Bharat','Naiknaware',NULL,NULL,9),
-(3269,'Nazneen','Akhter',NULL,NULL,10),
+(3269,'Nazneen','Akhter',NULL,NULL,10);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3272,'Rohith M.','N.',NULL,NULL,1),
 (3272,'U. B.','Mahadevaswamy',NULL,NULL,2),
 (3272,'Lokesh B.','S',NULL,NULL,3),
@@ -11215,11 +11212,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3289,'Niranjan Reddy','Kotha',NULL,NULL,8),
 (3294,'K.','Sandhya',NULL,NULL,1),
 (3294,'J Himabindu','Priyanka',NULL,NULL,2),
-(3295,'Ghazi Khairallah','Alanazi',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(3295,'Ghazi Khairallah','Alanazi',NULL,NULL,1),
 (3295,'Syed Ahmed','Salman',NULL,NULL,2),
 (3296,'Adel N.','Alanazi',NULL,NULL,1),
-(3296,'Syed Ahmed','Salman',NULL,NULL,2),
+(3296,'Syed Ahmed','Salman',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (3297,'Nguyen Thi Cuc','Hong',NULL,NULL,1),
 (3297,'Nguyen Phuong','Linh',NULL,NULL,2),
 (3298,'Alaa A.','Elnazer',NULL,NULL,1),
@@ -11276,11 +11273,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2696,'Munkhbadral','Tumurchunag',NULL,NULL,4),
 (2696,'Orchlon','Jin',NULL,NULL,5),
 (2697,'Sandeep Girijashankar Shukla, Monika','Bhatnagar',NULL,NULL,1),
-(2698,'Rahul Suryawanshi, Sandeep H Bhokare, Sharvari Abhishek','Muley',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2698,'Rahul Suryawanshi, Sandeep H Bhokare, Sharvari Abhishek','Muley',NULL,NULL,1),
 (2699,'Harish Kumar Krishnamurthy','Sukumar',NULL,NULL,1),
 (2699,'Navneet Dalipkumar','Magotra',NULL,NULL,2),
-(2699,'Shrutika Prakash','Mokashi',NULL,NULL,3),
+(2699,'Shrutika Prakash','Mokashi',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2699,'Rohit','Laheri',NULL,NULL,4),
 (2699,'Sagar','Kesarpu',NULL,NULL,5),
 (2699,'Swarnamalya','Mohan',NULL,NULL,6),
@@ -11337,11 +11334,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3003,'Natalia','Noya',NULL,NULL,1),
 (3003,'Wilson','Bangun',NULL,NULL,2),
 (3003,'Maya','Malinda',NULL,NULL,3),
-(2739,'Onkar Nath','Thakur',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2739,'Onkar Nath','Thakur',NULL,NULL,1),
 (2739,'Santosh','Kumar',NULL,NULL,2),
 (2739,'Nitesh Singh','Bhati',NULL,NULL,3),
-(2740,'Sai Joshitha','Kathari',NULL,NULL,1),
+(2740,'Sai Joshitha','Kathari',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2740,'Pramod Begur','Nagaraj',NULL,NULL,2),
 (2740,'Vishal Kumar','Bhagchandani',NULL,NULL,3),
 (2740,'Pavan Kumar','Marri',NULL,NULL,4),
@@ -11398,11 +11395,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2777,'Siti Khalidah Md','Yusoff',NULL,NULL,2),
 (2777,'S M Ferdous','Azam',NULL,NULL,3),
 (2777,'Jacquline','Tham',NULL,NULL,4),
-(2777,'Ali','Khatib',NULL,NULL,5);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2777,'Ali','Khatib',NULL,NULL,5),
 (2777,'Samantha','Peiris',NULL,NULL,6),
 (2777,'Indika','Sirinaga',NULL,NULL,7),
-(2778,'Mohammad Abdulmohsen','Alshaibi',NULL,NULL,1),
+(2778,'Mohammad Abdulmohsen','Alshaibi',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2778,'Muhammad Nauman','Khan',NULL,NULL,2),
 (2806,'Fatima Kazem','Shammam',NULL,NULL,1),
 (2807,'Ohod Ali','Hassan',NULL,NULL,1),
@@ -11459,11 +11456,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2851,'Abebe Ejigu','Alemu',NULL,NULL,3),
 (2852,'Chinmay','Prabhu',NULL,NULL,1),
 (2852,'Rohit','Kaliwal',NULL,NULL,2),
-(2853,'Sanjeevakumar M.','Hatture',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2853,'Sanjeevakumar M.','Hatture',NULL,NULL,1),
 (2853,'Rashmi P.','Karchi',NULL,NULL,2),
 (2853,'N','Sugundan',NULL,NULL,3),
-(2853,'Nagendra Pal','Singh',NULL,NULL,4),
+(2853,'Nagendra Pal','Singh',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2853,'Deep','Chandra',NULL,NULL,5),
 (2853,'Disha','Shah',NULL,NULL,6),
 (2853,'Raj Kumar','Singh',NULL,NULL,7),
@@ -11520,11 +11517,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2865,'Mahmood A.','Mahmood',NULL,NULL,4),
 (2865,'Israa J.','Mohammed',NULL,NULL,5),
 (2865,'Rana M.','Khammass',NULL,NULL,6),
-(2866,'Ali Hussein Alwan Mohan','Al-Rikabi',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2866,'Ali Hussein Alwan Mohan','Al-Rikabi',NULL,NULL,1),
 (2866,'Seyed Hassan Shobeiri','(Zanjani)',NULL,NULL,2),
 (2867,'Louchene','Oualid',NULL,NULL,1),
-(2867,'Turki','Al-Shahrani',NULL,NULL,2),
+(2867,'Turki','Al-Shahrani',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2868,'Najeeb Asliwah','Haido',NULL,NULL,1),
 (2869,'Omar Ali','Hussein',NULL,NULL,1),
 (2869,'Raed Awfi','Hussein',NULL,NULL,2),
@@ -11581,11 +11578,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2893,'Satish Narayanrao','Gujar',NULL,NULL,2),
 (2894,'Kavitha','K',NULL,NULL,1),
 (2894,'S.Venkatesh','kumar',NULL,NULL,2),
-(2895,'Ravula Asmitha','Yadav',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2895,'Ravula Asmitha','Yadav',NULL,NULL,1),
 (2895,'Merugu','Venugopal',NULL,NULL,2),
 (2896,'Palvi','Gupta',NULL,NULL,1),
-(2896,'Neha','Tyagi',NULL,NULL,2),
+(2896,'Neha','Tyagi',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2896,'Anu','Sayal',NULL,NULL,3),
 (2897,'Shanta H','Biradar',NULL,NULL,1),
 (2897,'Sahana Lokesh','R',NULL,NULL,2),
@@ -11642,11 +11639,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2909,'Md. Tarek','Habib',NULL,NULL,3),
 (2910,'Aditya','Dubey',NULL,NULL,1),
 (2910,'Kalash','Jain',NULL,NULL,2),
-(2910,'Shiven','Mishra',NULL,NULL,3);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2910,'Shiven','Mishra',NULL,NULL,3),
 (2910,'Amit','Chaudhari',NULL,NULL,4),
 (2910,'Pooja','Vartak',NULL,NULL,5),
-(2910,'Kanchan','Dabre',NULL,NULL,6),
+(2910,'Kanchan','Dabre',NULL,NULL,6);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2910,'Shruti','Dodani',NULL,NULL,7),
 (2910,'Pratik','Kanani',NULL,NULL,8),
 (2911,'Manjula S','Dalabanjan',NULL,NULL,1),
@@ -11703,11 +11700,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2928,'Sobhy','Abouramadan',NULL,NULL,1),
 (2928,'Omar','Ataa',NULL,NULL,2),
 (2928,'Abdallah','Nosair',NULL,NULL,3),
-(2929,'Jairo Antonio Guevara','Gómez',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2929,'Jairo Antonio Guevara','Gómez',NULL,NULL,1),
 (2929,'Jose Ignacio Vilardy','Armenta',NULL,NULL,2),
 (2929,'Alexander Arenas','Quintero',NULL,NULL,3),
-(2929,'José Leonardo Cervantes','González',NULL,NULL,4),
+(2929,'José Leonardo Cervantes','González',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2929,'Álvaro Javier Ramírez','Mercado',NULL,NULL,5),
 (2929,'Denis Karina Brieva','Bohórquez',NULL,NULL,6),
 (2931,'Dhanraj','',NULL,NULL,1),
@@ -11764,11 +11761,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2973,'Pallavi','Patil',NULL,NULL,1),
 (2973,'Mansing','Rathod',NULL,NULL,2),
 (2974,'Ismayani','',NULL,NULL,1),
-(2974,'Taufika','Hidayati',NULL,NULL,2);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2974,'Taufika','Hidayati',NULL,NULL,2),
 (2974,'Novi Natalia','Padang',NULL,NULL,3),
 (2974,'Irna Triannur','Lubis',NULL,NULL,4),
-(2975,'Rashmi','R',NULL,NULL,1),
+(2975,'Rashmi','R',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2975,'M.','Dakshayini',NULL,NULL,2),
 (2976,'Atmeshkumar Subhashbhai','Patel',NULL,NULL,1),
 (2976,'Harish Parshuram','Bhabad',NULL,NULL,2),
@@ -11825,11 +11822,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (3050,'Swati','Bhavsar',NULL,NULL,2),
 (6339,'Ghadi Said','Alahmadi',NULL,NULL,1),
 (6339,'Yasser Saad','Ramah',NULL,NULL,2),
-(6339,'Amira Ibrahim El-Dessouky','Ahmed',NULL,NULL,3);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(6339,'Amira Ibrahim El-Dessouky','Ahmed',NULL,NULL,3),
 (6339,'Mohamed Ahmed','Shalaby',NULL,NULL,4),
 (2284,'Mayank Gupta, Bahman','Kalantari',NULL,NULL,1),
-(2323,'NRKS','Chakravarthy',NULL,NULL,1),
+(2323,'NRKS','Chakravarthy',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2324,'Nalini Misra, Ram Prakash Saini, Anupama Yadav, Bushra Alvera, Rajni, Mahendra Mani','Tiwari',NULL,NULL,1),
 (2325,'Amal Mohammed Yassin Abu','Sabha',NULL,NULL,1),
 (2326,'Batoul Fouad','Noureddine',NULL,NULL,1),
@@ -11886,11 +11883,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2401,'Mohd. Rafiq','Shah',NULL,NULL,5),
 (2401,'Ravi','Kumar',NULL,NULL,6),
 (2401,'Rajat','Umrey',NULL,NULL,7),
-(2401,'Indu','Shukla',NULL,NULL,8);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2401,'Indu','Shukla',NULL,NULL,8),
 (2402,'Pushan Chikali, R.R. Malagi, Vasudev Shinde, Bahubali Kabnure, Santosh R.','Patil',NULL,NULL,1),
 (2405,'Patibandla Sandhya Krishna, Subba Rao','Peram',NULL,NULL,1),
-(2406,'Eliana Elizabeth','Martínez-Durán',NULL,NULL,1),
+(2406,'Eliana Elizabeth','Martínez-Durán',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2406,'José Ivo Óscar','Contreras-Briceño',NULL,NULL,2),
 (2406,'Cantuña Vallejo','Iván-Marcelo',NULL,NULL,3),
 (2406,'Luis Alfonso','Cujilema-Martínez',NULL,NULL,4),
@@ -11947,11 +11944,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2482,'Suneeth S G, Niveditha S','V',NULL,NULL,1),
 (2483,'Mohammad Alja’afreh, Ali','Karime',NULL,NULL,1),
 (2484,'Md Sazzad Hossain, Mohammed Mahbubur','Rahaman',NULL,NULL,1),
-(2485,'Baisakh, A. Geetha Devi, Prabira Kumar Sethy, Santi Kumari Behera, Aziz','Nanthaamornphong',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2485,'Baisakh, A. Geetha Devi, Prabira Kumar Sethy, Santi Kumari Behera, Aziz','Nanthaamornphong',NULL,NULL,1),
 (2486,'Shikha Jaiswal, Ujjwal','Mishra',NULL,NULL,1),
 (2487,'Sri Handayani, Virgiawan Adi Kristianto, Retno Mayasari, Mohamed Nor Azhari','Azman',NULL,NULL,1),
-(2488,'Sadananda Behera, Neelamadhab Padhy, Rasmita','Panigrahi',NULL,NULL,1),
+(2488,'Sadananda Behera, Neelamadhab Padhy, Rasmita','Panigrahi',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2489,'Kamagari Shilppaa, Suresh','Kallam',NULL,NULL,1),
 (2490,'Wanis M. Alanazi, B','Vivekanandam',NULL,NULL,1),
 (2491,'Mohamed Nosseir Hemdan, Ehab Rushdy, Hanaa M. Hamza, Ameer','El-Sayed',NULL,NULL,1),
@@ -12008,11 +12005,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2521,'Phạm Ngọc','Dung',NULL,NULL,6),
 (2521,'Nguyen Duc','Tuan',NULL,NULL,7),
 (2522,'Satyakam','Rahul',NULL,NULL,1),
-(2522,'Harshit','Kumar',NULL,NULL,2);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2522,'Harshit','Kumar',NULL,NULL,2),
 (2522,'Pratibha Mahendra','Tiwari',NULL,NULL,3),
 (2522,'Dharmendra','Singh',NULL,NULL,4),
-(2522,'Alkawati Annappa','Magadum',NULL,NULL,5),
+(2522,'Alkawati Annappa','Magadum',NULL,NULL,5);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2523,'Irawan Afrianto, Sufa Atin, Galih Hermawan, Adrian','Maidiyangsa',NULL,NULL,1),
 (2524,'Yashodhara Pattanaik, Madhubrata Mohanty, Jayadev','Pati',NULL,NULL,1),
 (2525,'Drashti Shrimal, Harshali','Patil',NULL,NULL,1),
@@ -12069,11 +12066,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2562,'Leelavathi R, Vidya','A',NULL,NULL,1),
 (2563,'Sonam Kumari, Sri Charan Reddy Pennaka, Shrie Raam','Sathyanarayanan',NULL,NULL,1),
 (2564,'Akhilesh Korpe, Hardikkumar Jayantibhai Lathiya, Pranav Heramb Kolapkar, Devashish','Kedar',NULL,NULL,1),
-(2565,'Jayashree C. Pasalkar, Dattatraya S.','Bormane',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2565,'Jayashree C. Pasalkar, Dattatraya S.','Bormane',NULL,NULL,1),
 (2566,'Vinay Kumar Nyatha, Deepak','.N.Biradar',NULL,NULL,1),
 (2567,'K. Swetha, Sivaraman','K',NULL,NULL,1),
-(2568,'Soumya Madduru, Venkata Raju','K',NULL,NULL,1),
+(2568,'Soumya Madduru, Venkata Raju','K',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2569,'Natthawud Dussadee, Rameshprabu Ramaraj, Nigran Homdoung, Kittikorn','Sasujit',NULL,NULL,1),
 (2570,'Dauren','Insepov',NULL,NULL,1),
 (2570,'Sayat','Moldakhmetov',NULL,NULL,2),
@@ -12130,11 +12127,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1972,'Shital Ajit','Dumbre',NULL,NULL,2),
 (1972,'Sunita','Kumar',NULL,NULL,3),
 (1972,'Sudipta','Banerjee',NULL,NULL,4),
-(1972,'Shubham','Yadav',NULL,NULL,5);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1972,'Shubham','Yadav',NULL,NULL,5),
 (1972,'Salaman Mansur','Kagadi',NULL,NULL,6),
 (1972,'S.Palpandi','',NULL,NULL,7),
-(1973,'Prashant H. Govardhan, Leena H.','Patil',NULL,NULL,1),
+(1973,'Prashant H. Govardhan, Leena H.','Patil',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1991,'Abdullah A.','Alasmari',NULL,NULL,1),
 (1992,'Amruta Tapas Paul, Lalit','Damahe',NULL,NULL,1),
 (1994,'Kabila Hmood, Kadhum Al-majdi, Engineer Fatima Raad','Khazaal',NULL,NULL,1),
@@ -12191,11 +12188,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2089,'Vinit Kotak, Swati Nadkarni, Rashmi Malvankar, Jalpa','Mehta',NULL,NULL,1),
 (2092,'M.B.C. Asha Vani, Ramakrishnan M, S.','Venkatesan',NULL,NULL,1),
 (2093,'Vivin Krishnan, Sreeja C.','S',NULL,NULL,1),
-(2094,'Arvind Sharma, Dalwinder Singh, Harmeet Singh,','Subhita',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2094,'Arvind Sharma, Dalwinder Singh, Harmeet Singh,','Subhita',NULL,NULL,1),
 (2095,'Seema Gaba, Harpreet Kaur, Arun','Singh',NULL,NULL,1),
 (2113,'Jagadam Vijay Gopal, T. S Subashini, K. Sai','Prasad',NULL,NULL,1),
-(2116,'Vinita Hari Patil, Satish Ramesh','Kolhe',NULL,NULL,1),
+(2116,'Vinita Hari Patil, Satish Ramesh','Kolhe',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2117,'Alpana Borse, Gajanan Kharate, Namrata','Wasatkar',NULL,NULL,1),
 (2128,'Veena, Munish Swaroop, Anmol Tibrewal, Gurudev','Sahil',NULL,NULL,1),
 (2129,'Muhammed Fatih Alaeddinoğlu, Vahdet Alaeddinoğlu, Nurcan','Demirel',NULL,NULL,1),
@@ -12252,11 +12249,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2187,'Sindhu V','Tayade',NULL,NULL,4),
 (2187,'Debadutta','Patra',NULL,NULL,5),
 (2187,'Jayakaran','Pachiyappan',NULL,NULL,6),
-(2188,'Alok Kumar','Bhargava',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2188,'Alok Kumar','Bhargava',NULL,NULL,1),
 (2188,'Vijay L.','Agrawal',NULL,NULL,2),
 (2188,'K. Ramesh','Babu',NULL,NULL,3),
-(2188,'Ashok Kumar','Sahoo',NULL,NULL,4),
+(2188,'Ashok Kumar','Sahoo',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2188,'R Z Inamul','Hussain',NULL,NULL,5),
 (2188,'Subrata Kumar','Sahu',NULL,NULL,6),
 (2189,'Marlén Suárez Pineda, Lina María Otálora Gómez, Jenny Edith Parada','Camargo',NULL,NULL,1),
@@ -12313,11 +12310,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2233,'Divya','Mohan',NULL,NULL,2),
 (2233,'Jomy','George',NULL,NULL,3),
 (2233,'Soorya','P',NULL,NULL,4),
-(2233,'Krishnadas','J',NULL,NULL,5);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2233,'Krishnadas','J',NULL,NULL,5),
 (2233,'Reji','R',NULL,NULL,6),
 (2233,'Jubilant J','Kizhakkethottam',NULL,NULL,7),
-(2233,'Rajneesh','Kumar',NULL,NULL,8),
+(2233,'Rajneesh','Kumar',NULL,NULL,8);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2233,'Asesh Kumar','Tripathy',NULL,NULL,9),
 (2233,'Divya','Saleela',NULL,NULL,10),
 (2234,'Babeetta','Bbhagat',NULL,NULL,1),
@@ -12374,11 +12371,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2274,'Vinay','Kumar',NULL,NULL,4),
 (2274,'Sanju','',NULL,NULL,5),
 (2274,'Satinder Pal','Singh',NULL,NULL,6),
-(2274,'Komal','Malik',NULL,NULL,7);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2274,'Komal','Malik',NULL,NULL,7),
 (2274,'Rajinder','Kumar',NULL,NULL,8),
 (2274,'Reena','',NULL,NULL,9),
-(2288,'Anita Sumelvia Dewi, Sudarmiatin, Agus Hermawan, Titis Shinta','Dhewi',NULL,NULL,1),
+(2288,'Anita Sumelvia Dewi, Sudarmiatin, Agus Hermawan, Titis Shinta','Dhewi',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2289,'Iing Sri Hardiningrum, Ery Tri Djatmika Rudjianto W.W, Puji Handayati, Sopiah','Sopiah',NULL,NULL,1),
 (2290,'Erwin Syahputra , Heri Pratikto, Agus Hermawan, Titis Shinta','Dhewi',NULL,NULL,1),
 (2292,'Susilo, Sapto Wibowo, Ians','Aprilo',NULL,NULL,1),
@@ -12435,11 +12432,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1681,'Oleksiy Hetmanenko, Volodymyr Prykhodko, Yuliia Halynska, Yeva Erfan, Yurii','Kornash',NULL,NULL,1),
 (1682,'Young-Chool','Choi',NULL,NULL,1),
 (1683,'Saif Salah Al-Din Affat, Ismael Taha','Ahmed',NULL,NULL,1),
-(1684,'Amer','Shehadeh',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1684,'Amer','Shehadeh',NULL,NULL,1),
 (1684,'Said','Awad',NULL,NULL,2),
 (1684,'Salah Theeb','Shawamri',NULL,NULL,3),
-(1684,'Raja','Sweidan',NULL,NULL,4),
+(1684,'Raja','Sweidan',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1684,'Nader','Shawamreh',NULL,NULL,5),
 (1684,'Samar','Owainah',NULL,NULL,6),
 (1684,'Qusai','Ibrahim',NULL,NULL,7),
@@ -12496,11 +12493,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1705,'Rondik J. Hassan, Kazheen Isamel','Taher',NULL,NULL,1),
 (1707,'Randa Mahdi, Saad Talib','Hasson',NULL,NULL,1),
 (1708,'Sarah H. Mnkash, Faiz A. Alawy, Israa T.','Ali',NULL,NULL,1),
-(1710,'Abdullah Ibrahim','Aljaafari',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1710,'Abdullah Ibrahim','Aljaafari',NULL,NULL,1),
 (1710,'Nadia A Abdelmegeed','Abdelwahed',NULL,NULL,2),
 (1710,'Mohamed A.','Moustafa',NULL,NULL,3),
-(1710,'Rajeh Bati','Almasradi',NULL,NULL,4),
+(1710,'Rajeh Bati','Almasradi',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1711,'Ahmed H. Alfuraiji, Majid Hamid Ali, Ahmed. S.','Abdullah',NULL,NULL,1),
 (1714,'Said H.','Awad',NULL,NULL,1),
 (1714,'Ola','Hussien',NULL,NULL,2),
@@ -12557,11 +12554,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1779,'Swati','Varshney',NULL,NULL,1),
 (1779,'Jitendra Nath','Shrivastava',NULL,NULL,2),
 (1779,'Neha','Gupta',NULL,NULL,3),
-(1779,'Akash','Sanghi',NULL,NULL,4);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1779,'Akash','Sanghi',NULL,NULL,4),
 (1779,'Seema Babusing','Rathod',NULL,NULL,5),
 (1779,'Garima','Joshi',NULL,NULL,6),
-(1780,'Almothana','Altamimi',NULL,NULL,1),
+(1780,'Almothana','Altamimi',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1780,'Abdulhafiz','Altamimi',NULL,NULL,2),
 (1780,'Oliver','Whitmore',NULL,NULL,3),
 (1780,'Mahmood Ghaleb','Al-Bashayreh',NULL,NULL,4),
@@ -12618,11 +12615,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1796,'Sarah Mohammed','Ghazwani',NULL,NULL,14),
 (1796,'Shuruq Fahad','Almutiri',NULL,NULL,15),
 (1797,'Krishnan Thiruvengadam, Yousef Elsheikh, Fabio','Rossi',NULL,NULL,1),
-(1798,'Kien Vu Ngoc, Dung Nguyen Le, Phuc Nguyen Hoang','Minh',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1798,'Kien Vu Ngoc, Dung Nguyen Le, Phuc Nguyen Hoang','Minh',NULL,NULL,1),
 (1800,'A.','Nagadeepan',NULL,NULL,1),
 (1800,'Vishakha Abhay','Gaidhani',NULL,NULL,2),
-(1800,'Bhambare','Rajesh',NULL,NULL,3),
+(1800,'Bhambare','Rajesh',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1800,'Sampada Abhijit','Dhole',NULL,NULL,4),
 (1800,'Anil Laxmanrao','Wakekar',NULL,NULL,5),
 (1800,'Shweta','Suryawanshi',NULL,NULL,6),
@@ -12679,11 +12676,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1841,'Banibrata Paul, Bhaskar','Karn',NULL,NULL,1),
 (1842,'Alok Kumar','Bhargava',NULL,NULL,1),
 (1842,'Manu T','U',NULL,NULL,2),
-(1842,'Chitra','Srivastava',NULL,NULL,3);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1842,'Chitra','Srivastava',NULL,NULL,3),
 (1842,'Krishna Kumar','TP',NULL,NULL,4),
 (1842,'V. L.','Nuntluanga',NULL,NULL,5),
-(1842,'Nalin Prakash','Singh',NULL,NULL,6),
+(1842,'Nalin Prakash','Singh',NULL,NULL,6);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1846,'Nikhil','Prakash',NULL,NULL,1),
 (1847,'Daisy A. Mamaril, Lailani C.','Banggawan',NULL,NULL,1),
 (1848,'Abdullah Hassan Eid','Barbari',NULL,NULL,1),
@@ -12740,11 +12737,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1859,'Bothina Ahmed','Mohamed',NULL,NULL,11),
 (1859,'Mai Hassan','Ibrahim',NULL,NULL,12),
 (1859,'Mahmoud M.','Hassan',NULL,NULL,13),
-(1859,'Samar Fawzy','gad',NULL,NULL,14);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1859,'Samar Fawzy','gad',NULL,NULL,14),
 (1859,'Mohamed Ghazy Attia','Hablas',NULL,NULL,15),
 (1867,'Hayder Ali Abdulhasan, Fazel Asadi','Amjad',NULL,NULL,1),
-(1868,'M. Yuvaraja, C.','Kumuthini',NULL,NULL,1),
+(1868,'M. Yuvaraja, C.','Kumuthini',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1869,'Israa Al-Obaidi, Manaf Abdul-Muttalib','Ahmed',NULL,NULL,1),
 (1870,'A. R. Al-Adday, Nada Khaleefah M. A.','Alrikabi',NULL,NULL,1),
 (1896,'R. Ajith Kumar, R.A.Arul Raja, Veeresha K B, Enock Immanuel, Saurav Kumar,','S.Poongavanam',NULL,NULL,1),
@@ -12801,11 +12798,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1912,'Ketki R.','Ingole',NULL,NULL,5),
 (1912,'Rajalaxmi','Hegde',NULL,NULL,6),
 (1927,'Ayman A.','Alyoubi',NULL,NULL,1),
-(1928,'Rojas Valdivieso María','Caridad',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1928,'Rojas Valdivieso María','Caridad',NULL,NULL,1),
 (1928,'Reyes-Reinoso Johanna','Rosali',NULL,NULL,2),
 (1928,'San Martín Andrade María','Augusta',NULL,NULL,3),
-(1928,'Quevedo Barros Manuel','Rafael',NULL,NULL,4),
+(1928,'Quevedo Barros Manuel','Rafael',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1929,'Pallavi Deshpande, Bina Sarkar, Vijay','Kulkarni',NULL,NULL,1),
 (1930,'Gayatri','Mirajkar',NULL,NULL,1),
 (1930,'Divya Midhun','Chakkaravarthy',NULL,NULL,2),
@@ -12862,11 +12859,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1951,'Vasanth','Vinayagamoorthi',NULL,NULL,2),
 (1951,'Aman','Kumar',NULL,NULL,3),
 (1951,'Vijay','Kumar',NULL,NULL,4),
-(1951,'Swati','Bisht',NULL,NULL,5);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1951,'Swati','Bisht',NULL,NULL,5),
 (1951,'Neelam','Sheoliha',NULL,NULL,6),
 (1951,'M.','Murali',NULL,NULL,7),
-(1952,'G.Priyadharshini, V.Rajendran, R.','Srinivasan',NULL,NULL,1),
+(1952,'G.Priyadharshini, V.Rajendran, R.','Srinivasan',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1953,'Cheng Xiaomin, Chonlavit','Sutunyarak',NULL,NULL,1),
 (1954,'Kshirsagar Sopan Bapu, Rais Abdul Hamid','Khan',NULL,NULL,1),
 (1955,'Thirumurugan Shanmugam, B Sowmiya, Mohamed AK','Sadiq',NULL,NULL,1),
@@ -12923,11 +12920,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1386,'K.V.Ganesh','',NULL,NULL,5),
 (1386,'M. Khaleel Ullah','Khan',NULL,NULL,6),
 (1387,'Chetan Naik J, Abdul Haq','Nalband',NULL,NULL,1),
-(1388,'Priyanka Aggarwal, Krity Gulati, Shivesh Pratap Singh, Shilpi Sarna, Kajal','Chauhan',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1388,'Priyanka Aggarwal, Krity Gulati, Shivesh Pratap Singh, Shilpi Sarna, Kajal','Chauhan',NULL,NULL,1),
 (1389,'Padmavathi SM, Suma S, Lakshmi R B, Vani N, Nandini L, Shruthi','G',NULL,NULL,1),
 (1390,'Parihar Dahake, Nidhi N. Somani, Rohan Job, Avinash Bhowate, Chaitanya A.','Sakhare',NULL,NULL,1),
-(1391,'Varun','Uppalpati',NULL,NULL,1),
+(1391,'Varun','Uppalpati',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1391,'Sumanth','Banakar',NULL,NULL,2),
 (1391,'Ramakrishna','Thannir',NULL,NULL,3),
 (1391,'Venkatesh Ankarla Sri','Ramuloo',NULL,NULL,4),
@@ -12984,11 +12981,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1414,'Aji','Suhendra',NULL,NULL,5),
 (1414,'Maylina Khansa','Damara',NULL,NULL,6),
 (1414,'Akhiruddin','',NULL,NULL,7),
-(1416,'Supriadi, Budiyanto, Muhamad Sholeh, Tri ‘Ulya','Qodriyati',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1416,'Supriadi, Budiyanto, Muhamad Sholeh, Tri ‘Ulya','Qodriyati',NULL,NULL,1),
 (1417,'Muhammad','Wajdi',NULL,NULL,1),
 (1417,'Arismunandar','',NULL,NULL,2),
-(1417,'Andi','Asmawati',NULL,NULL,3),
+(1417,'Andi','Asmawati',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1417,'Andi','Jamilah',NULL,NULL,4),
 (1417,'Hamka','',NULL,NULL,5),
 (1417,'A. Bida','Purnamasari',NULL,NULL,6),
@@ -13045,11 +13042,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1479,'Montu','Borah',NULL,NULL,7),
 (1480,'Jugulkar Lalitkumar','Maikulal',NULL,NULL,1),
 (1480,'Avinash H.','Kolekar',NULL,NULL,2),
-(1480,'Sushil Kumar','Choudhary',NULL,NULL,3);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1480,'Sushil Kumar','Choudhary',NULL,NULL,3),
 (1480,'Prashant Kumar','Bhatiya',NULL,NULL,4),
 (1480,'Manjeet','Raj',NULL,NULL,5),
-(1480,'Sourav','Samanta',NULL,NULL,6),
+(1480,'Sourav','Samanta',NULL,NULL,6);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1480,'Chandan Kumar','Choubey',NULL,NULL,7),
 (1481,'Pragya Lekheshwar Balley, Shrikant V.','Sonekar',NULL,NULL,1),
 (1482,'Nishtha Batheja, Renu Verma, Devkanya Gupta, Neetal','Vyas',NULL,NULL,1),
@@ -13106,11 +13103,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1501,'Hamza Ali Suleiman','Alayaydeh',NULL,NULL,7),
 (1501,'Lana Al','Khalaileh',NULL,NULL,8),
 (1502,'Aswathy N Rajan, J. Macklin Abraham','Navamani',NULL,NULL,1),
-(1503,'Mirzo Tursunov','Maxmudovich',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1503,'Mirzo Tursunov','Maxmudovich',NULL,NULL,1),
 (1503,'Farida Safarova','Normurotovna',NULL,NULL,2),
 (1503,'Maxfuza Tairova','Abdusattorovna',NULL,NULL,3),
-(1503,'Sayyora Kabilova','Abdukarimovna',NULL,NULL,4),
+(1503,'Sayyora Kabilova','Abdukarimovna',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1503,'Zumrad Gafarova','Zohirjonovna',NULL,NULL,5),
 (1503,'Dilnoza Ziyoyeva','Anvarovna',NULL,NULL,6),
 (1504,'Suchithra N P, Viswanath','K',NULL,NULL,1),
@@ -13167,11 +13164,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1540,'Shwetkranti','Taware',NULL,NULL,6),
 (1542,'Sudhanshu Gonge, Kalyani Kadam, Deepak Yashwant Bhadane, Pravin Ramdas Patil, Poonam','Pawar',NULL,NULL,1),
 (1543,'Sudhanshu Gonge, Kalyani Kadam, Deepak Yashwant Bhadane, Pravin Ramdas','Patil',NULL,NULL,1),
-(1545,'Marwah Mohammed Alzoubi, Eman Awwad Albaddawi, Belal H. Al-Nsour, Majed','Alrahahleh',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1545,'Marwah Mohammed Alzoubi, Eman Awwad Albaddawi, Belal H. Al-Nsour, Majed','Alrahahleh',NULL,NULL,1),
 (1546,'Willy Cahya Sundara, Umi Widyastuti, Indra','Pahala',NULL,NULL,1),
 (1547,'Dharmendra Singh Chouhan, Firoj','Parwej',NULL,NULL,1),
-(1548,'Wang Li, Ali Khatibi, Jacquline Tham, S. M. Ferdous','Azam',NULL,NULL,1),
+(1548,'Wang Li, Ali Khatibi, Jacquline Tham, S. M. Ferdous','Azam',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1549,'Suresh Kumar','Sahani',NULL,NULL,1),
 (1549,'Tsair-Fwu','Lee',NULL,NULL,2),
 (1549,'Digvijay','Pandey',NULL,NULL,3),
@@ -13228,11 +13225,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1443,'Reji','R',NULL,NULL,6),
 (1443,'Sheifali','Gupta',NULL,NULL,7),
 (1443,'Naresh','Sharma',NULL,NULL,8),
-(1443,'T','Hemalatha',NULL,NULL,9);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1443,'T','Hemalatha',NULL,NULL,9),
 (1443,'Divya','Saleela',NULL,NULL,10),
 (1444,'Aarti Paresh Pimpalkar, Jayashree Rajesh','Prasad',NULL,NULL,1),
-(1445,'Nagamani Divedari, Kusma Kumari Cheepurupalli, Srinivasa Rao','Chanamallu',NULL,NULL,1),
+(1445,'Nagamani Divedari, Kusma Kumari Cheepurupalli, Srinivasa Rao','Chanamallu',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1446,'Mahesh','Maindarkar',NULL,NULL,1),
 (1446,'Mahesh Shankarrao','Patil',NULL,NULL,2),
 (1446,'Pratibha','Jadhav',NULL,NULL,3),
@@ -13289,11 +13286,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1738,'Abdul Razak Kachu','Mohideen',NULL,NULL,4),
 (1738,'Rajakumar','Krishnasamy',NULL,NULL,5),
 (1739,'Ankush Sharma, Pretty','Bhalla',NULL,NULL,1),
-(1740,'Chaitra S','N',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1740,'Chaitra S','N',NULL,NULL,1),
 (1740,'Mahendra Shridhar','Naik',NULL,NULL,2),
 (1740,'Shashikala K','S',NULL,NULL,3),
-(1740,'Shivadarshan','J',NULL,NULL,4),
+(1740,'Shivadarshan','J',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1740,'Pradeep T','M',NULL,NULL,5),
 (1740,'Yashavanthakumar T','R',NULL,NULL,6),
 (1741,'Varshitha D N, Ranjan Kumar H S, Shabana S, Latha D U, Savita','Choudhary',NULL,NULL,1),
@@ -13350,11 +13347,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2210,'Rusdiyanto','',NULL,NULL,4),
 (2210,'Fardy','Metrianto',NULL,NULL,5),
 (2210,'Faisal','Aminuddin',NULL,NULL,6),
-(2210,'Rulan','Pamungkas',NULL,NULL,7);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2210,'Rulan','Pamungkas',NULL,NULL,7),
 (2210,'Sofia','',NULL,NULL,8),
 (2211,'Boseob Heo, Hyo Taek','Lee',NULL,NULL,1),
-(2212,'Intisar Hadi Abbas, Amal Fadhil Mohammed, Ameen Riyadh Shakir','Al-Yasiri',NULL,NULL,1),
+(2212,'Intisar Hadi Abbas, Amal Fadhil Mohammed, Ameen Riyadh Shakir','Al-Yasiri',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2213,'Januar Eko Prasetio, Sabihaini, Suyatno Ladiqi, Hamizah Binti Abdul Rahman,','Rusdiyanto',NULL,NULL,1),
 (2214,'Doan','Perdana',NULL,NULL,1),
 (2214,'Umi','Fadlilah',NULL,NULL,2),
@@ -13411,11 +13408,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (2452,'Dedi','Apriadi',NULL,NULL,8),
 (2453,'Agustinus Pindoan','Panjaitan',NULL,NULL,1),
 (2453,'Ranu','Fauzan',NULL,NULL,2),
-(2453,'Eko','Sunarno',NULL,NULL,3);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(2453,'Eko','Sunarno',NULL,NULL,3),
 (2453,'Edi','Leksono',NULL,NULL,4),
 (2453,'Faqihza','Mukhlis',NULL,NULL,5),
-(2453,'Ary','Setijadi',NULL,NULL,6),
+(2453,'Ary','Setijadi',NULL,NULL,6);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (2453,'Vani','Virdyawan',NULL,NULL,7),
 (2453,'Dedi','Apriadi',NULL,NULL,8),
 (2454,'D.','Saisanthiya',NULL,NULL,1),
@@ -13472,11 +13469,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (4172,'Yuhao Deng, Ismawati Binti Sharkawi, Malisah Binti Latip, Neilson Anak','Teruki',NULL,NULL,1),
 (4252,'Sattar Jabbar Shaboot Kalafy, Ehsan Shoja, Parviz','Rashidi-Khazaee',NULL,NULL,1),
 (4276,'P. Neeraja, D. Hanni','Pavithra',NULL,NULL,1),
-(4280,'Ravinder','Beniwal',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(4280,'Ravinder','Beniwal',NULL,NULL,1),
 (4280,'Jayashree','Deka',NULL,NULL,2),
 (4280,'Yogita','Talekar',NULL,NULL,3),
-(4280,'Sk Wasim','Haidar',NULL,NULL,4),
+(4280,'Sk Wasim','Haidar',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (4280,'Chhavi','Sharma',NULL,NULL,5),
 (4280,'Nidhi','Dubey',NULL,NULL,6),
 (4280,'Chandan','Mukherjee',NULL,NULL,7),
@@ -13533,11 +13530,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1186,'Mahzan','Johar',NULL,NULL,5),
 (1186,'Suhad D','Salman',NULL,NULL,6),
 (1187,'Daniel Karmel Fernando','Tampubolon',NULL,NULL,1),
-(1187,'Suroso','Isnandar',NULL,NULL,2);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1187,'Suroso','Isnandar',NULL,NULL,2),
 (1187,'Umar','Khayam',NULL,NULL,3),
 (1187,'Mohamad','Toha',NULL,NULL,4),
-(1187,'Dedi','Apriadi',NULL,NULL,5),
+(1187,'Dedi','Apriadi',NULL,NULL,5);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1188,'Suroso','Isnandar',NULL,NULL,1),
 (1188,'Daniel Karmel Fernando','Tampubolon',NULL,NULL,2),
 (1188,'Sidik','Mustafa',NULL,NULL,3),
@@ -13594,11 +13591,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1221,'Aisah B.','Camar',NULL,NULL,2),
 (1221,'Aries B.','Cabahit',NULL,NULL,3),
 (1221,'Gemma R.','Escultor',NULL,NULL,4),
-(1221,'Marbeth G.','Aringay',NULL,NULL,5);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1221,'Marbeth G.','Aringay',NULL,NULL,5),
 (1222,'Nelyne Lourdes Y. Plaza, Franklin M. Ganancias, Cheryl O. Tayo, Dione S.','Duero',NULL,NULL,1),
 (1223,'Partha Pratim','Saha',NULL,NULL,1),
-(1223,'Ranjan','Paul',NULL,NULL,2),
+(1223,'Ranjan','Paul',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1223,'Md Rezaul Karim','Khan',NULL,NULL,3),
 (1223,'Nur A Shawal','Siddique',NULL,NULL,4),
 (1223,'Buddha Dev','Sarker',NULL,NULL,5),
@@ -13655,11 +13652,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1272,'Chong','Li',NULL,NULL,1),
 (1273,'Odette C.','Pannogan',NULL,NULL,1),
 (1274,'Suriyan Somphong, Issadee Kutintara, Arnon','Wanla',NULL,NULL,1),
-(1275,'Rey S. Pepito, Ruther D.','Bianan',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1275,'Rey S. Pepito, Ruther D.','Bianan',NULL,NULL,1),
 (1276,'Rey S. Pepito, Ruther D. Bianan, Jenny B.','Boles',NULL,NULL,1),
 (1277,'Ronald U.','Wacas',NULL,NULL,1),
-(1277,'Mathew Jun P.','Mariani',NULL,NULL,2),
+(1277,'Mathew Jun P.','Mariani',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1277,'Reymar G.','Pan-oy',NULL,NULL,3),
 (1277,'Maryjoice D.','Wangiwang',NULL,NULL,4),
 (1277,'Marlita E.','Quesada',NULL,NULL,5),
@@ -13716,11 +13713,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1311,'Alicia','Fonseca-Muñoz',NULL,NULL,4),
 (1311,'José','Navarro-Antonio',NULL,NULL,5),
 (1311,'Baldomero Hortencio','Zárate-Nicolás',NULL,NULL,6),
-(1312,'Juana Yolanda López','Cruz',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1312,'Juana Yolanda López','Cruz',NULL,NULL,1),
 (1312,'José Roberto Grande','Ramirez',NULL,NULL,2),
 (1312,'Javier Gómez','Diaz',NULL,NULL,3),
-(1312,'Maribel Pérez','Pérez',NULL,NULL,4),
+(1312,'Maribel Pérez','Pérez',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1312,'Faustino Benjamín Rivera','López',NULL,NULL,5),
 (1312,'Raymundo Vásquez','Luis',NULL,NULL,6),
 (1313,'Sai Reethi Pydi, Sudha','Pelluri',NULL,NULL,1),
@@ -13777,11 +13774,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1337,'Keyur','Patel',NULL,NULL,1),
 (1354,'Mohamed Shafeeq, Ali','Khatibi',NULL,NULL,1),
 (1354,'S. M. Ferdous Azam, Jacquline','Tham',NULL,NULL,2),
-(1570,'J.Amudha','',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1570,'J.Amudha','',NULL,NULL,1),
 (1570,'Arun','Khatri',NULL,NULL,2),
 (1570,'A.ParimalagandhiAyyavu','',NULL,NULL,3),
-(1570,'P.Sudheer','',NULL,NULL,4),
+(1570,'P.Sudheer','',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1570,'N.','Sandhya',NULL,NULL,5),
 (1570,'Sumit','Kushwaha',NULL,NULL,6),
 (1570,'S.D.Vijayakumar','',NULL,NULL,7),
@@ -13838,11 +13835,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1020,'Bharat Bhushan Pandey, Mahmoud Mohammad','Aljawarneh',NULL,NULL,1),
 (1027,'Retracted','',NULL,NULL,1),
 (1028,'Sachin R. Gurnule, V.N.Rama Devi, P. Pranay, Polakonda Mahendra','Varma',NULL,NULL,1),
-(1029,'Rinku Mani Kalita, Siddhartha','Baruah',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1029,'Rinku Mani Kalita, Siddhartha','Baruah',NULL,NULL,1),
 (1030,'Manawa Anakpa, Hervé Manier, Tchamye Tcha-Esso','Boroze',NULL,NULL,1),
 (1031,'Rakhi','Dua',NULL,NULL,1),
-(1031,'Moupali','Roy',NULL,NULL,2),
+(1031,'Moupali','Roy',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1031,'Pulikeshi H','Kumbar',NULL,NULL,3),
 (1031,'Tabish Ali','Fatihi',NULL,NULL,4),
 (1031,'Gadde Raghu','Babu',NULL,NULL,5),
@@ -13899,11 +13896,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1060,'Oksana','Kompaniitseva',NULL,NULL,6),
 (1060,'Elvira','Rustenova',NULL,NULL,7),
 (1060,'Miras','Kilau',NULL,NULL,8),
-(1060,'Victor','Shishkin',NULL,NULL,9);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1060,'Victor','Shishkin',NULL,NULL,9),
 (1060,'Viktor I.','Shishkin',NULL,NULL,10),
 (1060,'Galina V.','Kudriavtseva',NULL,NULL,11),
-(1060,'Yuri','Malenkov',NULL,NULL,12),
+(1060,'Yuri','Malenkov',NULL,NULL,12);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1061,'Indra Pahala, Ela Elliyana, Rismawati, Ain','Hajawiyah',NULL,NULL,1),
 (1062,'Abdul Rahman, Ela','Elliyana',NULL,NULL,1),
 (1063,'Sari Yustiana, Kus Eddy Sartono, Wuri Wuryandani, Muhamad','Afandi',NULL,NULL,1),
@@ -13960,11 +13957,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1146,'Ehrol C. Bayed, Marsky A. Ubeña, Giarhard C.','Awis',NULL,NULL,1),
 (1147,'Zulki Zulkifli Noor, Nandan','Limakrisna',NULL,NULL,1),
 (1148,'Abdulrahman','Alshaikhmubarak',NULL,NULL,1),
-(1149,'Abdulrahman','Alshaikhmubarak',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1149,'Abdulrahman','Alshaikhmubarak',NULL,NULL,1),
 (1150,'Melanie S.','Manuel',NULL,NULL,1),
 (1151,'Wesam Idris','AL-Hobabseh',NULL,NULL,1),
-(1151,'Hamza Ali Suleiman','Alayaydeh',NULL,NULL,2),
+(1151,'Hamza Ali Suleiman','Alayaydeh',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1151,'Baker M. R.','Sweilmieen',NULL,NULL,3),
 (1151,'Noor Akiaf','Al-Dabbas',NULL,NULL,4),
 (1151,'Faisal Mahmoud','Alabdallat',NULL,NULL,5),
@@ -14021,11 +14018,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (1166,'Renukaradhya P','C',NULL,NULL,4),
 (1166,'Mohammed','Mujeerulla',NULL,NULL,5),
 (1166,'Dinesha H','A',NULL,NULL,6),
-(1166,'Shankar Prasad','Mitra',NULL,NULL,7);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(1166,'Shankar Prasad','Mitra',NULL,NULL,7),
 (1167,'Kiruthika Murali, R. Preetha Rajendran, Anju E. N, Subhashini Durai, M.','Sathya',NULL,NULL,1),
 (1168,'Deepak Saxena, Rohith Venkata Sai Kumar Potladurthy, Priyank Tailor, Mufaddal','Munim',NULL,NULL,1),
-(1169,'Anand M, Chaya P, Divya S, Tanuja Kayarga, Pradeep Kumar R, Rashmi M','J',NULL,NULL,1),
+(1169,'Anand M, Chaya P, Divya S, Tanuja Kayarga, Pradeep Kumar R, Rashmi M','J',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (1170,'Riz Rupert L.','Ortiz',NULL,NULL,1),
 (1171,'Luisa','Morales-Maure',NULL,NULL,1),
 (1171,'Orlando','García-Marimón',NULL,NULL,2),
@@ -14082,11 +14079,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (786,'Shazid Wahid','Khandakhani',NULL,NULL,1),
 (786,'Sachikanta','Dash',NULL,NULL,2),
 (786,'Sasmita','Padhy',NULL,NULL,3),
-(786,'Rabinarayan','Panda',NULL,NULL,4);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(786,'Rabinarayan','Panda',NULL,NULL,4),
 (787,'P.Ramprakash','',NULL,NULL,1),
 (787,'Rajeswari','Manickam',NULL,NULL,2),
-(787,'R.','Karthik',NULL,NULL,3),
+(787,'R.','Karthik',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (787,'D.','Brindha',NULL,NULL,4),
 (788,'P.Ramprakash','',NULL,NULL,1),
 (788,'Rajeswari','Manickam',NULL,NULL,2),
@@ -14143,11 +14140,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (808,'Osama','Al-Qahtani',NULL,NULL,9),
 (808,'Aghiad','Bakry',NULL,NULL,10),
 (808,'Gamil','Radman',NULL,NULL,11),
-(808,'Muhammad Athar','Javed',NULL,NULL,12);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(808,'Muhammad Athar','Javed',NULL,NULL,12),
 (809,'Hongyan Wang, Abu Hanifah','Ayob',NULL,NULL,1),
 (810,'Poonam Kadam, Sarvamangala D R, Manjunath R','Kounte',NULL,NULL,1),
-(811,'Valerii','Erkudov',NULL,NULL,1),
+(811,'Valerii','Erkudov',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (811,'Sergey','Lytaev',NULL,NULL,2),
 (811,'Polina','Vedeneeva',NULL,NULL,3),
 (811,'Alexander','Chernov',NULL,NULL,4),
@@ -14204,11 +14201,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (855,'Jake','Tran',NULL,NULL,5),
 (855,'Akhtaruzzaman','Khan',NULL,NULL,6),
 (856,'Berrin','Ergin',NULL,NULL,1),
-(857,'Balaramakrishna','Alti',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(857,'Balaramakrishna','Alti',NULL,NULL,1),
 (858,'Samatha J, C. Swapna, D.Swaroopa, Chetna Devkar, P.V. Naresh, Amol','Ranadive',NULL,NULL,1),
 (911,'Bhushankumar','Nemade',NULL,NULL,1),
-(911,'Kiran','Maharana',NULL,NULL,2),
+(911,'Kiran','Maharana',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (911,'Neha','Raut',NULL,NULL,3),
 (911,'Bhushan','Jadhav',NULL,NULL,4),
 (911,'Pramod','Bide',NULL,NULL,5),
@@ -14265,11 +14262,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (918,'Jie','Feng',NULL,NULL,7),
 (919,'Priya Amrut','Kadam',NULL,NULL,1),
 (919,'Monika','Rathore',NULL,NULL,2),
-(919,'Prashant Vijay','Thokal',NULL,NULL,3);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(919,'Prashant Vijay','Thokal',NULL,NULL,3),
 (919,'Poorna','Shankar',NULL,NULL,4),
 (919,'Huma','Khan',NULL,NULL,5),
-(919,'Gurtej','Singh',NULL,NULL,6),
+(919,'Gurtej','Singh',NULL,NULL,6);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (919,'Jie','Feng',NULL,NULL,7),
 (920,'R. A.','Kapgate',NULL,NULL,1),
 (920,'Bhushan','Nikam',NULL,NULL,2),
@@ -14326,11 +14323,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (927,'S. Rama','Sree',NULL,NULL,4),
 (927,'Mrunmai Mandar','Ranade',NULL,NULL,5),
 (927,'Salomov','Gulom',NULL,NULL,6),
-(927,'Rayudu','Sowmya',NULL,NULL,7);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(927,'Rayudu','Sowmya',NULL,NULL,7),
 (928,'Chirag R.','Trivedi',NULL,NULL,1),
 (928,'Senthil','Jayapalan',NULL,NULL,2),
-(928,'Mayuri Manikdarshan','Vengurlekar',NULL,NULL,3),
+(928,'Mayuri Manikdarshan','Vengurlekar',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (928,'Robin Rohit','Vincent',NULL,NULL,4),
 (928,'Sarvar Iskandarov','Baltabaevich',NULL,NULL,5),
 (928,'Surayyo','Khasanova',NULL,NULL,6),
@@ -14387,11 +14384,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (938,'Awantika','Bijwe',NULL,NULL,2),
 (938,'Vimal','Bibhu',NULL,NULL,3),
 (938,'Sandhya','Shinde',NULL,NULL,4),
-(938,'Jyotsna','Suryavanshi',NULL,NULL,5);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(938,'Jyotsna','Suryavanshi',NULL,NULL,5),
 (938,'Dnyanda','Hire',NULL,NULL,6),
 (939,'Snehankita','Majalekar',NULL,NULL,1),
-(939,'Tanveer Ahmad','Wani',NULL,NULL,2),
+(939,'Tanveer Ahmad','Wani',NULL,NULL,2);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (939,'Sudheer Kumar Varma','Namburi',NULL,NULL,3),
 (939,'Deepali Milind','Ujalambkar',NULL,NULL,4),
 (939,'Vaishali Sunilsingh','Bayas',NULL,NULL,5),
@@ -14448,11 +14445,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (970,'Suresh Kumar Sahani, Tsair-Fwu Lee, Digvijay Pandey, Binay Kumar Pandey, Khageshwar','Mandal',NULL,NULL,1),
 (971,'Suresh Kumar','Sahani',NULL,NULL,1),
 (971,'Tsair-Fwu','Lee',NULL,NULL,2),
-(971,'Digvijay','Pandey',NULL,NULL,3);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(971,'Digvijay','Pandey',NULL,NULL,3),
 (971,'Binay Kumar','Pandey',NULL,NULL,4),
 (971,'Rishav','Jha',NULL,NULL,5),
-(971,'Shivendra Labh','Karna',NULL,NULL,6),
+(971,'Shivendra Labh','Karna',NULL,NULL,6);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (972,'Claudio Paya','Santos',NULL,NULL,1),
 (972,'Roger Sanz','Gonzalez',NULL,NULL,2),
 (972,'Rafael','Canorea-García',NULL,NULL,3),
@@ -14509,11 +14506,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (647,'Uma Bhavin','Goradiya',NULL,NULL,1),
 (647,'Prachi','Wagde',NULL,NULL,2),
 (647,'Swapna Nikhil','Ambekar',NULL,NULL,3),
-(647,'Suresh Singh','Rajpurohit',NULL,NULL,4);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(647,'Suresh Singh','Rajpurohit',NULL,NULL,4),
 (647,'Aabha Amey','Patil',NULL,NULL,5),
 (647,'Nilesh Jagdish','Vispute',NULL,NULL,6),
-(649,'Yusuf Ahammed','Ronad',NULL,NULL,1),
+(649,'Yusuf Ahammed','Ronad',NULL,NULL,1);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (649,'Karuna S','Bhosale',NULL,NULL,2),
 (649,'Uma','Bhardwaj',NULL,NULL,3),
 (649,'Suvarna','P',NULL,NULL,4),
@@ -14570,11 +14567,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (657,'Khushboo','',NULL,NULL,1),
 (657,'Dinesh','Goyal',NULL,NULL,2),
 (657,'Madireddy','Sirisha',NULL,NULL,3),
-(657,'Arpita A.','Prajapati',NULL,NULL,4);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(657,'Arpita A.','Prajapati',NULL,NULL,4),
 (657,'Boypolvonov','Barot',NULL,NULL,5),
 (657,'Khakkulov','Yunusjon',NULL,NULL,6),
-(657,'Wei','Li',NULL,NULL,7),
+(657,'Wei','Li',NULL,NULL,7);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (658,'Rohit Ravindra','Nikam',NULL,NULL,1),
 (658,'Tanya','Singh',NULL,NULL,2),
 (658,'Manisha Tushar','Jadhav',NULL,NULL,3),
@@ -14631,11 +14628,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (665,'Kamal','Gulati',NULL,NULL,5),
 (665,'M. Sreenivasa','Reddy',NULL,NULL,6),
 (665,'Jiang','Min',NULL,NULL,7),
-(666,'Prachi','Bahekar',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(666,'Prachi','Bahekar',NULL,NULL,1),
 (666,'Jayant','Pawar',NULL,NULL,2),
 (666,'Neha','Rana',NULL,NULL,3),
-(666,'Mrunmai Mandar','Ranade',NULL,NULL,4),
+(666,'Mrunmai Mandar','Ranade',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (666,'Kimaya Kiran','Shelar',NULL,NULL,5),
 (666,'Karpagavalli','',NULL,NULL,6),
 (666,'Gafur','Namazov',NULL,NULL,7),
@@ -14692,11 +14689,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (675,'Minal','Bodke',NULL,NULL,1),
 (675,'S. K.','Pawar',NULL,NULL,2),
 (675,'Kaustubh Milind','Utpat',NULL,NULL,3),
-(675,'Arockia','Babu',NULL,NULL,4);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(675,'Arockia','Babu',NULL,NULL,4),
 (675,'Sumita','Kumar',NULL,NULL,5),
 (675,'D.','SathisKumar',NULL,NULL,6),
-(675,'Suraj','Bhan',NULL,NULL,7),
+(675,'Suraj','Bhan',NULL,NULL,7);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (676,'Amena','Ansari',NULL,NULL,1),
 (676,'Milind Manikrao','Darade',NULL,NULL,2),
 (676,'Devdatta','Mokashi',NULL,NULL,3),
@@ -14753,11 +14750,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (685,'Anubhav','Bhalla',NULL,NULL,4),
 (685,'Anvesha','Garg',NULL,NULL,5),
 (685,'Raufjon','Mahmudov',NULL,NULL,6),
-(686,'Prashant Ashok','Phatangare',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(686,'Prashant Ashok','Phatangare',NULL,NULL,1),
 (686,'Arpita A.','Prajapati',NULL,NULL,2),
 (686,'Prasad M.','Patare',NULL,NULL,3),
-(686,'S Srinivas','Reddy',NULL,NULL,4),
+(686,'S Srinivas','Reddy',NULL,NULL,4);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (686,'Dokiburra','Beulah',NULL,NULL,5),
 (686,'Shubhi','Goyal',NULL,NULL,6),
 (742,'Kevin Daniel De la Cruz','Ortiz',NULL,NULL,1),
@@ -14814,11 +14811,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (468,'Laxmibai Biradar, Lakshmi Patil, Vinita','Patil',NULL,NULL,1),
 (469,'Pulate Kirti Sudhir, Gajanan K. Kharate, Ranjit Madhukar','Gawande',NULL,NULL,1),
 (470,'Shruti V H, Lakshmi','Patil',NULL,NULL,1),
-(471,'Prajwala T R, Mithileysh Sathiyanarayanan, Walter Priesnitz Filho, Maria Emilia','Camargo',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(471,'Prajwala T R, Mithileysh Sathiyanarayanan, Walter Priesnitz Filho, Maria Emilia','Camargo',NULL,NULL,1),
 (472,'Majo','George',NULL,NULL,1),
 (472,'An Duong Thi','Binh',NULL,NULL,2),
-(472,'Linh Thi Hai','Tran',NULL,NULL,3),
+(472,'Linh Thi Hai','Tran',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (472,'Nguyen Thi My','Duyen',NULL,NULL,4),
 (472,'Yong Huynh','Kia',NULL,NULL,5),
 (472,'Nguyen Nhat Bao','Dang',NULL,NULL,6),
@@ -14875,11 +14872,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (6260,'Sharifah Mohammed Nasser','Alghamdi',NULL,NULL,7),
 (6260,'Abdulaziz Saleh Saad','Alghamdi',NULL,NULL,8),
 (6260,'Asim Saleh Abdullah','Alghamdi',NULL,NULL,9),
-(6260,'Ayish Mosfer Gorm','Alkhathami',NULL,NULL,10);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(6260,'Ayish Mosfer Gorm','Alkhathami',NULL,NULL,10),
 (6354,'Shalan Ayedh Gharsan','Alelyani',NULL,NULL,1),
 (6354,'Ali Mana Hadi','Alshahi',NULL,NULL,2),
-(6354,'Rami Kamil Bin','Othman',NULL,NULL,3),
+(6354,'Rami Kamil Bin','Othman',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (6354,'Mousa Abdu','Kaffat',NULL,NULL,4),
 (6354,'Walid Meteb','Almetery',NULL,NULL,5),
 (6354,'Hamad Fahed','Alqahtani',NULL,NULL,6),
@@ -14936,11 +14933,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (167,'Fatih','Canitez','Imperial College London, Civil and Environmental Engineering, UK','https://orcid.org/0000-0001-6193-3996',1),
 (168,'Sefer','Darıcı','Faculty of Communication, Department of New Media and Communication, Sivas Cumhuriyet University, Sivas, Turkey','https://orcid.org/0000-0002-3630-4511',1),
 (169,'Krishnan','Suvitha','Department of Mathematics, Bharathiar University, Coimbatore, India','https://orcid.org/0000-0003-1408-1393',1),
-(169,'Ranganathan Saraswathy','Karpagam','Medical College and Hospital, Coimbatore, Tamil Nadu, India','https://orcid.org/0009-0009-7919-8868',2);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(169,'Ranganathan Saraswathy','Karpagam','Medical College and Hospital, Coimbatore, Tamil Nadu, India','https://orcid.org/0009-0009-7919-8868',2),
 (169,'Chakkarapani Sumathi','Thilagasree','Chakkarapani Sumathi Thilagasree Department of Mathematics, Sri Ramakrishna Mission Vidyalaya College of Arts and Science, Coimbatore, India','https://orcid.org/0009-0001-2670-3009',3),
 (169,'Samayan','Kalaiselvan','Department of Social Work, SRMV College of Arts and Science, Coimbatore, India','https://orcid.org/0000-0002-7214-7752',4),
-(169,'Samayan','Narayanamoorthy','Department of Mathematics, Bharathiar University, Coimbatore, India','https://orcid.org/0000-0002-3782-4666',5),
+(169,'Samayan','Narayanamoorthy','Department of Mathematics, Bharathiar University, Coimbatore, India','https://orcid.org/0000-0002-3782-4666',5);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (170,'Zeeshan','Ali','Department of Information Management, National Yunlin University of Science and Technology, Taiwan','https://orcid.org/0000-0001-7567-3101',1),
 (170,'Anam','Razzaq','Department of Mathematics and Statistics, Riphah International University Islamabad, 44000, Pakistan','https://orcid.org/0009-0000-9260-5346',2),
 (170,'Kinza','Manahil','Department of Mathematics and Statistics, Riphah International University Islamabad, 44000, Pakistan','https://orcid.org/0009-0005-5748-010X',3),
@@ -14997,11 +14994,11 @@ INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq
 (157,'Serkan','Eti',NULL,NULL,3),
 (158,'Gülay','Demir',NULL,NULL,1),
 (159,'Shuihaoran','Jiang',NULL,NULL,1),
-(160,'Ismail','Kunduracioglu',NULL,NULL,1);
-INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
+(160,'Ismail','Kunduracioglu',NULL,NULL,1),
 (161,'Mahmoud Zahedian','Nezhad',NULL,NULL,1),
 (161,'Javad','Nazarian-Jashnabadi',NULL,NULL,2),
-(161,'Mohammad','Mehraeen',NULL,NULL,3),
+(161,'Mohammad','Mehraeen',NULL,NULL,3);
+INSERT INTO authors (publication_id,given_name,family_name,affiliation,orcid,seq) VALUES
 (161,'Javad','Rezazadeh',NULL,NULL,4);
 INSERT INTO submission_files (id,submission_id,file_stage,genre,original_name,stored_name,mime,size,viewable,created_at) VALUES
 (2608,6141,'galley','Article Text','article-6141-2608.pdf','galley-2608.pdf','application/pdf',0,1,NOW()),

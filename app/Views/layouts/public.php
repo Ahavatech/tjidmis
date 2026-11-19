@@ -10,13 +10,14 @@ $css = Settings::get('journalStyleSheet', ''); ?>
 	<title><?= e(($title ?? '') ? $title . ' | ' . $name : $name) ?></title>
 	<?php if ($fav = Settings::get('favicon', '')): ?><link rel="icon" href="<?= e(public_url($fav)) ?>" /><?php endif; ?>
 
-	<meta name="description" content="<?= e($name) ?>" />
+	<meta name="description" content="<?= e(Settings::get('searchDescription', '') ?: $name) ?>" />
 	<meta name="generator" content="Open Journal Systems 3.3.0.22" />
 	<?= $headExtra ?? '' ?>
+	<?= Settings::get('customHeaders', '') ? Settings::get('customHeaders') . "\n" : '' ?>
 	<link rel="alternate" type="application/atom+xml" href="<?= e(url('gateway', 'plugin', ['WebFeedGatewayPlugin', 'atom'])) ?>">
 	<link rel="alternate" type="application/rdf+xml" href="<?= e(url('gateway', 'plugin', ['WebFeedGatewayPlugin', 'rss'])) ?>">
 	<link rel="alternate" type="application/rss+xml" href="<?= e(url('gateway', 'plugin', ['WebFeedGatewayPlugin', 'rss2'])) ?>">
-	<link rel="stylesheet" href="<?= e(asset('css/theme.css')) ?>" type="text/css" /><link rel="stylesheet" href="<?= e(asset('css/fontawesome.css')) ?>" type="text/css" /><link rel="stylesheet" href="<?= e(asset('css/google-fonts.css')) ?>" type="text/css" /><?php if ($css): ?><link rel="stylesheet" href="<?= e(public_url($css)) ?>" type="text/css" /><?php endif; ?>
+	<?= theme_css_links() ?>
 	<style>:root{--theme-color:<?= e(Settings::get('themeColor', '#d79f24')) ?>}</style>
 </head>
 <body class="pkp_page_<?= e($pkp['page']) ?> pkp_op_<?= e($pkp['op']) ?><?= $logo ? ' has_site_logo' : '' ?>" dir="ltr">

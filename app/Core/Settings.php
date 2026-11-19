@@ -22,6 +22,9 @@ class Settings {
         DB::exec('INSERT INTO journal_settings (journal_id,name,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value=VALUES(value)', [$jid, $name, (string)$value]);
         unset(self::$j[$jid]);
     }
+    public static function setSite(string $name, string $value): void {
+        DB::exec('INSERT INTO site_settings (name,value) VALUES (?,?) ON DUPLICATE KEY UPDATE value=VALUES(value)', [$name, $value]); self::$site = null;
+    }
     public static function site(string $name, $default = null) {
         if (self::$site === null) { self::$site = []; foreach (DB::all('SELECT name,value FROM site_settings') as $r) self::$site[$r['name']] = $r['value']; }
         return self::$site[$name] ?? $default;

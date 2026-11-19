@@ -1,0 +1,4 @@
+<div class="be_page"><div class="be_pagehead"><h1><?= e(t('menu.users')) ?></h1></div>
+<ul class="be_tabs"><li><a href="<?= e(url('users')) ?>"><?= e(t('users.users_tab')) ?></a></li><li><a href="<?= e(url('users', 'roles')) ?>"><?= e(t('users.roles')) ?></a></li><li class="active"><a href="<?= e(url('users', 'access')) ?>"><?= e(t('users.access')) ?></a></li></ul>
+<div class="be_card"><form class="cmp_form be_form" method="post" action="<?= e(url('users', 'access')) ?>"><?= csrf_field() ?><div class="fields"><?= checkbox('allowRegistration', '<strong>' . e(t('users.allow_registration')) . '</strong>', $allow) ?><?= checkbox('requireConsent', '<strong>' . e(t('users.require_consent')) . '</strong>', $consent) ?></div>
+<div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></form></div></div>

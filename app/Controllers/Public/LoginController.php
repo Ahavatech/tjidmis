@@ -12,7 +12,7 @@ class LoginController {
         $source = safe_source($_POST['source'] ?? '');
         $user = trim((string)($_POST['username'] ?? ''));
         $res = Auth::attempt($user, (string)($_POST['password'] ?? ''), !empty($_POST['remember']));
-        if ($res === 'ok') redirect($source ?: url('submissions'));
+        if ($res === 'ok') { if (Auth::user()['must_change_password']) { flash(t('login.must_change')); redirect(url('user', 'profile', ['password'])); } redirect($source ?: url('submissions')); }
         http_response_code($res === 'locked' ? 429 : 200);
         View::render('public/login', ['title' => t('nav.login'), 'bodyClass' => 'login', 'source' => $source, 'username' => $user,
             'error' => t(['invalid' => 'login.invalid', 'disabled' => 'login.disabled', 'locked' => 'login.locked'][$res])]);

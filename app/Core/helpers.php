@@ -27,7 +27,7 @@ function flash(?string $msg = null, string $type = 'success') {
 function old(string $k, $d = '') { return $_SESSION['old'][$k] ?? $d; }
 
 function public_url(string $file): string { $b = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/'), '/\\'); return $b . '/public/' . ltrim($file, '/\\'); }
-function fmt_date(?string $d): string { return $d ? date('Y-m-d', strtotime($d)) : ''; }
+function fmt_date(?string $d): string { return $d ? date(\App\Core\Settings::get('dateFormat', 'Y-m-d') ?: 'Y-m-d', strtotime($d)) : ''; }
 /** $crumbs: list of [label, url|null]; the last item is the current page. Home is added automatically. */
 function breadcrumb(array $crumbs): string {
     array_unshift($crumbs, [t('crumb.home'), url('index')]);
@@ -89,4 +89,21 @@ function rich(?string $html): string {
     if ($html === null || $html === '') return '';
     $b = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/'), '/\\');
     return strtr($html, ['__JURL__' => url(), '__PUBLIC__' => $b . '/public', '__ASSETS__' => $b . '/assets', '__SUBMIT_URL__' => url('about', 'submissions')]);
+}
+
+/** Is a built-in feature switched on (Settings > Website > Plugins)? Everything defaults to on. */
+function feature(string $key): bool { $f = \App\Core\Settings::json('enabledFeatures', []); return $f[$key] ?? true; }
+/** Darken (negative) or lighten (positive) a #rrggbb colour by a 0..1 factor. */
+function shade_color(string $hex, float $f): string {
+    $hex = ltrim($hex, '#'); $c = [hexdec(substr($hex, 0, 2)), hexdec(substr($hex, 2, 2)), hexdec(substr($hex, 4, 2))];
+    $c = array_map(fn($v) => max(0, min(255, (int)round($f >= 0 ? $v + (255 - $v) * $f : $v * (1 + $f)))), $c);
+    return sprintf('#%02x%02x%02x', ...$c);
+}
+/** Stylesheet links in the original order. When the theme colour was changed, the theme and journal CSS are served recoloured. */
+function theme_css_links(): string {
+    $c = strtolower(\App\Core\Settings::get('themeColor', '#d79f24')); $dyn = $c !== '#d79f24'; $v = substr(md5($c), 0, 8); $css = \App\Core\Settings::get('journalStyleSheet', '');
+    $h = '<link rel="stylesheet" href="' . e($dyn ? url('css', 'theme', [], ['v' => $v]) : asset('css/theme.css')) . '" type="text/css" />'
+       . '<link rel="stylesheet" href="' . e(asset('css/fontawesome.css')) . '" type="text/css" />' . '<link rel="stylesheet" href="' . e(asset('css/google-fonts.css')) . '" type="text/css" />';
+    if ($css) $h .= '<link rel="stylesheet" href="' . e($dyn ? url('css', 'journal', [], ['v' => $v]) : public_url($css)) . '" type="text/css" />';
+    return $h;
 }

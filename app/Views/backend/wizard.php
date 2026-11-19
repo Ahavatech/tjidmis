@@ -52,8 +52,8 @@ $sid = $sub['id'] ?? null; $stepUrl = fn($i) => $sid ? url('submission', 'wizard
       <button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('submission', 'deleteContributor', [$sid, $a['id']])) ?>" formnovalidate><?= e(t('wizard.delete')) ?></button></td></tr><?php endforeach; ?>
     <?php if (!$authors): ?><tr><td colspan="4" class="muted"><?= e(t('wizard.no_contributors')) ?></td></tr><?php endif; ?></tbody></table>
     <button class="be_btn" type="submit" name="action" value="add_contributor" formnovalidate><?= e(t('wizard.add_contributor')) ?></button> <span class="muted"><?= e(t('wizard.contrib_note')) ?></span></fieldset>
-  <?= field(t('wizard.keywords'), 'keywords', $_POST['keywords'] ?? implode(', ', $keywords), ['help' => t('wizard.keywords_help')]) ?>
-  <?= field(t('wizard.references'), 'references', $_POST['references'] ?? trim(strip_tags(str_replace('</p>', "\n", (string)$sub['references_text']))), ['type' => 'textarea', 'rows' => 6, 'help' => t('wizard.references_help')]) ?>
+  <?php if (\App\Core\Settings::get('metaKeywords', '1') === '1'): ?><?= field(t('wizard.keywords'), 'keywords', $_POST['keywords'] ?? implode(', ', $keywords), ['help' => t('wizard.keywords_help')]) ?><?php endif; ?>
+  <?php if (\App\Core\Settings::get('metaReferences', '1') === '1'): ?><?= field(t('wizard.references'), 'references', $_POST['references'] ?? trim(strip_tags(str_replace('</p>', "\n", (string)$sub['references_text']))), ['type' => 'textarea', 'rows' => 6, 'help' => t('wizard.references_help')]) ?><?php endif; ?>
 </div><div class="buttons"><a class="be_btn" href="<?= e($stepUrl(2)) ?>"><?= e(t('wizard.back')) ?></a><button class="be_btn" type="submit" name="action" value="save" formnovalidate><?= e(t('wizard.save')) ?></button><button class="submit" type="submit" name="action" value="continue"><?= e(t('wizard.save_continue')) ?></button></div></form>
 
 <?php else: ?>

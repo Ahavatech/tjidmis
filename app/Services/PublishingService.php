@@ -28,9 +28,18 @@ class PublishingService {
         DB::exec("UPDATE publications SET issue_id=?, status='scheduled', seq=? WHERE id=?", [$issueId, $seq, $pid]);
         DB::exec("UPDATE submissions SET status='scheduled', stage_id=5, date_last_activity=NOW() WHERE id=?", [$sid]);
         self::issueOrder($issueId, (int)$sub['section_id']);
+        self::copyrightDefaults($sub, $issue);
         SubmissionRepo::log($sid, $actor, 'scheduled', t('log.scheduled', Catalog::issueLabel($issue)));
         if ((int)$issue['published'] === 1) { self::publishPublication($sid, $actor); return 'published'; }
         return 'scheduled';
+    }
+    /** Fills the copyright holder / year from Settings > Distribution > License when the editor left them empty. */
+    private static function copyrightDefaults(array $sub, array $issue): void {
+        $p = DB::one('SELECT copyright_holder, copyright_year, license_url FROM publications WHERE id=?', [$sub['pid']]); $jid = (int)$sub['journal_id'];
+        $type = Settings::get('copyrightHolderType', 'author', $jid);
+        $holder = $type === 'journal' ? Settings::get('name', '', $jid) : ($type === 'other' ? Settings::get('copyrightHolderOther', '', $jid) : implode(', ', array_map(fn($a) => trim($a['given_name'] . ' ' . $a['family_name']), SubmissionRepo::authors((int)$sub['pid']))));
+        $year = Settings::get('copyrightYearBasis', 'issue', $jid) === 'issue' && $issue['year'] ? (int)$issue['year'] : (int)date('Y');
+        DB::exec('UPDATE publications SET copyright_holder=COALESCE(NULLIF(copyright_holder,""),?), copyright_year=COALESCE(copyright_year,?), license_url=COALESCE(NULLIF(license_url,""),?) WHERE id=?', [$holder ?: null, $year, Settings::get('licenseUrl', '', $jid) ?: null, $sub['pid']]);
     }
     public static function publishPublication(int $sid, int $actor): void {
         $s = DB::one('SELECT s.*, p.id pid, p.title, p.date_published FROM submissions s JOIN publications p ON p.id=s.current_publication_id WHERE s.id=?', [$sid]);

@@ -1,0 +1,4 @@
+<?php $er = fn($k) => $errors[$k] ?? ''; ?>
+<div class="be_page"><div class="be_pagehead"><h1><?= e(t('users.email')) ?>: <?= e(trim($u['given_name'] . ' ' . $u['family_name'])) ?></h1></div><div class="be_card"><?= errors_summary($errors) ?>
+<form class="cmp_form be_form" method="post" action="<?= e(url('users', 'email', [$u['id']])) ?>"><?= csrf_field() ?><p><strong><?= e(t('wf.to')) ?>:</strong> <?= e($u['email']) ?></p><div class="fields"><?= field(t('wf.subject'), 'subject', $_POST['subject'] ?? '', ['required' => true, 'maxlength' => 255, 'error' => $er('subject')]) ?><?= field(t('dec.body'), 'body', $_POST['body'] ?? '', ['type' => 'textarea', 'rows' => 10, 'required' => true, 'error' => $er('body')]) ?></div>
+<div class="buttons"><button class="submit" type="submit"><?= e(t('users.send_email')) ?></button><a href="<?= e(url('users')) ?>"><?= e(t('wizard.cancel')) ?></a></div></form></div></div>

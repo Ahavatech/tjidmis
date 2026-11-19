@@ -17,6 +17,7 @@ class Auth {
     public static function user(): ?array {
         if (!self::$loaded) {
             self::$loaded = true;
+            if (!empty($_SESSION['uid']) && (int)($_SESSION['epoch'] ?? 0) < (int)Settings::site('sessionsEpoch', 0)) $_SESSION = [];   // admin expired all sessions
             if (!empty($_SESSION['uid'])) self::$user = DB::one('SELECT * FROM users WHERE id=? AND disabled=0', [$_SESSION['uid']]);
             if (!self::$user && empty($_SESSION['uid']) && !empty($_COOKIE[self::REMEMBER_COOKIE])) self::restoreRemembered();
             if (!self::$user) unset($_SESSION['uid']);
@@ -44,7 +45,7 @@ class Auth {
     /** Log a user in without a password (after registration, password reset or remember-me). */
     public static function loginId(int $id): void {
         session_regenerate_id(true);
-        $_SESSION = ['uid' => $id, 'csrf' => bin2hex(random_bytes(32))];
+        $_SESSION = ['uid' => $id, 'csrf' => bin2hex(random_bytes(32)), 'epoch' => time()];
         DB::exec('UPDATE users SET last_login_at=NOW() WHERE id=?', [$id]);
         self::reset();
     }

@@ -9,6 +9,7 @@ class SidebarService {
         $out = '';
         foreach ($order as $key) {
             if (strpos($key, 'custom:') === 0) {
+                if (!feature('customBlocks')) continue;
                 $b = $blocks[substr($key, 7)] ?? null; if (!$b) continue;
                 $html = rich($b['content']);
                 $out .= '<div class="pkp_block block_custom" id="customblock-' . e($b['name']) . '"><h2 class="title' . ($b['show_title'] ? '' : ' pkp_screen_reader') . '">'
@@ -21,6 +22,7 @@ class SidebarService {
                     . '<li><a href="' . e(url('information', 'authors')) . '">' . e(t('sidebar.authors')) . '</a></li>'
                     . '<li><a href="' . e(url('information', 'librarians')) . '">' . e(t('sidebar.librarians')) . '</a></li></ul></div></div>';
             } elseif ($key === 'web_feed') {
+                if (!feature('webFeeds')) continue;
                 $f = fn($fmt, $img, $alt) => '<li><a href="' . e(url('gateway', 'plugin', ['WebFeedGatewayPlugin', $fmt])) . '"><img src="' . e(asset('img/feeds/' . $img)) . '" alt="' . e($alt) . '"></a></li>';
                 $out .= '<div class="pkp_block block_web_feed"><h2 class="title">' . e(t('sidebar.current_issue')) . '</h2><div class="content"><ul>'
                     . $f('atom', 'atom.svg', 'Atom logo') . $f('rss2', 'rss20_logo.svg', 'RSS2 logo') . $f('rss', 'rss10_logo.svg', 'RSS1 logo') . '</ul></div></div>';

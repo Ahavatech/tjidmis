@@ -1,0 +1,94 @@
+{
+ "USER_REGISTER": [
+  "Registration as a user at {$journalName}",
+  "Dear {$recipientName},\n\nThank you for registering with {$journalName}. Your username is {$username}.\n\n{$signature}"
+ ],
+ "PASSWORD_RESET": [
+  "Password reset requested",
+  "Dear {$recipientName},\n\nUse this link to choose a new password: {$passwordResetUrl}\n\n{$signature}"
+ ],
+ "SUBMISSION_ACK": [
+  "Submission Acknowledgement",
+  "Dear {$authorName},\n\nThank you for submitting \"{$submissionTitle}\" to {$journalName}. You can track it at {$submissionUrl}.\n\n{$signature}"
+ ],
+ "SUBMISSION_NOTIFY_EDITORS": [
+  "New submission received",
+  "A new submission, \"{$submissionTitle}\", has been received and awaits assignment: {$submissionUrl}\n\n{$signature}"
+ ],
+ "REVIEW_REQUEST": [
+  "Request to review a manuscript",
+  "Dear {$reviewerName},\n\nWe invite you to review \"{$submissionTitle}\". Please respond by {$responseDueDate}: {$reviewUrl}\n\n{$signature}"
+ ],
+ "REVIEW_ACK": [
+  "Thank you for your review",
+  "Dear {$reviewerName},\n\nThank you for reviewing \"{$submissionTitle}\".\n\n{$signature}"
+ ],
+ "EDITOR_DECISION_ACCEPT": [
+  "Editor decision: accepted",
+  "Dear {$authorName},\n\nWe are pleased to accept \"{$submissionTitle}\" for publication.\n\n{$signature}"
+ ],
+ "EDITOR_DECISION_REVISIONS": [
+  "Editor decision: revisions required",
+  "Dear {$authorName},\n\nRevisions are required for \"{$submissionTitle}\". Reviewer comments follow.\n\n{$reviewerComments}\n\n{$signature}"
+ ],
+ "EDITOR_DECISION_RESUBMIT": [
+  "Editor decision: resubmit for review",
+  "Dear {$authorName},\n\nWe ask you to revise \"{$submissionTitle}\" and resubmit it for a new round of review.\n\n{$reviewerComments}\n\n{$signature}"
+ ],
+ "EDITOR_DECISION_SEND_TO_EXTERNAL": [
+  "Editor decision: sent to review",
+  "Dear {$authorName},\n\nYour submission \"{$submissionTitle}\" has been sent for peer review. We will contact you when the reviews are in.\n\n{$signature}"
+ ],
+ "EDITOR_ASSIGN": [
+  "You have been assigned to a submission",
+  "Dear {$recipientName},\n\nYou have been assigned to \"{$submissionTitle}\" as {$roleName}: {$submissionUrl}\n\n{$message}\n\n{$signature}"
+ ],
+ "REVIEW_CONFIRM": [
+  "Review request accepted",
+  "Dear {$editorName},\n\n{$reviewerName} has accepted the request to review \"{$submissionTitle}\".\n\n{$signature}"
+ ],
+ "REVIEW_DECLINE": [
+  "Review request declined",
+  "Dear {$editorName},\n\n{$reviewerName} has declined the request to review \"{$submissionTitle}\".\n\n{$declineReason}\n\n{$signature}"
+ ],
+ "REVIEW_REMIND": [
+  "Reminder: review request",
+  "Dear {$reviewerName},\n\nThis is a reminder about your review of \"{$submissionTitle}\", due {$reviewDueDate}: {$reviewUrl}\n\n{$signature}"
+ ],
+ "REVIEW_CANCEL": [
+  "Review request cancelled",
+  "Dear {$reviewerName},\n\nWe no longer need your review of \"{$submissionTitle}\". Thank you for your willingness to help.\n\n{$signature}"
+ ],
+ "REVIEW_COMPLETE": [
+  "Review submitted",
+  "Dear {$editorName},\n\n{$reviewerName} has submitted a review of \"{$submissionTitle}\": {$submissionUrl}\n\n{$signature}"
+ ],
+ "REVISED_VERSION_NOTIFY": [
+  "Revised version uploaded",
+  "Dear {$editorName},\n\nThe author has uploaded a revised version of \"{$submissionTitle}\": {$submissionUrl}\n\n{$signature}"
+ ],
+ "DISCUSSION_NOTIFICATION": [
+  "New discussion message: {$discussionSubject}",
+  "Dear {$recipientName},\n\nThere is a new message in the discussion \"{$discussionSubject}\" on \"{$submissionTitle}\": {$submissionUrl}\n\n{$signature}"
+ ],
+ "EDITOR_DECISION_SEND_TO_PRODUCTION": [
+  "Editor decision: sent to production",
+  "Dear {$authorName},\n\nYour submission \"{$submissionTitle}\" has been sent to production. We will let you know when it is published.\n\n{$signature}"
+ ],
+ "PUBLICATION_NOTIFY": [
+  "Your article has been published",
+  "Dear {$authorName},\n\n\"{$submissionTitle}\" is now published: {$submissionUrl}\n\n{$signature}"
+ ],
+ "ISSUE_PUBLISHED": [
+  "New issue published: {$issueName}",
+  "Dear {$recipientName},\n\nA new issue of {$journalName} is available: {$issueUrl}\n\n{$signature}"
+ ],
+ "ANNOUNCEMENT": [
+  "New announcement: {$announcementTitle}",
+  "Dear {$recipientName},\n\n{$announcementTitle}: {$announcementUrl}\n\n{$signature}"
+ ],
+ "EDITOR_DECISION_DECLINE": [
+  "Editor decision: declined",
+  "Dear {$authorName},\n\nWe regret that \"{$submissionTitle}\" cannot be accepted.\n\n{$signature}"
+ ]
+}

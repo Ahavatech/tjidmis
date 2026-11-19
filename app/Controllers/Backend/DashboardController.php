@@ -24,6 +24,6 @@ class DashboardController {
         foreach (array_keys($tabs) as $k) $counts[$k] = $k === $tab ? $total : SubmissionRepo::dashboard($jid, $k, [], 1, 1)[0];
         View::render('backend/dashboard', ['title' => t('menu.submissions'), 'menu' => 'submissions', 'tabs' => $tabs, 'tab' => $tab, 'counts' => $counts, 'f' => $f, 'rows' => $rows,
             'total' => $total, 'page' => $page, 'per' => $per, 'sections' => DB::all('SELECT id,title FROM sections WHERE journal_id=? ORDER BY seq', [$jid]),
-            'canSubmit' => (bool)array_intersect(['author', 'editor', 'manager', 'site_admin', 'section_editor'], $r)], 'backend');
+            'canSubmit' => Settings::get('submissionsDisabled', '0') !== '1' && (bool)array_intersect(['author', 'editor', 'manager', 'site_admin', 'section_editor'], $r)], 'backend');
     }
 }

@@ -26,6 +26,13 @@ class Router {
         'discussion'   => [B\DiscussionController::class, 'view'],
         'publication'  => [B\PublicationController::class, 'index'],
         'manageIssues' => [B\IssueManageController::class, 'index'],
+        'settings'     => [B\SettingsController::class, 'index'],
+        'content'      => [B\ContentSettingsController::class, 'section'],
+        'manageAnnouncements' => [B\AnnouncementManageController::class, 'index'],
+        'users'        => [B\UsersController::class, 'index'],
+        'statistics'   => [B\StatisticsController::class, 'index'],
+        'admin'        => [B\AdminController::class, 'index'],
+        'css'          => [P\CssController::class, 'theme'],
         'notification' => [B\NotificationController::class, 'index'],
         'management'   => [B\ManagementController::class, 'users'],
     ];
@@ -51,7 +58,7 @@ class Router {
             return;
         }
         // Unknown page: try a static page whose path matches (e.g. /pes, /APCharges)
-        $sp = DB::one('SELECT * FROM static_pages WHERE journal_id=? AND path=?', [$journal['id'], $page]);
+        $sp = feature('staticPages') ? DB::one('SELECT * FROM static_pages WHERE journal_id=? AND path=?', [$journal['id'], $page]) : null;
         if ($sp) { View::render('public/static_page', ['page' => $sp, 'title' => $sp['title']]); return; }
         $this->notFound();
     }

@@ -21,6 +21,7 @@ class SubmissionWizardController {
 
     public function wizard(string $id = '', string $step = ''): void {
         Auth::require(self::SUBMIT_ROLES);
+        if (Settings::get('submissionsDisabled', '0') === '1') { flash(t('wizard.disabled'), 'error'); redirect(url('submissions')); }
         $jid = $this->jid(); $user = Auth::user(); $errors = [];
         if ($id === '') { $sub = null; $progress = 1; }
         else {
@@ -49,7 +50,7 @@ class SubmissionWizardController {
         $jid = $this->jid(); $data = ['title' => t('wizard.title'), 'menu' => 'submissions', 'sub' => $sub, 'n' => $n, 'progress' => $progress, 'errors' => $errors];
         $data['sections'] = DB::all('SELECT id,title,policy FROM sections WHERE journal_id=? AND editor_restricted=0 ORDER BY seq', [$jid]);
         $data['checklist'] = Settings::json('submissionChecklist', []);
-        $data['components'] = self::COMPONENTS;
+        $data['components'] = Settings::json('components', self::COMPONENTS) ?: self::COMPONENTS;
         if ($sub) {
             $data['files'] = SubmissionRepo::files((int)$sub['id']);
             $data['authors'] = $sub['pid'] ? SubmissionRepo::authors((int)$sub['pid']) : [];
@@ -98,7 +99,7 @@ class SubmissionWizardController {
         if (!Request::isPost()) redirect(url('submission', 'wizard', [$id, 2]));
         $comp = (string)($_POST['component'] ?? '');
         try {
-            if (!in_array($comp, self::COMPONENTS, true)) throw new \RuntimeException(t('wizard.err_component'));
+            if (!in_array($comp, Settings::json('components', self::COMPONENTS) ?: self::COMPONENTS, true)) throw new \RuntimeException(t('wizard.err_component'));
             if (empty($_FILES['file']['name'])) throw new \RuntimeException(t('wizard.err_no_file'));
             $f = Upload::store($_FILES['file'], 'journals/' . $this->jid() . '/submissions/' . (int)$sub['id'] . '/submission');
             $fid = DB::insert('submission_files', ['submission_id' => $sub['id'], 'file_stage' => 'submission', 'genre' => $comp, 'original_name' => $f['original_name'], 'stored_name' => $f['stored_name'],
