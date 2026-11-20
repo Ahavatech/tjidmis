@@ -47,7 +47,7 @@ class SettingsController {
                 ['licenseUrl', 'text'], ['copyrightYearBasis', 'select', ['options' => ['issue' => 'set.year_issue', 'submission' => 'set.year_submission'], 'translate' => 1]], ['licenseTerms', 'html']],
             'indexing' => [['searchDescription', 'textarea'], ['customHeaders', 'textarea']],
             'payments' => [['apcEnabled', 'checkbox'], ['apcFee', 'number', ['min' => 0, 'max' => 1000000]], ['apcCurrency', 'text'], ['apcInstructions', 'html']],
-            'access' => [['enableOai', 'checkbox']],
+            'access' => [['publishingMode', 'select', ['options' => ['open' => 'set.pm_open', 'subscription' => 'set.pm_subscription', 'none' => 'set.pm_none'], 'translate' => 1]], ['openAccessPolicy', 'html'], ['delayedOpenAccessDuration', 'number', ['min' => 0, 'max' => 120, 'optional' => 1]], ['delayedOpenAccessPolicy', 'html'], ['authorSelfArchivePolicy', 'html'], ['enableOai', 'checkbox']],
             'archiving' => [['enableLockss', 'checkbox'], ['lockssLicense', 'html'], ['enableClockss', 'checkbox'], ['clockssLicense', 'html']],
         ],
     ];
@@ -117,7 +117,7 @@ class SettingsController {
             switch ($type) {
                 case 'text': $v = mb_substr(trim((string)$raw), 0, 255); if (!empty($o['required']) && $v === '') $errors[$k] = t('form.required_field'); $write[$k] = $v; break;
                 case 'email': $v = trim((string)$raw); if ($v !== '' && !filter_var($v, FILTER_VALIDATE_EMAIL)) $errors[$k] = t('form.email_invalid'); $write[$k] = $v; break;
-                case 'number': $n = (int)$raw; if (!is_numeric($raw) || $n < ($o['min'] ?? 0) || $n > ($o['max'] ?? 9999)) $errors[$k] = t('set.err_number', $o['min'] ?? 0, $o['max'] ?? 9999); $write[$k] = (string)$n; break;
+                case 'number': if (!empty($o['optional']) && trim((string)$raw) === '') { $write[$k] = '0'; break; } $n = (int)$raw; if (!is_numeric($raw) || $n < ($o['min'] ?? 0) || $n > ($o['max'] ?? 9999)) $errors[$k] = t('set.err_number', $o['min'] ?? 0, $o['max'] ?? 9999); $write[$k] = (string)$n; break;
                 case 'textarea': $write[$k] = trim((string)$raw); break;
                 case 'html': $write[$k] = Sanitizer::clean((string)$raw); break;
                 case 'checkbox': $write[$k] = empty($_POST[$k]) ? '0' : '1'; break;

@@ -11,7 +11,14 @@ class AboutController {
         $h = '';
         foreach ([['enableLockss', 'lockssLicense', 'arch.default_lockss'], ['enableClockss', 'clockssLicense', 'arch.default_clockss']] as [$on, $lic, $def])
             if (Settings::get($on, '') === '1') $h .= '<p>' . (Settings::get($lic, '') ?: t($def)) . '</p>';
-        return $h ? '<h2>' . e(t('arch.about_heading')) . '</h2>' . $h : '';
+        $h = $h ? '<h2>' . e(t('arch.about_heading')) . '</h2>' . $h : '';
+        $mode = Settings::get('publishingMode', 'open') ?: 'open'; $pre = '';
+        if ($mode === 'open' && ($oa = trim((string)Settings::get('openAccessPolicy', '')))) $pre .= '<h2>' . e(t('about.oa_policy')) . '</h2>' . $oa;
+        if ($mode === 'subscription') {
+            if (($m = (int)Settings::get('delayedOpenAccessDuration', '0')) > 0) $pre .= '<h2>' . e(t('about.delayed_oa')) . '</h2><p>' . e(t('about.delayed_oa_text', $m)) . '</p>' . Settings::get('delayedOpenAccessPolicy', '');
+            if (trim((string)Settings::get('authorSelfArchivePolicy', ''))) $pre .= '<h2>' . e(t('about.self_archive')) . '</h2>' . Settings::get('authorSelfArchivePolicy', '');
+        }
+        return $pre . $h;
     }
     public function editorialTeam(): void {
         $html = Settings::get('editorialTeam', '');

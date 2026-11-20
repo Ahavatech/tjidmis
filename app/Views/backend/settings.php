@@ -92,7 +92,7 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 
 <?php else: ?>
 <?php if ($area === 'distribution' && $tab === 'archiving'): ?><p class="muted"><?= e(t('arch.intro')) ?></p><p><?= t('arch.lockss_url', e(abs_url(url('gateway', 'lockss')))) ?><br><?= t('arch.clockss_url', e(abs_url(url('gateway', 'clockss')))) ?></p><h3 class="be_group"><?= e(t('arch.pn')) ?></h3><p class="muted"><?= e(t('arch.pn_text')) ?> <?= e(t('arch.pn_missing')) ?></p><?php endif; ?>
-<?php if ($area === 'distribution' && $tab === 'access'): ?><p><?= e(t('set.access_text')) ?></p><?php endif; ?>
+
 <?php if ($area === 'website' && $tab === 'announcements'): ?><p><a class="be_btn be_btn_primary" href="<?= e(url('manageAnnouncements')) ?>"><?= e(t('menu.announcements')) ?></a></p><?php endif; ?>
 <?php if ($fields): ?>
 <form class="cmp_form be_form" method="post" action="<?= e($post) ?>"<?= $multipart ? ' enctype="multipart/form-data"' : '' ?>><?= csrf_field() ?><div class="fields">

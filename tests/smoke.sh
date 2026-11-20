@@ -138,9 +138,9 @@ LID=$(db "select max(id) from library_files" 2>/dev/null | head -1); [ -z "$LID"
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/libraryFiles/downloadPublic/$LID")" 404 "private library file is not public"
 ok "$(code admin /content/libraryDownload/$LID)" 200 "manager can download it"
 ok "$(code admin /settings/index/website/languages)" 200 "languages tab"
-FORM=/settings/index/distribution/access; post admin /settings/save/distribution/access >/dev/null
+FORM=/settings/index/distribution/access; post admin /settings/save/distribution/access -d publishingMode=open >/dev/null
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/oai?verb=Identify")" 404 "OAI switched off"
-post admin /settings/save/distribution/access -d enableOai=1 >/dev/null
+post admin /settings/save/distribution/access -d publishingMode=open -d enableOai=1 >/dev/null
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/oai?verb=Identify")" 200 "OAI switched on"
 echo "== metadata options (Workflow > Submission > Metadata)"
 FORM=/settings/index/workflow/metadata; code admin $FORM >/dev/null
@@ -170,6 +170,12 @@ post admin /settings/save/distribution/archiving -d enableLockss=1 -d 'lockssLic
 ok "$(code anon /gateway/lockss)" 200 "LOCKSS manifest on when enabled"; ok "$(has 'permission to collect, preserve')" 1 "manifest carries the permission statement"
 ok "$(has 'issue/view')" 1 "manifest lists issues"; ok "$(code anon /gateway/clockss)" 404 "CLOCKSS still off"
 code anon /about >/dev/null; ok "$(has 'Custom LOCKSS licence text')" 1 "licence shown under Archiving on About"
+echo "== publishing mode and delayed open access (Distribution > Access)"
+FORM=/settings/index/distribution/access; ok "$(code admin $FORM)" 200 "access tab"; ok "$(has 'Publishing Mode')" 1 "publishing mode field"; ok "$(has 'The journal will require subscriptions')" 1 "OJS mode wording"
+post admin /settings/save/distribution/access -d publishingMode=open -d 'openAccessPolicy=<p>Smoke OA policy.</p>' -d enableOai=1 >/dev/null; code anon /about >/dev/null; ok "$(has 'Smoke OA policy')" 1 "open access policy on About"
+post admin /settings/save/distribution/access -d publishingMode=subscription -d delayedOpenAccessDuration=12 -d 'authorSelfArchivePolicy=<p>Self archive ok.</p>' -d enableOai=1 >/dev/null; code anon /about >/dev/null
+ok "$(has '12 month(s) after an issue is published')" 1 "delayed open access statement"; ok "$(has 'Self archive ok')" 1 "self-archive policy shown"; ok "$(has 'Smoke OA policy')" 0 "open access policy hidden in subscription mode"
+post admin /settings/save/distribution/access -d publishingMode=open -d enableOai=1 >/dev/null
 echo "== indexing feeds and reports (same shapes as OJS 3.3)"
 ok "$(curl -s "$BASE/oai?verb=Identify" | grep -c '<repositoryName>')" 1 "OAI Identify"
 ok "$(curl -s "$BASE/oai?verb=ListSets" | grep -c 'setSpec')" 2 "OAI sets (journal and Articles)"

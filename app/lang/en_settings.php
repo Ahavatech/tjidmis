@@ -170,7 +170,6 @@ return [
     'set.abbreviation' => 'Journal Abbreviation',
     'set.about' => 'About the Journal',
     'set.abstracts_required' => 'Require abstracts',
-    'set.access_text' => 'This journal is open access: all published content is free to read.',
     'set.add' => 'Add',
     'set.add_block' => 'Add Custom Block',
     'set.add_nav' => 'Add Menu Item',
@@ -477,4 +476,9 @@ return [
     'arch.about_heading' => 'Archiving',
     'arch.manifest_title' => '%s Publisher Manifest', 'arch.manifest_permission' => '%s system has permission to collect, preserve, and serve this Archival Unit.',
     'arch.default_lockss' => 'This journal utilizes the LOCKSS system to create a distributed archiving system among participating libraries and permits those libraries to create permanent archives of the journal for purposes of preservation and restoration. <a href="http://www.lockss.org/">More...</a>', 'arch.default_clockss' => 'This journal utilizes the CLOCKSS system to create a distributed archiving system among participating libraries and permits those libraries to create permanent archives of the journal for purposes of preservation and restoration. <a href="http://clockss.org/">More...</a>',
+    'set.publishingMode' => 'Publishing Mode', 'set.pm_open' => 'The journal will provide open access to its contents.', 'set.pm_subscription' => 'The journal will require subscriptions to access some or all of its contents.', 'set.pm_none' => 'OJS will not be used to publish the journal\'s contents online.',
+    'set.openAccessPolicy' => 'Open Access Policy', 'set.openAccessPolicy_help' => 'If providing immediate free access to all published content, you may enter a description of your Open Access Policy.',
+    'set.delayedOpenAccessDuration' => 'Delayed Open Access', 'set.delayedOpenAccessDuration_help' => 'Subscription journals can provide \'delayed open access\' to their published content, as well as permit \'author self-archiving\' (both of which increase readership and citation of content). Months after an issue is published until it becomes open access; 0 for none.',
+    'set.delayedOpenAccessPolicy' => 'Delayed Open Access Policy', 'set.authorSelfArchivePolicy' => 'Author Self-Archive Policy',
+    'about.oa_policy' => 'Open Access Policy', 'about.delayed_oa' => 'Delayed Open Access', 'about.delayed_oa_text' => 'The contents of this journal will be available in an open access format %s month(s) after an issue is published.', 'about.self_archive' => 'Author Self-Archive Policy',
 ];
