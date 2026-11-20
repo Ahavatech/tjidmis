@@ -176,6 +176,10 @@ post admin /settings/save/distribution/access -d publishingMode=open -d 'openAcc
 post admin /settings/save/distribution/access -d publishingMode=subscription -d delayedOpenAccessDuration=12 -d 'authorSelfArchivePolicy=<p>Self archive ok.</p>' -d enableOai=1 >/dev/null; code anon /about >/dev/null
 ok "$(has '12 month(s) after an issue is published')" 1 "delayed open access statement"; ok "$(has 'Self archive ok')" 1 "self-archive policy shown"; ok "$(has 'Smoke OA policy')" 0 "open access policy hidden in subscription mode"
 post admin /settings/save/distribution/access -d publishingMode=open -d enableOai=1 >/dev/null
+echo "== grids (OJS grid markup on back-end lists)"
+for g in submissions users users/roles manageIssues manageAnnouncements settings/index/journal/sections settings/index/journal/categories settings/index/workflow/reviewForms settings/index/workflow/templates settings/index/website/navigation statistics/articles statistics/users admin; do
+  ok "$(code admin /$g >/dev/null; has 'pkp_controllers_grid')" 1 "grid markup: $g"; done
+ok "$(code author /submissions >/dev/null; has 'gridRow')" 1 "dashboard rows are grid rows"
 echo "== indexing feeds and reports (same shapes as OJS 3.3)"
 ok "$(curl -s "$BASE/oai?verb=Identify" | grep -c '<repositoryName>')" 1 "OAI Identify"
 ok "$(curl -s "$BASE/oai?verb=ListSets" | grep -c 'setSpec')" 2 "OAI sets (journal and Articles)"
