@@ -24,7 +24,7 @@
 			</a>
 		</li>
 		<li class="browse">
-			<a href="<?= e(url()) ?>">
+			<a href="<?= e(url('index')) ?>">
 				<?= e(t('reg.continue')) ?>
 			</a>
 		</li>
