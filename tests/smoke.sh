@@ -90,16 +90,24 @@ ok "$(curl -s -D - -o /dev/null "$BASE" | grep -ci '^X-Frame-Options: SAMEORIGIN
 P=$(python3 -c "import urllib.parse;print(urllib.parse.quote(\"<img src=x onerror=XSSMARK>\"))" 2>/dev/null || python -c "import urllib.parse;print(urllib.parse.quote('<img src=x onerror=XSSMARK>'))")
 ok "$(curl -s "$BASE/search/search?query=$P" | grep -c '<img src=x onerror=XSSMARK')" 0 "reflected XSS is escaped"
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/search/search?query=%27%20OR%201%3D1--")" 200 "SQL injection probe is harmless"
+echo "== text is translated (a missing language key shows up as a raw key)"
+ok "$(curl -s "$BASE/user/register" | grep -c 'Privacy Options')" 1 "register page strings present"
+ok "$(curl -s "$BASE/login/lostPassword" | grep -c 'Registered user')" 1 "lost password strings present"
 if [ -n "$DBCMD" ]; then
-echo "== password reset (OJS 3.3 flow: link resets to a random password and e-mails it)"
+echo "== password reset (OJS 3.3 flow: e-mailed link opens a form to choose a new password)"
 FORM=/login/lostPassword; post anon /login/requestResetPassword -d email=reader@example.com >/dev/null
+ok "$(has 'A confirmation has been sent')" 1 "same confirmation page"
 RLINK=$(db "select body from email_log order by id desc limit 1" | grep -o 'resetPassword/reader?confirm=[A-Za-z0-9]*' | head -1)
+HASH=${RLINK#*confirm=}
 ok "$([ -n "$RLINK" ] && echo y)" y "reset link e-mailed"
-ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/login/resetPassword/reader?confirm=bogus")" 302 "bogus reset link redirects"
-ok "$(code anon "/login/$RLINK")" 200 "valid reset link accepted"
-NEWPW=$(db "select body from email_log order by id desc limit 1" | grep -o 'Password: [A-Za-z0-9]*' | head -1 | cut -d' ' -f2)
-ok "${#NEWPW}" 10 "new password e-mailed"
-ok "$(code anon "/login/$RLINK")" 302 "reset link works only once"
-login rdr reader "$NEWPW"; ok "$(code rdr /submissions)" 200 "new password logs in"
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/login/resetPassword/nosuchuser?confirm=x")" 302 "unknown username redirects"
+code anon "/login/resetPassword/reader?confirm=bogus" >/dev/null; ok "$(has 'expired or is not valid')" 1 "bad hash shows the invalid-link message"
+code anon "/login/$RLINK" >/dev/null; ok "$(has 'Enter new password')" 1 "valid link opens the new password form"
+FORM="/login/$RLINK"; post anon /login/updateResetPassword -d username=reader -d hash=$HASH -d password=NewPass@123 -d password2=different >/dev/null
+ok "$(has 'passwords do not match')" 1 "mismatch refused"
+post anon /login/updateResetPassword -d username=reader -d hash=$HASH -d password=NewPass@123 -d password2=NewPass@123 >/dev/null
+ok "$(has 'Password has been updated successfully')" 1 "password updated"
+code anon "/login/$RLINK" >/dev/null; ok "$(has 'expired or is not valid')" 1 "link works only once"
+login rdr reader NewPass@123; ok "$(code rdr /submissions)" 200 "new password logs in"
 fi
 echo; echo "passed: $pass, failed: $fail"; [ $fail -eq 0 ]

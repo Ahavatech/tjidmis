@@ -363,12 +363,6 @@ If you did not make this request, please ignore this email and your password wil
 Reset my password: {$passwordResetUrl}
 
 {$signature}',1,0);
-INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'PASSWORD_RESET','Password Reset','Your password has been successfully reset for use with the {$journalName} web site. Please retain this username and password, as it is necessary for all work with the journal.
-
-Your username: {$username}
-Password: {$password}
-
-{$signature}',1,0);
 INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'SUBMISSION_ACK','Submission Acknowledgement','Dear {$authorName},
 
 Thank you for submitting "{$submissionTitle}" to {$journalName}. You can track it at {$submissionUrl}.

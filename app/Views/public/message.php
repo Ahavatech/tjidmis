@@ -1,5 +1,5 @@
 <?php /** $heading, $message, optional $backUrl/$backLabel: the OJS "message" page */ ?>
-<div class="page page_message"><?= breadcrumb([[$heading, null]]) ?>
+<div class="page <?= e($cls ?? 'page_message') ?>"><?= breadcrumb([[$heading, null]]) ?>
 
 	<h1>
 		<?= e($heading) ?>
