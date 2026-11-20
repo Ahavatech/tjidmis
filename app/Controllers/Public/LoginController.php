@@ -38,7 +38,7 @@ class LoginController {
                 'passwordResetUrl' => abs_url(url('login', 'resetPassword', [$u['username']], ['confirm' => $tok]))]);
         }
         // same answer whether or not the address exists, so the form cannot be used to discover accounts
-        flash(t('lost.sent')); redirect(url('login'));
+        View::render('public/message', ['title' => t('lost.title'), 'bodyClass' => 'lost_password', 'heading' => t('lost.title'), 'message' => t('lost.sent'), 'backUrl' => url('login'), 'backLabel' => t('nav.login')]);
     }
     /** OJS 3.3 flow: the emailed link is /login/resetPassword/{username}?confirm={hash}. A valid link resets the password to a random one and emails it. */
     public function resetPassword(string $username = ''): void {
