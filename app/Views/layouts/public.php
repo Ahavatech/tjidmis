@@ -105,12 +105,12 @@ $css = Settings::get('journalStyleSheet', ''); ?>
 										</ul>
 							</li>
 								<?php else: ?>
-								<li class="profile">
+								<?php if (\App\Core\Settings::get('disableUserReg', '0') !== '1'): ?><li class="profile">
 				<a href="<?= e(url('user', 'register')) ?>">
 					<?= e(t('nav.register')) ?>
 				</a>
 							</li>
-								<li class="profile">
+<?php endif; ?>								<li class="profile">
 				<a href="<?= e(url('login')) ?>">
 					<?= e(t('nav.login')) ?>
 				</a>

@@ -1,5 +1,14 @@
 <?php
 return [
+    'users.current' => 'Current Users', 'users.edit_user' => 'Edit User', 'users.search_in' => 'Search in', 'users.search_all' => 'All fields', 'users.search_btn' => 'Search',
+    'users.f_given' => 'Given Name', 'users.f_family' => 'Family Name', 'users.f_username' => 'Username', 'users.f_email' => 'Email address',
+    'users.current_roles' => 'Current Roles', 'users.role_name' => 'Role Name', 'users.permission_level' => 'Permission level',
+    'users.roles_desc' => 'Roles are groups of users in the journal who are given access to different permission levels and associated workflows within the journal. There are five different permission levels: Journal Managers have access to everything in the journal (all content and settings); Section Editors have complete access to all assigned content; Journal Assistants have limited access to all submissions that have been explicitly assigned to them by an editor; Reviewers can see and perform the submissions they have been assigned to review; and Authors can see and interact with a limited amount of information on their own submissions. Additionally, there are five different stage assignments that roles may be given access to: Submission, Internal Review, Review, Editorial, and Production.',
+    'users.lvl_site_admin' => 'Site Administrator', 'users.lvl_manager' => 'Journal Manager', 'users.lvl_editor' => 'Journal Manager', 'users.lvl_section_editor' => 'Section Editor', 'users.lvl_reviewer' => 'Reviewer',
+    'users.lvl_author' => 'Author', 'users.lvl_copyeditor' => 'Assistant', 'users.lvl_layout_editor' => 'Assistant', 'users.lvl_proofreader' => 'Assistant', 'users.lvl_reader' => 'Reader',
+    'users.sa_site' => 'Site Access', 'users.sa_site_opt' => 'Users must be registered and log in to view the journal site.', 'users.sa_content' => 'View Article Content', 'users.sa_content_opt' => 'Users must be registered and log in to view open access content.',
+    'users.sa_reg' => 'User Registration', 'users.sa_reg_open' => 'Visitors can register a user account with the journal.', 'users.sa_reg_closed' => 'The Journal Manager will register all user accounts. Editors or Section Editors may register user accounts for reviewers.',
+
     'set.publisherUrl' => 'URL',
     'set.group_technical' => 'Technical Support Contact',
     'set.group_principal' => 'Principal Contact',

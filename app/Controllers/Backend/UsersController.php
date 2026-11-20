@@ -23,15 +23,18 @@ class UsersController {
     }
 
     public function index(): void {
-        $this->guard(); $jid = $this->jid(); $q = trim((string)($_GET['q'] ?? '')); $role = (int)($_GET['role'] ?? 0); $page = max(1, (int)($_GET['page'] ?? 1)); $per = 25;
+        $this->guard(); $jid = $this->jid(); $q = trim((string)($_GET['q'] ?? '')); $field = (string)($_GET['field'] ?? ''); $role = (int)($_GET['role'] ?? 0); $page = max(1, (int)($_GET['page'] ?? 1)); $per = 25;
         $w = ['1=1']; $p = [$jid];
-        if ($q !== '') { $like = '%' . addcslashes($q, '%_\\') . '%'; $w[] = '(u.username LIKE ? OR u.email LIKE ? OR CONCAT(u.given_name," ",u.family_name) LIKE ?)'; array_push($p, $like, $like, $like); }
+        if ($q !== '') {
+            $like = '%' . addcslashes($q, '%_\\') . '%'; $col = ['given' => 'u.given_name', 'family' => 'u.family_name', 'username' => 'u.username', 'email' => 'u.email'][$field] ?? null;
+            if ($col) { $w[] = "$col LIKE ?"; $p[] = $like; } else { $w[] = '(u.username LIKE ? OR u.email LIKE ? OR CONCAT(u.given_name," ",u.family_name) LIKE ?)'; array_push($p, $like, $like, $like); }
+        }
         if ($role) { $w[] = 'u.id IN (SELECT user_id FROM user_user_groups WHERE user_group_id=?)'; $p[] = $role; }
         $where = implode(' AND ', $w); $cp = array_slice($p, 1);
         $total = (int)DB::val("SELECT COUNT(*) FROM users u WHERE $where", $cp);
         $rows = DB::all("SELECT u.id,u.username,u.email,u.given_name,u.family_name,u.disabled,u.last_login_at, GROUP_CONCAT(DISTINCT g.name ORDER BY g.id SEPARATOR ', ') roles
             FROM users u LEFT JOIN user_user_groups x ON x.user_id=u.id LEFT JOIN user_groups g ON g.id=x.user_group_id AND (g.journal_id IS NULL OR g.journal_id=?) WHERE $where GROUP BY u.id ORDER BY u.family_name, u.given_name LIMIT $per OFFSET " . (($page - 1) * $per), $p);
-        View::render('backend/users', ['title' => t('menu.users'), 'menu' => 'settings', 'sub' => 'users', 'rows' => $rows, 'q' => $q, 'role' => $role, 'groups' => $this->assignable(), 'total' => $total, 'page' => $page, 'per' => $per, 'me' => Auth::id()], 'backend');
+        View::render('backend/users', ['title' => t('menu.users'), 'menu' => 'settings', 'sub' => 'users', 'rows' => $rows, 'q' => $q, 'field' => $field, 'role' => $role, 'groups' => $this->assignable(), 'total' => $total, 'page' => $page, 'per' => $per, 'me' => Auth::id()], 'backend');
     }
     private function validate(array $p, ?array $u, bool $creating): array {
         $e = []; $email = strtolower(trim((string)($p['email'] ?? ''))); $uname = strtolower(trim((string)($p['username'] ?? '')));
@@ -127,7 +130,7 @@ class UsersController {
     }
     public function access(): void {
         $this->guard();
-        if (Request::isPost()) { Settings::setSite('allowRegistration', empty($_POST['allowRegistration']) ? '0' : '1'); Settings::setSite('requireConsent', empty($_POST['requireConsent']) ? '0' : '1'); flash(t('profile.saved')); redirect(url('users', 'access')); }
-        View::render('backend/site_access', ['title' => t('users.access'), 'menu' => 'settings', 'sub' => 'access', 'allow' => Settings::site('allowRegistration', '1') === '1', 'consent' => Settings::site('requireConsent', '1') === '1'], 'backend');
+        if (Request::isPost()) { $j = $this->jid(); Settings::set('restrictSiteAccess', empty($_POST['restrictSiteAccess']) ? '0' : '1', $j); Settings::set('restrictArticleAccess', empty($_POST['restrictArticleAccess']) ? '0' : '1', $j); Settings::set('disableUserReg', ($_POST['disableUserReg'] ?? '0') === '1' ? '1' : '0', $j); flash(t('profile.saved')); redirect(url('users', 'access')); }
+        View::render('backend/site_access', ['title' => t('users.access'), 'menu' => 'settings', 'sub' => 'access', 'restrictSite' => Settings::get('restrictSiteAccess', '0') === '1', 'restrictArticle' => Settings::get('restrictArticleAccess', '0') === '1', 'disableReg' => Settings::get('disableUserReg', '0') === '1'], 'backend');
     }
 }

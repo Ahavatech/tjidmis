@@ -92,6 +92,15 @@ ok "$(curl -s -D - -o /dev/null "$BASE" | grep -ci '^X-Frame-Options: SAMEORIGIN
 P=$(python3 -c "import urllib.parse;print(urllib.parse.quote(\"<img src=x onerror=XSSMARK>\"))" 2>/dev/null || python -c "import urllib.parse;print(urllib.parse.quote('<img src=x onerror=XSSMARK>'))")
 ok "$(curl -s "$BASE/search/search?query=$P" | grep -c '<img src=x onerror=XSSMARK')" 0 "reflected XSS is escaped"
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/search/search?query=%27%20OR%201%3D1--")" 200 "SQL injection probe is harmless"
+echo "== site access options (Users & Roles)"
+FORM=/users/access; post admin /users/access -d restrictArticleAccess=1 >/dev/null
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/article/view/182/29")" 302 "galley needs login when content is restricted"
+ok "$(code admin /article/view/182/29)" 200 "logged-in users still reach it"
+post admin /users/access -d restrictSiteAccess=1 >/dev/null
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/about")" 302 "site restricted: visitors are sent to login"
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/login")" 200 "login page stays reachable"
+post admin /users/access -d disableUserReg=0 >/dev/null
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/about")" 200 "all options off again"
 echo "== indexing feeds and reports (same shapes as OJS 3.3)"
 ok "$(curl -s "$BASE/oai?verb=Identify" | grep -c '<repositoryName>')" 1 "OAI Identify"
 ok "$(curl -s "$BASE/oai?verb=ListSets" | grep -c 'setSpec')" 2 "OAI sets (journal and Articles)"

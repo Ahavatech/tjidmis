@@ -6,7 +6,7 @@ use App\Services\{EmailTemplateService, NotificationService};
 class UserController {
     public function register(): void {
         if (Auth::user()) { View::render('public/registration_complete', ['title' => t('reg.complete'), 'bodyClass' => 'register']); return; }   // OJS shows the success page to anyone logged in
-        if (Settings::site('allowRegistration', '1') !== '1') { View::render('public/page_simple', ['title' => t('nav.register'), 'crumb' => t('nav.register'), 'html' => '<p>' . e(t('reg.disabled')) . '</p>', 'cls' => 'page_register']); return; }
+        if (Settings::get('disableUserReg', '0') === '1') { View::render('public/page_simple', ['title' => t('nav.register'), 'crumb' => t('nav.register'), 'html' => '<p>' . e(t('reg.disabled')) . '</p>', 'cls' => 'page_register']); return; }
         $errors = []; $v = $_POST;
         if (Request::isPost()) {
             $given = trim($v['givenName'] ?? ''); $aff = trim($v['affiliation'] ?? ''); $country = (string)($v['country'] ?? '');
@@ -25,7 +25,7 @@ class UserController {
             if (!isset(Countries::all()[$country])) $add('country', t('reg.err_country_required'));
             if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 190) $add('email', t('reg.err_email_required'));
             elseif (DB::val('SELECT id FROM users WHERE email=?', [$email])) $add('email', t('reg.err_email_exists'));
-            if (empty($v['privacyConsent']) && Settings::site('requireConsent', '1') === '1') $add('privacyConsent', t('reg.err_consent_required'));
+            if (empty($v['privacyConsent']) && trim(strip_tags((string)Settings::get('privacyStatement', ''))) !== '') $add('privacyConsent', t('reg.err_consent_required'));
             if (!$errors) {
                 $jid = (int)Settings::journal()['id'];
                 $roles = ['reader', 'author']; if (!empty($v['reviewerGroup'])) $roles[] = 'reviewer';

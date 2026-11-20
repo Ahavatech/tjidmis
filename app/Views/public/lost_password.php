@@ -12,5 +12,5 @@
 			</div>
 		<?php endif; ?>
   <div class="fields"><?= field(t('lost.email'), 'email', '', ['type' => 'email', 'required' => true]) ?>
-  <div class="buttons"><button class="submit" type="submit"><?= e(t('lost.title')) ?></button> <a href="<?= e(url('user', 'register')) ?>" class="register"><?= e(t('nav.register')) ?></a></div></div>
+  <div class="buttons"><button class="submit" type="submit"><?= e(t('lost.title')) ?></button> <?php if (\App\Core\Settings::get('disableUserReg', '0') !== '1'): ?><a href="<?= e(url('user', 'register')) ?>" class="register"><?= e(t('nav.register')) ?></a><?php endif; ?></div></div>
 </form></div>

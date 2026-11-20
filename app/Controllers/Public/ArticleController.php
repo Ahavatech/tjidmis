@@ -4,6 +4,10 @@ use App\Core\{View, Settings, Upload};
 use App\Models\Catalog;
 use App\Services\{CitationService, MetricsService};
 class ArticleController {
+    /** OJS "View Article Content": with the option on, galleys are for logged-in users only (abstracts stay public). */
+    private function requireLoginForContent(): void {
+        if (Settings::get('restrictArticleAccess', '0') === '1' && !\App\Core\Auth::user()) redirect(url('login', null, [], ['source' => $_SERVER['REQUEST_URI'] ?? '']));
+    }
     private function notFound(): void { http_response_code(404); View::render('public/error', ['code' => 404, 'message' => t('error.404'), 'title' => t('error.404.title')]); }
     public function view(string $id = '', string $galleyId = '', string $fileId = ''): void {
         $jid = (int)Settings::journal()['id'];
@@ -12,6 +16,7 @@ class ArticleController {
         if ($galleyId !== '') {
             $g = Catalog::galley((int)$a['pid'], (int)$galleyId);
             if (!$g) { $this->notFound(); return; }
+            $this->requireLoginForContent();
             if ($g['remote_url']) redirect($g['remote_url']);
             MetricsService::hit($jid, (int)$a['sid'], 'galley_download', (int)$g['id']);
             View::render('public/galley', ['a' => $a, 'g' => $g], null);
@@ -24,6 +29,7 @@ class ArticleController {
     }
     /** Streams a published galley file. Permission rule: only galleys of published articles are public. */
     public function download(string $id = '', string $galleyId = '', string $fileId = ''): void {
+        $this->requireLoginForContent();
         $jid = (int)Settings::journal()['id'];
         $a = Catalog::article($jid, (int)$id);
         $g = $a ? Catalog::galley((int)$a['pid'], (int)$galleyId) : null;

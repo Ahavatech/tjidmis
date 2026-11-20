@@ -54,6 +54,10 @@ class Router {
         $op = $seg[2] ?? null;
         $GLOBALS['pkp'] = ['page' => $page, 'op' => $op ?: 'index'];
         $args = array_slice($seg, 3);
+        $backend = in_array($page, ['submissions', 'submission', 'workflow', 'participant', 'decision', 'review', 'reviewer', 'discussion', 'publication', 'manageIssues', 'settings', 'content', 'manageAnnouncements', 'users', 'statistics', 'admin', 'notification', 'management'], true);
+        if (!$backend && !in_array($page, ['login', 'user', 'css', 'gateway', 'oai', 'sitemap'], true) && Settings::get('restrictSiteAccess', '0') === '1' && !Auth::user()) {
+            redirect(url('login', null, [], ['source' => $_SERVER['REQUEST_URI'] ?? '']));   // OJS sends visitors to the login page
+        }
         if (isset($this->routes[$page])) {
             [$cls, $def] = $this->routes[$page];
             $op = $op ?: $def;

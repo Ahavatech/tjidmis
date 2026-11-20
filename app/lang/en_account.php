@@ -58,6 +58,6 @@ return [
     'profile.notif_intro' => 'Choose which emails you would like to receive.', 'profile.notif_newPublications' => 'New publications and announcements',
     'profile.notif_submissionActivity' => 'Activity on my submissions', 'profile.notif_reviewRequests' => 'Review requests and reminders', 'profile.notif_discussions' => 'New discussion messages',
     'profile.api_stub' => 'API keys are not used on this installation.',
-    'role.site_admin' => 'Site Administrator', 'role.manager' => 'Journal Manager', 'role.editor' => 'Journal Editor', 'role.section_editor' => 'Section Editor',
+    'role.site_admin' => 'Site Admin', 'role.manager' => 'Journal manager', 'role.editor' => 'Journal editor', 'role.section_editor' => 'Section editor',
     'role.reviewer' => 'Reviewer', 'role.author' => 'Author', 'role.copyeditor' => 'Copyeditor', 'role.layout_editor' => 'Layout Editor', 'role.proofreader' => 'Proofreader', 'role.reader' => 'Reader',
 ];
