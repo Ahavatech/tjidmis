@@ -225,7 +225,8 @@ w("INSERT INTO navigation_menu_items (journal_id,menu,type,title,seq) VALUES (1,
 
 emails = {
     'USER_REGISTER': ('Registration as a user at {$journalName}', 'Dear {$recipientName},\n\nThank you for registering with {$journalName}. Your username is {$username}.\n\n{$signature}'),
-    'PASSWORD_RESET': ('Password reset requested', 'Dear {$recipientName},\n\nUse this link to choose a new password: {$passwordResetUrl}\n\n{$signature}'),
+    'PASSWORD_RESET_CONFIRM': ('Password Reset Confirmation', 'We have received a request to reset your password for the {$journalName} web site.\n\nIf you did not make this request, please ignore this email and your password will not be changed. If you wish to reset your password, click on the below URL.\n\nReset my password: {$passwordResetUrl}\n\n{$signature}'),
+    'PASSWORD_RESET': ('Password Reset', 'Your password has been successfully reset for use with the {$journalName} web site. Please retain this username and password, as it is necessary for all work with the journal.\n\nYour username: {$username}\nPassword: {$password}\n\n{$signature}'),
     'SUBMISSION_ACK': ('Submission Acknowledgement', 'Dear {$authorName},\n\nThank you for submitting "{$submissionTitle}" to {$journalName}. You can track it at {$submissionUrl}.\n\n{$signature}'),
     'SUBMISSION_NOTIFY_EDITORS': ('New submission received', 'A new submission, "{$submissionTitle}", has been received and awaits assignment: {$submissionUrl}\n\n{$signature}'),
     'REVIEW_REQUEST': ('Request to review a manuscript', 'Dear {$reviewerName},\n\nWe invite you to review "{$submissionTitle}". Please respond by {$responseDueDate}: {$reviewUrl}\n\n{$signature}'),

@@ -42,4 +42,4 @@ Set `'demo_mode' => false` in `config.php` to hide the credentials box on the lo
 4. Change or delete the demo accounts (`Demo@12345`).
 5. Set the `smtp` block, then check it: `php tools/smtp_check.php you@example.org`.
 6. Optional: `php tools/sanitizer_check.php` (XSS payloads), `php tools/audit_routes.php` (route list for review).
-7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 58 checks, submit to publish).
+7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 64 checks, submit to publish).

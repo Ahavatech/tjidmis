@@ -34,30 +34,23 @@ class LoginController {
             DB::exec('DELETE FROM password_resets WHERE user_id=? OR expires_at<NOW()', [$u['id']]);
             $tok = bin2hex(random_bytes(32));
             DB::insert('password_resets', ['user_id' => $u['id'], 'token_hash' => hash('sha256', $tok), 'expires_at' => date('Y-m-d H:i:s', time() + 3600)]);
-            EmailTemplateService::send('PASSWORD_RESET', $u['email'], ['recipientName' => trim($u['given_name'] . ' ' . $u['family_name']), 'username' => $u['username'],
-                'passwordResetUrl' => abs_url(url('login', 'resetPassword', [$tok]))]);
+            EmailTemplateService::send('PASSWORD_RESET_CONFIRM', $u['email'], ['recipientName' => trim($u['given_name'] . ' ' . $u['family_name']), 'username' => $u['username'],
+                'passwordResetUrl' => abs_url(url('login', 'resetPassword', [$u['username']], ['confirm' => $tok]))]);
         }
         // same answer whether or not the address exists, so the form cannot be used to discover accounts
         flash(t('lost.sent')); redirect(url('login'));
     }
-    private function validReset(string $tok): ?array {
-        return $tok === '' ? null : DB::one('SELECT user_id FROM password_resets WHERE token_hash=? AND expires_at>NOW()', [hash('sha256', $tok)]);
-    }
-    public function resetPassword(string $token = ''): void {
-        $r = $this->validReset($token); $errors = [];
-        if (!$r) { flash(t('reset.invalid'), 'error'); redirect(url('login', 'lostPassword')); }
-        if (Request::isPost()) {
-            $min = (int)Settings::site('minPasswordLength', '8'); $p = (string)($_POST['password'] ?? '');
-            if (strlen($p) < $min) $errors['password'] = t('form.password_short', $min);
-            elseif (strlen($p) > 72) $errors['password'] = t('form.password_long');
-            elseif ($p !== (string)($_POST['password2'] ?? '')) $errors['password2'] = t('form.password_mismatch');
-            if (!$errors) {
-                DB::exec('UPDATE users SET password_hash=?, must_change_password=0 WHERE id=?', [password_hash($p, PASSWORD_DEFAULT), $r['user_id']]);
-                DB::exec('DELETE FROM password_resets WHERE user_id=?', [$r['user_id']]);
-                DB::exec('DELETE FROM sessions_remember WHERE user_id=?', [$r['user_id']]);   // sign out remembered devices
-                flash(t('reset.done')); redirect(url('login'));
-            }
-        }
-        View::render('public/reset_password', ['title' => t('reset.title'), 'bodyClass' => 'lost_password', 'token' => $token, 'errors' => $errors]);
+    /** OJS 3.3 flow: the emailed link is /login/resetPassword/{username}?confirm={hash}. A valid link resets the password to a random one and emails it. */
+    public function resetPassword(string $username = ''): void {
+        $tok = (string)($_GET['confirm'] ?? '');
+        $u = ($username === '' || $tok === '') ? null : DB::one('SELECT u.* FROM users u JOIN password_resets r ON r.user_id=u.id WHERE u.username=? AND r.token_hash=? AND r.expires_at>NOW() AND u.disabled=0', [$username, hash('sha256', $tok)]);
+        if (!$u) redirect(url('login', 'lostPassword'));
+        $alphabet = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'; $pw = '';
+        for ($i = 0; $i < 10; $i++) $pw .= $alphabet[random_int(0, strlen($alphabet) - 1)];
+        DB::exec('UPDATE users SET password_hash=?, must_change_password=0 WHERE id=?', [password_hash($pw, PASSWORD_DEFAULT), $u['id']]);
+        DB::exec('DELETE FROM password_resets WHERE user_id=?', [$u['id']]);
+        DB::exec('DELETE FROM sessions_remember WHERE user_id=?', [$u['id']]);   // sign out remembered devices
+        EmailTemplateService::send('PASSWORD_RESET', $u['email'], ['recipientName' => trim($u['given_name'] . ' ' . $u['family_name']), 'username' => $u['username'], 'password' => $pw]);
+        View::render('public/message', ['title' => t('lost.title'), 'bodyClass' => 'lost_password', 'heading' => t('lost.title'), 'message' => t('reset.done'), 'backUrl' => url('login'), 'backLabel' => t('nav.login')]);
     }
 }

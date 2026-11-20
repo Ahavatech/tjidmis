@@ -356,9 +356,17 @@ INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom
 Thank you for registering with {$journalName}. Your username is {$username}.
 
 {$signature}',1,0);
-INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'PASSWORD_RESET','Password reset requested','Dear {$recipientName},
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'PASSWORD_RESET_CONFIRM','Password Reset Confirmation','We have received a request to reset your password for the {$journalName} web site.
 
-Use this link to choose a new password: {$passwordResetUrl}
+If you did not make this request, please ignore this email and your password will not be changed. If you wish to reset your password, click on the below URL.
+
+Reset my password: {$passwordResetUrl}
+
+{$signature}',1,0);
+INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'PASSWORD_RESET','Password Reset','Your password has been successfully reset for use with the {$journalName} web site. Please retain this username and password, as it is necessary for all work with the journal.
+
+Your username: {$username}
+Password: {$password}
 
 {$signature}',1,0);
 INSERT INTO email_templates (journal_id,email_key,subject,body,enabled,is_custom) VALUES (1,'SUBMISSION_ACK','Submission Acknowledgement','Dear {$authorName},

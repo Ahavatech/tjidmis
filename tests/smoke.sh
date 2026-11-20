@@ -90,4 +90,16 @@ ok "$(curl -s -D - -o /dev/null "$BASE" | grep -ci '^X-Frame-Options: SAMEORIGIN
 P=$(python3 -c "import urllib.parse;print(urllib.parse.quote(\"<img src=x onerror=XSSMARK>\"))" 2>/dev/null || python -c "import urllib.parse;print(urllib.parse.quote('<img src=x onerror=XSSMARK>'))")
 ok "$(curl -s "$BASE/search/search?query=$P" | grep -c '<img src=x onerror=XSSMARK')" 0 "reflected XSS is escaped"
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/search/search?query=%27%20OR%201%3D1--")" 200 "SQL injection probe is harmless"
+if [ -n "$DBCMD" ]; then
+echo "== password reset (OJS 3.3 flow: link resets to a random password and e-mails it)"
+FORM=/login/lostPassword; post anon /login/requestResetPassword -d email=reader@example.com >/dev/null
+RLINK=$(db "select body from email_log order by id desc limit 1" | grep -o 'resetPassword/reader?confirm=[A-Za-z0-9]*' | head -1)
+ok "$([ -n "$RLINK" ] && echo y)" y "reset link e-mailed"
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/login/resetPassword/reader?confirm=bogus")" 302 "bogus reset link redirects"
+ok "$(code anon "/login/$RLINK")" 200 "valid reset link accepted"
+NEWPW=$(db "select body from email_log order by id desc limit 1" | grep -o 'Password: [A-Za-z0-9]*' | head -1 | cut -d' ' -f2)
+ok "${#NEWPW}" 10 "new password e-mailed"
+ok "$(code anon "/login/$RLINK")" 302 "reset link works only once"
+login rdr reader "$NEWPW"; ok "$(code rdr /submissions)" 200 "new password logs in"
+fi
 echo; echo "passed: $pass, failed: $fail"; [ $fail -eq 0 ]

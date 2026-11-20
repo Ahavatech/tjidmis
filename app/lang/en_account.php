@@ -13,8 +13,8 @@ return [
     // lost / reset password
     'lost.title' => 'Reset Password', 'lost.intro' => 'Enter your account email address below and an email will be sent with instructions on how to reset your password.',
     'lost.email' => 'Registered user\'s email', 'lost.sent' => 'If that address belongs to an account, an email with reset instructions has been sent.',
-    'reset.title' => 'Choose a New Password', 'reset.new' => 'New password', 'reset.submit' => 'Change Password',
-    'reset.invalid' => 'That password reset link is invalid or has expired. Please request a new one.', 'reset.done' => 'Your password has been changed. You can now log in.',
+    'reset.new' => 'New password',
+    'reset.invalid' => 'That password reset link is invalid or has expired. Please request a new one.', 'reset.done' => 'Your password has been reset and a new password has been sent to your email address.',
     // register
     'reg.profile' => 'Profile', 'reg.login' => 'Login', 'reg.given' => 'Given Name', 'reg.family' => 'Family Name', 'reg.affiliation' => 'Affiliation', 'reg.country' => 'Country',
     'reg.email' => 'Email', 'reg.username' => 'Username', 'reg.username_help' => 'Lowercase letters and numbers; hyphens and underscores allowed between them.',
