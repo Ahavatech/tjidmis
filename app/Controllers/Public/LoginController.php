@@ -57,7 +57,7 @@ class LoginController {
         if ((int)$row['disabled']) { $this->resetMessage(t('reset.failed', t('reset.disabled')), url('login'), t('nav.login')); return; }
         $tok = (string)($_GET['confirm'] ?? '');
         if ($tok === '' || !$this->resetUser($username, $tok)) { $this->resetMessage(t('reset.invalid'), url('login', 'lostPassword'), t('lost.title'), 'page_error'); return; }
-        View::render('public/reset_password', ['title' => t('lost.title'), 'bodyClass' => 'lost_password', 'username' => $username, 'hash' => $tok, 'errors' => []]);
+        View::render('public/reset_password', ['title' => t('lost.title'), 'username' => $username, 'hash' => $tok, 'errors' => []], 'backend_anon');
     }
     public function updateResetPassword(): void {
         if (!Request::isPost()) redirect(url('login', 'lostPassword'));
@@ -66,11 +66,11 @@ class LoginController {
         $u = $this->resetUser($username, $tok);
         if (!$u) { $this->resetMessage(t('reset.invalid'), url('login', 'lostPassword'), t('lost.title'), 'page_error'); return; }
         $min = (int)Settings::site('minPasswordLength', '8'); $p = (string)($_POST['password'] ?? ''); $errors = [];
-        if ($p === '') $errors['password'] = t('reset.err_required');
-        elseif (strlen($p) < $min) $errors['password'] = t('form.password_short', $min);
-        elseif (strlen($p) > 72) $errors['password'] = t('form.password_long');
-        elseif ($p !== (string)($_POST['password2'] ?? '')) $errors['password2'] = t('form.password_mismatch');
-        if ($errors) { View::render('public/reset_password', ['title' => t('lost.title'), 'bodyClass' => 'lost_password', 'username' => $username, 'hash' => $tok, 'errors' => $errors]); return; }
+        // OJS 3.3 ResetPasswordForm checks, in order: length, required, match. All are on the "password" field and the first failure is shown.
+        if (strlen($p) < $min) $errors['password'] = t('form.password_short', $min);
+        elseif ($p === '') $errors['password'] = t('reset.err_required');
+        elseif ($p !== (string)($_POST['password2'] ?? '')) $errors['password'] = t('form.password_mismatch');
+        if ($errors) { View::render('public/reset_password', ['title' => t('lost.title'), 'username' => $username, 'hash' => $tok, 'errors' => $errors], 'backend_anon'); return; }
         DB::exec('UPDATE users SET password_hash=?, must_change_password=0 WHERE id=?', [password_hash($p, PASSWORD_DEFAULT), $u['id']]);
         DB::exec('DELETE FROM password_resets WHERE user_id=?', [$u['id']]);
         DB::exec('DELETE FROM sessions_remember WHERE user_id=?', [$u['id']]);   // sign out remembered devices

@@ -156,3 +156,19 @@ form.is_busy button[type=submit],form.is_busy input[type=submit]{opacity:.6;curs
   .be_tabs a,.be_stagetabs a,.be_stagetabs span{white-space:nowrap}
   .cmp_form input[type=text],.cmp_form input[type=email],.cmp_form input[type=password],.cmp_form select,.cmp_form textarea{max-width:100%}
 }
+
+/* password reset form (OJS renders it in the back-end layout, with no sidebar for visitors) */
+.backend_anon .be_content{max-width:46rem;margin:0 auto;width:100%}
+.backend_anon .be_brand_inline{text-decoration:none;color:inherit}
+.app__pageHeading{font-family:var(--font-head);font-size:1.5rem;margin:1.2rem 0 1rem}
+.app__contentPanel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:1.5rem 1.8rem}
+.app__contentPanel .pkp_form_section{margin:0 0 1.1rem}
+.app__contentPanel .pkp_form_section label{display:block;font-weight:600;margin-bottom:.3rem}
+.app__contentPanel .pkp_form_section input{width:100%;max-width:22rem;padding:.55rem .7rem;border:1px solid var(--line);border-radius:6px;font:inherit}
+.app__contentPanel .field_hint{font-weight:400;color:var(--muted);font-size:.85rem;margin-top:.3rem}
+.app__contentPanel .req{color:#b42318}
+.app__contentPanel .formButtons{margin-top:1rem}
+#formErrors{border:1px solid #f1b0a8;background:#fdf1ef;border-radius:6px;padding:.7rem 1rem;margin-bottom:1rem}
+#formErrors .pkp_form_error{font-weight:600;color:#b42318}
+#formErrors ul{margin:.4rem 0 0 1.1rem;padding:0}
+.backend_anon .be_journal{display:inline;font-weight:600}

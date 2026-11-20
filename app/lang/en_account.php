@@ -13,7 +13,8 @@ return [
     // lost / reset password
     'lost.title' => 'Reset Password', 'lost.intro' => 'Enter your account email address below and an email will be sent with instructions on how to reset your password.',
     'lost.email' => 'Registered user\'s email', 'lost.sent' => 'A confirmation has been sent to your email address. Please follow the instructions in the email to reset your password.',
-    'reset.new' => 'New password', 'reset.new2' => 'Repeat new password', 'reset.submit' => 'Reset Password', 'reset.instructions' => 'Enter new password to update login password.',
+    'reset.new' => 'New password', 'reset.new2' => 'Repeat new password', 'reset.save' => 'Save',
+    'reset.privacy_link' => 'Your data is stored in accordance with our <a href="%s" target="_blank">privacy statement</a>.', 'reset.required_note' => 'Required fields are marked with an asterisk: <abbr class="required" title="required">*</abbr>', 'reset.instructions' => 'Enter new password to update login password.',
     'reset.invalid' => 'Sorry, the link you clicked on has expired or is not valid. Please try resetting your password again.', 'reset.done' => 'Password has been updated successfully. Please login with updated password.',
     'reset.err_required' => 'You must enter your new password.', 'reset.failed' => 'Unable to complete password reset request because %s.',
     'reset.disabled' => 'Your account has been disabled. Please contact the administrator for more information',
