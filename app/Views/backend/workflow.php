@@ -20,56 +20,44 @@ $isReviewStage = $stage === 3; $mgr = $manage; ?>
 <p class="be_substatus"><?= e(SubmissionRepo::statusText($sub + ['editors' => count(array_filter($participants, fn($p) => in_array($p['role_key'], ['editor', 'manager', 'section_editor'], true)))])) ?></p>
 
 <?php if ($stage === 1): ?>
-<h2><?= e(t('wf.files')) ?></h2>
-<table class="be_table"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wizard.component')) ?></th><th><?= e(t('wf.uploaded')) ?></th></tr></thead><tbody>
-<?php foreach ($files as $f): ?><tr><td><a href="<?= e(url('workflow', 'download', [$sid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e($f['genre']) ?></td><td><?= e(fmt_date($f['created_at'])) ?></td></tr><?php endforeach; ?>
-<?php if (!$files): ?><tr><td colspan="3" class="muted"><?= e(t('wizard.no_files')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $gr = []; foreach ($files as $f) $gr[] = ['cells' => ['<a href="' . e(url('workflow', 'download', [$sid, $f['id']])) . '">' . e($f['original_name']) . '</a>', e($f['genre']), e(fmt_date($f['created_at']))]]; ?>
+<?= grid(t('wf.files'), [], [[t('wizard.file'), 50], [t('wizard.component'), 25], [t('wf.uploaded'), 25]], $gr, t('wizard.no_files')) ?>
 
 <?php elseif ($isReviewStage): ?>
 <?php if (!$round): ?><p class="muted"><?= e(t('wf.no_round')) ?></p><?php else: ?>
 <ul class="be_roundtabs"><?php foreach ($rounds as $r): ?><li class="<?= (int)$r['id'] === (int)$round['id'] ? 'active' : '' ?>"><a href="<?= e($stageUrl(3, ['round' => $r['round']])) ?>"><?= e(t('wf.round', (int)$r['round'])) ?></a></li><?php endforeach; ?></ul>
-<h2><?= e(t('wf.review_files')) ?></h2>
-<table class="be_table"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wizard.component')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($reviewFiles as $f): ?><tr><td><a href="<?= e(url('workflow', 'download', [$sid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e($f['genre']) ?></td><td class="be_actions"><?php if ($mgr && $f['file_stage'] === 'review_file'): ?><form class="be_inline" method="post" action="<?= e(url('workflow', 'deleteFile', [$sid, $f['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form><?php endif; ?></td></tr><?php endforeach; ?>
-<?php if (!$reviewFiles): ?><tr><td colspan="3" class="muted"><?= e(t('wizard.no_files')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $gr = []; foreach ($reviewFiles as $f) $gr[] = ['cells' => ['<a href="' . e(url('workflow', 'download', [$sid, $f['id']])) . '">' . e($f['original_name']) . '</a>', e($f['genre'])], 'actions' => ($mgr && $f['file_stage'] === 'review_file') ? [[t('wizard.delete'), url('workflow', 'deleteFile', [$sid, $f['id']]), ['post' => 1, 'class' => 'delete']]] : []]; ?>
+<?= grid(t('wf.review_files'), [], [[t('wizard.file'), 60], [t('wizard.component'), 40]], $gr, t('wizard.no_files')) ?>
 <?php if ($mgr && (int)$round['id'] === (int)WorkflowService::currentRound($sid)['id']): ?><form class="be_upload be_inline_form" method="post" enctype="multipart/form-data" action="<?= e(url('workflow', 'uploadFile', [$sid, $round['id']])) ?>"><?= csrf_field() ?><input type="file" name="file" required><button class="be_btn" type="submit"><?= e(t('wf.add_review_file')) ?></button></form><?php endif; ?>
 
-<?php if ($mgr): ?><h2><?= e(t('wf.reviewers')) ?> <?php if ($sub['status'] === 'queued' && (int)$round['id'] === (int)WorkflowService::currentRound($sid)['id']): ?><a class="be_btn be_btn_primary be_small" href="<?= e(url('review', 'search', [$sid])) ?>"><?= e(t('rev.add')) ?></a><?php endif; ?></h2>
-<table class="be_table be_reviewers"><thead><tr><th><?= e(t('wf.reviewer')) ?></th><th><?= e(t('wf.status')) ?></th><th><?= e(t('wf.response_due')) ?></th><th><?= e(t('wf.review_due')) ?></th><th><?= e(t('wf.recommendation')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($reviewers as $ra): $live = in_array($ra['status'], ['awaiting_response', 'accepted'], true); $open = $sub['status'] === 'queued' && (int)$round['id'] === (int)WorkflowService::currentRound($sid)['id']; ?>
-<tr class="<?= ReviewService::isOverdue($ra) ? 'be_overdue' : '' ?><?= in_array($ra['status'], ['cancelled', 'declined'], true) ? ' be_muted_row' : '' ?>"><td><?= e(trim($ra['given_name'] . ' ' . $ra['family_name'])) ?><div class="muted be_small"><?= e(t(ReviewService::METHODS[$ra['review_method']])) ?></div></td>
-<td><span class="be_chip be_chip_<?= e($ra['status']) ?>"><?= e(ReviewService::statusLabel($ra)) ?></span></td><td><?= e(fmt_date($ra['date_response_due'])) ?></td><td><?= e(fmt_date($ra['date_due'])) ?></td>
-<td><?= $ra['recommendation'] ? e(t(ReviewService::RECOMMENDATIONS[$ra['recommendation']])) : '-' ?></td>
-<td class="be_actions"><?php if (in_array($ra['status'], ['review_submitted', 'thanked'], true)): ?><a class="be_btn" href="<?= e(url('review', 'details', [$sid, $ra['id']])) ?>"><?= e(t('rev.details')) ?></a><?php endif; ?>
-<?php if ($open): ?><?php if ($live): ?><a class="be_btn" href="<?= e(url('review', 'edit', [$sid, $ra['id']])) ?>"><?= e(t('rev.edit_deadlines')) ?></a>
-<?php foreach (['remind' => 'rev.remind', 'unassign' => 'rev.unassign'] as $op => $lbl): ?><form class="be_inline" method="post" action="<?= e(url('review', $op, [$sid, $ra['id']])) ?>"><?= csrf_field() ?><button class="be_btn<?= $op === 'unassign' ? ' be_btn_danger' : '' ?>" type="submit"><?= e(t($lbl)) ?></button></form><?php endforeach; ?><?php endif; ?>
-<?php if ($ra['status'] === 'review_submitted'): ?><form class="be_inline" method="post" action="<?= e(url('review', 'thank', [$sid, $ra['id']])) ?>"><?= csrf_field() ?><button class="be_btn" type="submit"><?= e(t('rev.thank')) ?></button></form><?php endif; ?>
-<?php if (in_array($ra['status'], ['cancelled', 'declined'], true)): ?><form class="be_inline" method="post" action="<?= e(url('review', 'reinstate', [$sid, $ra['id']])) ?>"><?= csrf_field() ?><button class="be_btn" type="submit"><?= e(t('rev.reinstate')) ?></button></form><?php endif; ?><?php endif; ?></td></tr><?php endforeach; ?>
-<?php if (!$reviewers): ?><tr><td colspan="6" class="muted"><?= e(t('wf.no_reviewers')) ?></td></tr><?php endif; ?></tbody></table><?php endif; ?>
+<?php if ($mgr): ?>
+<?php $open = $sub['status'] === 'queued' && (int)$round['id'] === (int)WorkflowService::currentRound($sid)['id']; $gr = [];
+foreach ($reviewers as $ra) { $live = in_array($ra['status'], ['awaiting_response', 'accepted'], true); $act = [];
+  if (in_array($ra['status'], ['review_submitted', 'thanked'], true)) $act[] = [t('rev.details'), url('review', 'details', [$sid, $ra['id']]), ['class' => 'preview']];
+  if ($open && $live) { $act[] = [t('rev.edit_deadlines'), url('review', 'edit', [$sid, $ra['id']])]; $act[] = [t('rev.remind'), url('review', 'remind', [$sid, $ra['id']]), ['post' => 1, 'class' => 'copy']]; $act[] = [t('rev.unassign'), url('review', 'unassign', [$sid, $ra['id']]), ['post' => 1, 'class' => 'delete']]; }
+  if ($open && $ra['status'] === 'review_submitted') $act[] = [t('rev.thank'), url('review', 'thank', [$sid, $ra['id']]), ['post' => 1, 'class' => 'copy']];
+  if ($open && in_array($ra['status'], ['cancelled', 'declined'], true)) $act[] = [t('rev.reinstate'), url('review', 'reinstate', [$sid, $ra['id']]), ['post' => 1, 'class' => 'copy']];
+  $gr[] = ['class' => trim((ReviewService::isOverdue($ra) ? 'be_overdue ' : '') . (in_array($ra['status'], ['cancelled', 'declined'], true) ? 'be_muted_row' : '')), 'cells' => [e(trim($ra['given_name'] . ' ' . $ra['family_name'])) . '<div class="muted be_small">' . e(t(ReviewService::METHODS[$ra['review_method']])) . '</div>',
+    '<span class="be_chip be_chip_' . e($ra['status']) . '">' . e(ReviewService::statusLabel($ra)) . '</span>', e(fmt_date($ra['date_response_due'])), e(fmt_date($ra['date_due'])), $ra['recommendation'] ? e(t(ReviewService::RECOMMENDATIONS[$ra['recommendation']])) : '-'], 'actions' => $act]; } ?>
+<?= grid(t('wf.reviewers'), $open ? [[t('rev.add'), url('review', 'search', [$sid])]] : [], [[t('wf.reviewer'), 28], [t('wf.status'), 18], [t('wf.response_due'), 18], [t('wf.review_due'), 18], [t('wf.recommendation'), 18]], $gr, t('wf.no_reviewers')) ?><?php endif; ?>
 
-<h2><?= e(t('wf.revisions')) ?></h2>
-<table class="be_table"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wf.by')) ?></th><th><?= e(t('wf.uploaded')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($revisions as $f): ?><tr><td><a href="<?= e(url('workflow', 'download', [$sid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e($f['uploader']) ?></td><td><?= e(fmt_date($f['created_at'])) ?></td>
-<td class="be_actions"><?php if ($mgr || ((int)$f['uploader_user_id'] === $me && $canRevise)): ?><form class="be_inline" method="post" action="<?= e(url('workflow', 'deleteFile', [$sid, $f['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form><?php endif; ?></td></tr><?php endforeach; ?>
-<?php if (!$revisions): ?><tr><td colspan="4" class="muted"><?= e(t('wf.no_revisions')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $gr = []; foreach ($revisions as $f) $gr[] = ['cells' => ['<a href="' . e(url('workflow', 'download', [$sid, $f['id']])) . '">' . e($f['original_name']) . '</a>', e($f['uploader']), e(fmt_date($f['created_at']))], 'actions' => ($mgr || ((int)$f['uploader_user_id'] === $me && $canRevise)) ? [[t('wizard.delete'), url('workflow', 'deleteFile', [$sid, $f['id']]), ['post' => 1, 'class' => 'delete']]] : []]; ?>
+<?= grid(t('wf.revisions'), [], [[t('wizard.file'), 50], [t('wf.by'), 25], [t('wf.uploaded'), 25]], $gr, t('wf.no_revisions')) ?>
 <?php if ($canRevise): ?><div class="be_notice"><?= e(t('wf.revisions_requested')) ?></div><form class="be_upload be_inline_form" method="post" enctype="multipart/form-data" action="<?= e(url('workflow', 'uploadFile', [$sid, $round['id']])) ?>"><?= csrf_field() ?><input type="file" name="file" required><button class="be_btn be_btn_primary" type="submit"><?= e(t('wf.upload_revision')) ?></button></form><?php endif; ?>
 
 <?php if ($roundDecisions): ?><h2><?= e(t('wf.decisions')) ?></h2><ul class="be_list"><?php foreach ($roundDecisions as $d): ?><li><span><?= e(t('dec.' . $d['decision'])) ?> <span class="muted">&mdash; <?= e($mgr ? $d['who'] : t('wf.editor')) ?></span></span><span class="muted"><?= e(fmt_date($d['date_decided'])) ?></span></li><?php endforeach; ?></ul><?php endif; ?>
 <?php endif; ?>
 
 <?php elseif ($stage === 4): ?>
-<h2><?= e(t('wf.copyedit_files')) ?></h2>
-<table class="be_table"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wizard.component')) ?></th><th><?= e(t('wf.uploaded')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($draftFiles as $f): ?><tr><td><a href="<?= e(url('workflow', 'download', [$sid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e($f['genre']) ?></td><td><?= e(fmt_date($f['created_at'])) ?></td><td class="be_actions"><?php if ($canWork): ?><form class="be_inline" method="post" action="<?= e(url('workflow', 'deleteFile', [$sid, $f['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form><?php endif; ?></td></tr><?php endforeach; ?>
-<?php if (!$draftFiles): ?><tr><td colspan="4" class="muted"><?= e(t('wf.no_copyedit_files')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $gr = []; foreach ($draftFiles as $f) $gr[] = ['cells' => ['<a href="' . e(url('workflow', 'download', [$sid, $f['id']])) . '">' . e($f['original_name']) . '</a>', e($f['genre']), e(fmt_date($f['created_at']))], 'actions' => $canWork ? [[t('wizard.delete'), url('workflow', 'deleteFile', [$sid, $f['id']]), ['post' => 1, 'class' => 'delete']]] : []]; ?>
+<?= grid(t('wf.copyedit_files'), [], [[t('wizard.file'), 50], [t('wizard.component'), 25], [t('wf.uploaded'), 25]], $gr, t('wf.no_copyedit_files')) ?>
 <?php if ($canWork && $sub['status'] === 'queued'): ?><form class="be_upload be_inline_form" method="post" enctype="multipart/form-data" action="<?= e(url('workflow', 'uploadStageFile', [$sid, 4])) ?>"><?= csrf_field() ?><select name="genre"><option value="Draft"><?= e(t('wf.genre_draft')) ?></option><option value="Copyedited"><?= e(t('wf.genre_copyedited')) ?></option></select><input type="file" name="file" required><button class="be_btn" type="submit"><?= e(t('wf.upload_file')) ?></button></form><?php endif; ?>
-<?php if ($mgr && $candidates && $sub['status'] === 'queued'): ?><h2><?= e(t('wf.select_files')) ?></h2><table class="be_table"><tbody><?php foreach ($candidates as $f): ?><tr><td><?= e($f['original_name']) ?> <span class="muted">(<?= e($f['genre']) ?>)</span></td><td class="be_actions"><form class="be_inline" method="post" action="<?= e(url('workflow', 'promote', [$sid, $f['id'], 'copyedit'])) ?>"><?= csrf_field() ?><button class="be_btn" type="submit"><?= e(t('wf.add_to_copyediting')) ?></button></form></td></tr><?php endforeach; ?></tbody></table><?php endif; ?>
+<?php if ($mgr && $candidates && $sub['status'] === 'queued'): ?><?php $gr = []; foreach ($candidates as $f) $gr[] = ['cells' => [e($f['original_name']) . ' <span class="muted">(' . e($f['genre']) . ')</span>'], 'actions' => [[t('wf.add_to_copyediting'), url('workflow', 'promote', [$sid, $f['id'], 'copyedit']), ['post' => 1, 'class' => 'copy']]]]; ?>
+<?= grid(t('wf.select_files'), [], [[t('wizard.file'), 100]], $gr) ?><?php endif; ?>
 
 <?php elseif ($stage === 5): ?>
-<h2><?= e(t('wf.prod_files')) ?></h2>
-<table class="be_table"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wf.uploaded')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($prodFiles as $f): ?><tr><td><a href="<?= e(url('workflow', 'download', [$sid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e(fmt_date($f['created_at'])) ?></td><td class="be_actions"><?php if ($canWork && $sub['status'] !== 'published'): ?><form class="be_inline" method="post" action="<?= e(url('workflow', 'deleteFile', [$sid, $f['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form><?php endif; ?></td></tr><?php endforeach; ?>
-<?php if (!$prodFiles): ?><tr><td colspan="3" class="muted"><?= e(t('wf.no_prod_files')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $gr = []; foreach ($prodFiles as $f) $gr[] = ['cells' => ['<a href="' . e(url('workflow', 'download', [$sid, $f['id']])) . '">' . e($f['original_name']) . '</a>', e(fmt_date($f['created_at']))], 'actions' => ($canWork && $sub['status'] !== 'published') ? [[t('wizard.delete'), url('workflow', 'deleteFile', [$sid, $f['id']]), ['post' => 1, 'class' => 'delete']]] : []]; ?>
+<?= grid(t('wf.prod_files'), [], [[t('wizard.file'), 70], [t('wf.uploaded'), 30]], $gr, t('wf.no_prod_files')) ?>
 <?php if ($canWork && !in_array($sub['status'], ['published', 'declined'], true)): ?><form class="be_upload be_inline_form" method="post" enctype="multipart/form-data" action="<?= e(url('workflow', 'uploadStageFile', [$sid, 5])) ?>"><?= csrf_field() ?><input type="file" name="file" required><button class="be_btn" type="submit"><?= e(t('wf.upload_file')) ?></button></form><?php endif; ?>
 <h2><?= e(t('wf.galleys')) ?> <?php if ($mgr): ?><a class="be_btn be_small" href="<?= e(url('publication', 'index', [$sid, 'galleys'])) ?>"><?= e(t('wf.manage_galleys')) ?></a><?php endif; ?></h2>
 <ul class="be_list"><?php foreach ($galleys as $g): ?><li><span><?= e($g['label']) ?> <span class="muted"><?= e($g['original_name'] ?: $g['remote_url']) ?></span></span></li><?php endforeach; ?><?php if (!$galleys): ?><li class="muted"><?= e(t('pub.no_galleys')) ?></li><?php endif; ?></ul>

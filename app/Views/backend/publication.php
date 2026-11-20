@@ -19,12 +19,10 @@ $er = fn($k) => $errors[$k] ?? ''; ?>
 <div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></fieldset></form>
 
 <?php elseif ($tab === 'contributors'): ?>
-<table class="be_table"><thead><tr><th><?= e(t('users.name')) ?></th><th><?= e(t('reg.email')) ?></th><th><?= e(t('wizard.role')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($authors as $a): ?><tr><td><?= e(trim($a['given_name'] . ' ' . $a['family_name'])) ?><?= (int)$pub['primary_contact_id'] === (int)$a['id'] ? ' <span class="be_badge_stage">' . e(t('wizard.primary')) . '</span>' : '' ?><div class="muted be_small"><?= e($a['affiliation']) ?></div></td><td><?= e($a['email']) ?></td><td><?= e(t('wizard.role_' . $a['user_group'])) ?></td>
-<td class="be_actions"><?php if (!$locked): ?><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('publication', 'contributor', [$sid, $a['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
-<?php foreach (['up' => '&uarr;', 'down' => '&darr;'] as $dir => $sym): ?><button class="be_btn" type="submit" formaction="<?= e(url('publication', 'moveContributor', [$sid, $a['id'], $dir])) ?>"><?= $sym ?></button><?php endforeach; ?>
-<?php if (count($authors) > 1): ?><button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('publication', 'deleteContributor', [$sid, $a['id']])) ?>"><?= e(t('wizard.delete')) ?></button><?php endif; ?></form><?php endif; ?></td></tr><?php endforeach; ?></tbody></table>
-<?php if (!$locked): ?><p><a class="be_btn be_btn_primary" href="<?= e(url('publication', 'contributor', [$sid])) ?>"><?= e(t('wizard.add_contributor')) ?></a></p><?php endif; ?>
+<?php $gr = []; foreach ($authors as $a) $gr[] = ['cells' => [e(trim($a['given_name'] . ' ' . $a['family_name'])) . ((int)$pub['primary_contact_id'] === (int)$a['id'] ? ' <span class="be_badge_stage">' . e(t('wizard.primary')) . '</span>' : '') . '<div class="muted be_small">' . e($a['affiliation']) . '</div>', e($a['email']), e(t('wizard.role_' . $a['user_group']))], 'actions' => $locked ? [] : array_merge(
+  [[t('wizard.edit'), url('publication', 'contributor', [$sid, $a['id']])], [t('grid.move_up'), url('publication', 'moveContributor', [$sid, $a['id'], 'up']), ['post' => 1, 'class' => 'order_items']], [t('grid.move_down'), url('publication', 'moveContributor', [$sid, $a['id'], 'down']), ['post' => 1, 'class' => 'order_items']]],
+  count($authors) > 1 ? [[t('wizard.delete'), url('publication', 'deleteContributor', [$sid, $a['id']]), ['post' => 1, 'class' => 'delete']]] : [])]; ?>
+<?= grid(t('wizard.contributors'), $locked ? [] : [[t('wizard.add_contributor'), url('publication', 'contributor', [$sid])]], [[t('users.name'), 40], [t('reg.email'), 35], [t('wizard.role'), 25]], $gr) ?>
 
 <?php elseif ($tab === 'metadata'): ?>
 <form class="cmp_form be_form" method="post" action="<?= e($save) ?>"><?= csrf_field() ?><fieldset <?= $locked ? 'disabled' : '' ?> class="be_plain"><div class="fields">
@@ -41,11 +39,12 @@ $er = fn($k) => $errors[$k] ?? ''; ?>
 <div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></fieldset></form>
 
 <?php elseif ($tab === 'galleys'): ?>
-<table class="be_table"><thead><tr><th><?= e(t('pub.label')) ?></th><th><?= e(t('wizard.file')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($galleys as $g): ?><tr><td><?= e($g['label']) ?></td><td><?php if ($g['submission_file_id']): ?><a href="<?= e(url('workflow', 'download', [$sid, $g['submission_file_id']])) ?>"><?= e($g['original_name']) ?></a> <span class="muted">(<?= e(number_format($g['size'] / 1024, 1)) ?> KB)</span><?php else: ?><a href="<?= e($g['remote_url']) ?>" target="_blank" rel="noopener"><?= e($g['remote_url']) ?></a><?php endif; ?></td>
-<td class="be_actions"><?php if (!$locked): ?><form class="be_inline" method="post" action="<?= e(url('publication', 'renameGalley', [$sid, $g['id']])) ?>"><?= csrf_field() ?><input type="text" name="label" value="<?= e($g['label']) ?>" maxlength="30" aria-label="<?= e(t('pub.label')) ?>"><?php if (\App\Services\MetadataService::publisherIdOn('galley')): ?> <input type="text" name="publisher_id" value="<?= e($g['publisher_id'] ?? '') ?>" maxlength="255" placeholder="<?= e(t('pubid.label')) ?>" aria-label="<?= e(t('pubid.label')) ?>"><?php endif; ?><button class="be_btn" type="submit"><?= e(t('wizard.rename')) ?></button></form>
-<form class="be_inline" method="post" action="<?= e(url('publication', 'deleteGalley', [$sid, $g['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form><?php endif; ?></td></tr><?php endforeach; ?>
-<?php if (!$galleys): ?><tr><td colspan="3" class="muted"><?= e(t('pub.no_galleys')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $gr = []; foreach ($galleys as $g) { $act = [];
+  if (!$locked) { $pid = \App\Services\MetadataService::publisherIdOn('galley') ? ' <input type="text" name="publisher_id" value="' . e($g['publisher_id'] ?? '') . '" maxlength="255" placeholder="' . e(t('pubid.label')) . '" aria-label="' . e(t('pubid.label')) . '">' : '';
+    $act[] = ['', '', ['html' => '<input type="text" name="label" value="' . e($g['label']) . '" maxlength="30" aria-label="' . e(t('pub.label')) . '">' . $pid . '<button type="submit" class="pkp_controllers_linkAction pkp_linkaction_icon_edit" formaction="' . e(url('publication', 'renameGalley', [$sid, $g['id']])) . '">' . e(t('wizard.rename')) . '</button>']];
+    $act[] = [t('wizard.delete'), url('publication', 'deleteGalley', [$sid, $g['id']]), ['post' => 1, 'class' => 'delete']]; }
+  $gr[] = ['cells' => [e($g['label']), $g['submission_file_id'] ? '<a href="' . e(url('workflow', 'download', [$sid, $g['submission_file_id']])) . '">' . e($g['original_name']) . '</a> <span class="muted">(' . e(number_format($g['size'] / 1024, 1)) . ' KB)</span>' : '<a href="' . e($g['remote_url']) . '" target="_blank" rel="noopener">' . e($g['remote_url']) . '</a>'], 'actions' => $act]; } ?>
+<?= grid(t('wf.galleys'), [], [[t('pub.label'), 30], [t('wizard.file'), 70]], $gr, t('pub.no_galleys')) ?>
 <?php if (!$locked): ?><form class="cmp_form be_form be_upload" method="post" enctype="multipart/form-data" action="<?= e($act('addGalley')) ?>"><?= csrf_field() ?><div class="fields">
 <?= field(t('pub.label'), 'label', 'PDF', ['required' => true, 'maxlength' => 30, 'help' => t('pub.label_help')]) ?><div><label><span class="label"><?= e(t('wizard.choose_file')) ?></span><input type="file" name="file"></label></div>
 <?= field(t('pub.remote_url'), 'remote_url', '', ['help' => t('pub.remote_help')]) ?><?php if (\App\Services\MetadataService::publisherIdOn('galley')): ?><?= field(t('pubid.label'), 'publisher_id', '', ['maxlength' => 255]) ?><?php endif; ?></div><div class="buttons"><button class="be_btn be_btn_primary" type="submit"><?= e(t('pub.add_galley')) ?></button></div></form><?php endif; ?>

@@ -24,8 +24,8 @@ $su = fn($i) => url('reviewer', 'submission', [$aid, $i]); $blind = $ra['review_
 <div class="buttons"><a class="submit" href="<?= e($su(3)) ?>"><?= e(t('rflow.continue3')) ?></a></div>
 
 <?php elseif ($n === 3): ?>
-<h2><?= e(t('rflow.download_review')) ?></h2>
-<table class="be_table"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wizard.component')) ?></th></tr></thead><tbody><?php foreach ($files as $f): ?><tr><td><a href="<?= e(url('reviewer', 'download', [$aid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e($f['genre']) ?></td></tr><?php endforeach; ?><?php if (!$files): ?><tr><td colspan="2" class="muted"><?= e(t('wizard.no_files')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $gr = []; foreach ($files as $f) $gr[] = ['cells' => ['<a href="' . e(url('reviewer', 'download', [$aid, $f['id']])) . '">' . e($f['original_name']) . '</a>', e($f['genre'])]]; ?>
+<?= grid(t('rflow.download_review'), [], [[t('wizard.file'), 60], [t('wizard.component'), 40]], $gr, t('wizard.no_files')) ?>
 <form class="cmp_form be_form" method="post" action="<?= e(url('reviewer', 'saveReview', [$aid])) ?>"><?= csrf_field() ?><div class="fields">
 <?php if ($rfEls): ?><?php if ($rfForm['description']): ?><div class="be_notice"><?= rich($rfForm['description']) ?></div><?php endif; ?>
 <?php foreach ($rfEls as $el): ?><div class="rf_item"><span class="label"><?= strip_tags($el['question']) ?><?= $el['required'] ? ' <span class="required" aria-hidden="true">*</span>' : '' ?></span><?php if ($el['description']): ?><p class="muted"><?= strip_tags($el['description']) ?></p><?php endif; ?><?= \App\Services\ReviewFormService::input($el, $rfAns[(int)$el['id']] ?? '') ?></div>
@@ -35,8 +35,8 @@ $su = fn($i) => url('reviewer', 'submission', [$aid, $i]); $blind = $ra['review_
 <?php endif; ?>
 <?= field(t('wf.recommendation'), 'recommendation', $ra['recommendation'], ['type' => 'select', 'options' => array_map(fn($k) => t($k), ReviewService::RECOMMENDATIONS)]) ?></div>
 <div class="buttons"><a class="be_btn" href="<?= e($su(2)) ?>"><?= e(t('wizard.back')) ?></a><button class="be_btn" type="submit" name="action" value="save"><?= e(t('rflow.save_later')) ?></button><button class="submit" type="submit" name="action" value="submit" onclick="return confirm('<?= e(t('rflow.confirm_submit')) ?>')"><?= e(t('rflow.submit')) ?></button></div></form>
-<?php if (\App\Core\Settings::get('reviewerUploads', '1') === '1'): ?><h2><?= e(t('rflow.attachments')) ?></h2>
-<table class="be_table"><tbody><?php foreach ($attachments as $f): ?><tr><td><a href="<?= e(url('reviewer', 'download', [$aid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td class="be_actions"><form class="be_inline" method="post" action="<?= e(url('reviewer', 'deleteAttachment', [$aid, $f['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?></tbody></table>
+<?php if (\App\Core\Settings::get('reviewerUploads', '1') === '1'): ?><?php $gr = []; foreach ($attachments as $f) $gr[] = ['cells' => ['<a href="' . e(url('reviewer', 'download', [$aid, $f['id']])) . '">' . e($f['original_name']) . '</a>'], 'actions' => [[t('wizard.delete'), url('reviewer', 'deleteAttachment', [$aid, $f['id']]), ['post' => 1, 'class' => 'delete']]]]; ?>
+<?= grid(t('rflow.attachments'), [], [[t('wizard.file'), 100]], $gr) ?>
 <form class="be_upload be_inline_form" method="post" enctype="multipart/form-data" action="<?= e(url('reviewer', 'uploadAttachment', [$aid])) ?>"><?= csrf_field() ?><input type="file" name="file" required><button class="be_btn" type="submit"><?= e(t('wizard.upload')) ?></button></form><?php endif; ?>
 
 <?php else: ?>

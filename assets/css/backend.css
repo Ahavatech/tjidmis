@@ -205,3 +205,5 @@ form.is_busy button[type=submit],form.is_busy input[type=submit]{opacity:.6;curs
 .pkp_controllers_grid .grid_row_form .pkp_linkaction_icon_delete{color:#d00a6c}
 .pkp_controllers_grid .grid_row_form a{font-size:.85rem}
 .pkp_controllers_grid tbody.empty td{color:var(--muted);text-align:center}
+.pkp_controllers_grid .grid_row_form input[type=text]{padding:.25rem .4rem;border:1px solid #ccc;border-radius:4px;font-size:.85rem}
+.pkp_controllers_grid .gridRow.be_overdue td{background:#fff4f4}.pkp_controllers_grid .gridRow.be_muted_row td{opacity:.6}

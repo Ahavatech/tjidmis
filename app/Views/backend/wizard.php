@@ -25,11 +25,10 @@ $sid = $sub['id'] ?? null; $stepUrl = fn($i) => $sid ? url('submission', 'wizard
 <?php elseif ($n === 2): ?>
 <h2><?= e(t('wizard.upload_files')) ?></h2><p class="muted"><?= e(t('wizard.upload_intro')) ?></p>
 <?= $er('files') ? '<div class="cmp_notification error" role="alert">' . e($er('files')) . '</div>' : '' ?>
-<table class="be_table be_files"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wizard.component')) ?></th><th><?= e(t('wizard.size')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($files as $f): ?><tr><td><a href="<?= e(url('workflow', 'download', [$sid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e($f['genre']) ?></td><td><?= e(number_format($f['size'] / 1024, 1)) ?> KB</td>
-<td class="be_actions"><form method="post" action="<?= e(url('submission', 'renameFile', [$sid, $f['id']])) ?>" class="be_inline"><?= csrf_field() ?><input type="text" name="name" value="<?= e($f['original_name']) ?>" aria-label="<?= e(t('wizard.rename')) ?>"><button class="be_btn" type="submit"><?= e(t('wizard.rename')) ?></button></form>
-<form method="post" action="<?= e(url('submission', 'deleteFile', [$sid, $f['id']])) ?>" class="be_inline"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?>
-<?php if (!$files): ?><tr><td colspan="4" class="muted"><?= e(t('wizard.no_files')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $gr = []; foreach ($files as $f) $gr[] = ['cells' => ['<a href="' . e(url('workflow', 'download', [$sid, $f['id']])) . '">' . e($f['original_name']) . '</a>', e($f['genre']), e(number_format($f['size'] / 1024, 1)) . ' KB'], 'actions' => [
+  ['', '', ['html' => '<input type="text" name="name" value="' . e($f['original_name']) . '" aria-label="' . e(t('wizard.rename')) . '"><button type="submit" class="pkp_controllers_linkAction pkp_linkaction_icon_edit" formaction="' . e(url('submission', 'renameFile', [$sid, $f['id']])) . '">' . e(t('wizard.rename')) . '</button>']],
+  [t('wizard.delete'), url('submission', 'deleteFile', [$sid, $f['id']]), ['post' => 1, 'class' => 'delete']]]]; ?>
+<?= grid(t('wizard.files'), [], [[t('wizard.file'), 45], [t('wizard.component'), 30], [t('wizard.size'), 25]], $gr, t('wizard.no_files')) ?>
 <form class="cmp_form be_form be_upload" method="post" enctype="multipart/form-data" action="<?= e(url('submission', 'uploadFile', [$sid])) ?>"><?= csrf_field() ?>
 <div class="fields"><div><label><span class="label"><?= e(t('wizard.component')) ?></span><select name="component"><?php foreach ($components as $c): ?><option><?= e($c) ?></option><?php endforeach; ?></select></label></div>
 <div><label><span class="label"><?= e(t('wizard.choose_file')) ?></span><input type="file" name="file" required></label><span class="help"><?= e(t('wizard.file_types')) ?></span></div></div>
@@ -45,12 +44,11 @@ $sid = $sub['id'] ?? null; $stepUrl = fn($i) => $sid ? url('submission', 'wizard
   <?= field(t('wizard.abstract'), 'abstract', $_POST['abstract'] ?? strip_tags(str_replace(['</p>', '<br>'], "\n\n", (string)$sub['abstract'])), ['type' => 'textarea', 'rows' => 9, 'required' => true, 'error' => $er('abstract'), 'help' => t('wizard.abstract_help')]) ?>
   <fieldset class="be_fs"><legend><?= e(t('wizard.contributors')) ?></legend>
     <?= $er('authors') ? '<span class="field_error" role="alert">' . e($er('authors')) . '</span>' : '' ?>
-    <table class="be_table"><thead><tr><th><?= e(t('users.name')) ?></th><th><?= e(t('reg.email')) ?></th><th><?= e(t('wizard.role')) ?></th><th></th></tr></thead><tbody>
-    <?php foreach ($authors as $i => $a): ?><tr><td><?= e(trim($a['given_name'] . ' ' . $a['family_name'])) ?><?= (int)$sub['primary_contact_id'] === (int)$a['id'] ? ' <span class="be_badge_stage">' . e(t('wizard.primary')) . '</span>' : '' ?></td><td><?= e($a['email']) ?></td><td><?= e(t('wizard.role_' . $a['user_group'])) ?></td>
-      <td class="be_actions"><a class="be_btn" href="<?= e(url('submission', 'contributor', [$sid, $a['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
-      <?php foreach (['up' => '&uarr;', 'down' => '&darr;'] as $dir => $sym): ?><button class="be_btn" type="submit" formaction="<?= e(url('submission', 'moveContributor', [$sid, $a['id'], $dir])) ?>" formnovalidate aria-label="<?= e(t('wizard.move_' . $dir)) ?>"><?= $sym ?></button><?php endforeach; ?>
-      <button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('submission', 'deleteContributor', [$sid, $a['id']])) ?>" formnovalidate><?= e(t('wizard.delete')) ?></button></td></tr><?php endforeach; ?>
-    <?php if (!$authors): ?><tr><td colspan="4" class="muted"><?= e(t('wizard.no_contributors')) ?></td></tr><?php endif; ?></tbody></table>
+    <?php $gr = []; foreach ($authors as $a) $gr[] = ['cells' => [e(trim($a['given_name'] . ' ' . $a['family_name'])) . ((int)$sub['primary_contact_id'] === (int)$a['id'] ? ' <span class="be_badge_stage">' . e(t('wizard.primary')) . '</span>' : ''), e($a['email']), e(t('wizard.role_' . $a['user_group']))], 'actions' => [
+  [t('wizard.edit'), url('submission', 'contributor', [$sid, $a['id']])],
+  [t('grid.move_up'), url('submission', 'moveContributor', [$sid, $a['id'], 'up']), ['post' => 1, 'class' => 'order_items']], [t('grid.move_down'), url('submission', 'moveContributor', [$sid, $a['id'], 'down']), ['post' => 1, 'class' => 'order_items']],
+  [t('wizard.delete'), url('submission', 'deleteContributor', [$sid, $a['id']]), ['post' => 1, 'class' => 'delete']]]]; ?>
+<?= grid(t('wizard.contributors'), [], [[t('users.name'), 40], [t('reg.email'), 35], [t('wizard.role'), 25]], $gr, t('wizard.no_contributors'), true) ?>
     <button class="be_btn" type="submit" name="action" value="add_contributor" formnovalidate><?= e(t('wizard.add_contributor')) ?></button> <span class="muted"><?= e(t('wizard.contrib_note')) ?></span></fieldset>
   <?php foreach (array_keys(\App\Services\MetadataService::FIELDS) as $mf): if (!\App\Services\MetadataService::asked($mf)) continue; $col = \App\Services\MetadataService::column($mf); $shape = \App\Services\MetadataService::shape($mf); ?>
   <?= field(t('meta.' . $mf), 'meta_' . $mf, $_POST['meta_' . $mf] ?? \App\Services\MetadataService::toForm($mf, $sub[$col] ?? null), ['required' => \App\Services\MetadataService::required($mf), 'type' => $shape === 'refs' ? 'textarea' : 'text', 'rows' => 6, 'help' => $shape === 'list' ? t('wizard.keywords_help') : ($shape === 'refs' ? t('wizard.references_help') : ''), 'error' => $errors['meta_' . $mf] ?? '']) ?>
