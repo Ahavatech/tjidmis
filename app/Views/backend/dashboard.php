@@ -6,7 +6,6 @@ $filtersOn = $f['stage'] || $f['section'] || $f['incomplete'] || $f['overdue'] |
 <div class="be_page"><div class="be_pagehead"><h1><?= e(t('menu.submissions')) ?></h1></div>
 <ul class="be_tabs" role="tablist"><?php foreach ($tabs as $k => $l): ?><li class="<?= $k === $tab ? 'active' : '' ?>"><a href="<?= e(url('submissions', null, [], ['tab' => $k])) ?>"><?= e($l) ?><?php if ((int)$counts[$k] > 0): ?> <span class="be_count"><?= (int)$counts[$k] ?></span><?php endif; ?></a></li><?php endforeach; ?></ul>
 <div class="be_card">
-<div class="be_panelhead"><h2><?= e(t($panelTitle)) ?></h2><?php if ($canSubmit): ?><a class="be_btn be_btn_primary" href="<?= e(url('submission', 'wizard')) ?>"><?= e(t('dash.new_submission')) ?></a><?php endif; ?></div>
 <form class="be_filters be_dashfilters" method="get" action="<?= e(url('submissions')) ?>"><input type="hidden" name="tab" value="<?= e($tab) ?>">
   <input type="search" name="q" value="<?= e($f['q']) ?>" placeholder="<?= e(t('dash.search')) ?>" aria-label="<?= e(t('dash.search')) ?>">
   <button class="be_btn" type="submit"><?= e(t('dash.search_btn')) ?></button>
@@ -21,16 +20,17 @@ $filtersOn = $f['stage'] || $f['section'] || $f['incomplete'] || $f['overdue'] |
     <div class="be_filteractions"><button class="be_btn be_btn_primary" type="submit"><?= e(t('dash.apply')) ?></button><?php if ($filtersOn || $f['q']): ?> <a href="<?= e(url('submissions', null, [], ['tab' => $tab])) ?>"><?= e(t('dash.clear')) ?></a><?php endif; ?></div>
   </div></details>
 </form>
-<?php if (!$rows): ?><p class="be_empty muted"><?= e(t('dash.empty')) ?></p><?php else: ?>
-<ul class="be_sublist"><?php foreach ($rows as $r): $rev = !empty($r['review_only']); $revUrl = $rev ? url('reviewer', 'submission', [$r['my_review_id']]) : ''; $mineDraft = $r['status'] === 'incomplete' && (int)$r['created_by'] === \App\Core\Auth::id(); ?>
-<li class="be_subitem"><div class="be_subid">#<?= (int)$r['id'] ?></div>
-  <div class="be_subbody"><div class="be_subtitle"><a href="<?= e($rev ? $revUrl : ($mineDraft ? url('submission', 'wizard', [$r['id']]) : url('workflow', 'index', [$r['id']]))) ?>"><?= e($rev ? t('dash.review_assignment', $r['title']) : ($r['title'] ?: t('dash.untitled'))) ?></a></div>
-    <div class="be_submeta"><?= $rev ? e(t('dash.review_due', fmt_date($r['my_review_due']))) : e($r['authors_short'] ?: '-') ?><?= $r['section_title'] ? ' &middot; ' . e($r['section_title']) : '' ?><?= $r['open_discussions'] ? ' &middot; <span class="be_disc">' . e(t('dash.discussions', (int)$r['open_discussions'])) . '</span>' : '' ?></div>
-    <div class="be_substatus"><?= $rev ? e(t('review.status_' . $r['my_review_status'])) : e(SubmissionRepo::statusText($r)) ?></div></div>
-  <div class="be_subright"><?php if ($rev): ?><span class="be_badge_stage"><?= e(t('stage.review')) ?></span><a class="be_btn" href="<?= e($revUrl) ?>"><?= e(in_array($r['my_review_status'], ['review_submitted', 'thanked'], true) ? t('dash.view_review') : ($r['my_review_status'] === 'awaiting_response' ? t('dash.begin_review') : t('dash.continue_review'))) ?></a><?php elseif ($r['status'] === 'incomplete'): ?><span class="be_badge_stage be_badge_incomplete"><?= e(t('dash.incomplete_badge')) ?></span>
-    <?php elseif (in_array($r['status'], ['published', 'declined'], true)): ?><span class="be_badge_stage be_badge_<?= e($r['status']) ?>"><?= e(t('status.' . $r['status'])) ?></span>
-    <?php else: ?><span class="be_badge_stage"><?= e(t(SubmissionRepo::STAGES[$r['stage_id']] ?? 'stage.submission')) ?></span><?php endif; ?>
-    <?php if (!$rev): ?><a class="be_btn" href="<?= e($mineDraft ? url('submission', 'wizard', [$r['id']]) : url('workflow', 'index', [$r['id']])) ?>"><?= e($mineDraft ? t('dash.continue') : t('dash.view')) ?></a><?php endif; ?></div></li>
-<?php endforeach; ?></ul>
+<?php $gr = []; foreach ($rows as $r) { $rev = !empty($r['review_only']); $revUrl = $rev ? url('reviewer', 'submission', [$r['my_review_id']]) : ''; $mineDraft = $r['status'] === 'incomplete' && (int)$r['created_by'] === \App\Core\Auth::id();
+  $href = $rev ? $revUrl : ($mineDraft ? url('submission', 'wizard', [$r['id']]) : url('workflow', 'index', [$r['id']]));
+  $title = $rev ? t('dash.review_assignment', $r['title']) : ($r['title'] ?: t('dash.untitled'));
+  $meta = ($rev ? e(t('dash.review_due', fmt_date($r['my_review_due']))) : e($r['authors_short'] ?: '-')) . ($r['section_title'] ? ' &middot; ' . e($r['section_title']) : '') . ($r['open_discussions'] ? ' &middot; <span class="be_disc">' . e(t('dash.discussions', (int)$r['open_discussions'])) . '</span>' : '');
+  $status = $rev ? e(t('review.status_' . $r['my_review_status'])) : e(SubmissionRepo::statusText($r));
+  if ($rev) $badge = '<span class="be_badge_stage">' . e(t('stage.review')) . '</span>';
+  elseif ($r['status'] === 'incomplete') $badge = '<span class="be_badge_stage be_badge_incomplete">' . e(t('dash.incomplete_badge')) . '</span>';
+  elseif (in_array($r['status'], ['published', 'declined'], true)) $badge = '<span class="be_badge_stage be_badge_' . e($r['status']) . '">' . e(t('status.' . $r['status'])) . '</span>';
+  else $badge = '<span class="be_badge_stage">' . e(t(SubmissionRepo::STAGES[$r['stage_id']] ?? 'stage.submission')) . '</span>';
+  $label = $rev ? (in_array($r['my_review_status'], ['review_submitted', 'thanked'], true) ? t('dash.view_review') : ($r['my_review_status'] === 'awaiting_response' ? t('dash.begin_review') : t('dash.continue_review'))) : ($mineDraft ? t('dash.continue') : t('dash.view'));
+  $gr[] = ['cells' => ['#' . (int)$r['id'], '<a href="' . e($href) . '">' . e($title) . '</a><div class="muted be_small">' . $meta . '</div><div class="be_substatus">' . $status . '</div>', $badge], 'actions' => [[$label, $href, ['class' => 'preview']]]]; } ?>
+<?= grid(t($panelTitle), $canSubmit ? [[t('dash.new_submission'), url('submission', 'wizard')]] : [], [[t('dash.col_id'), 8], [t('wizard.title_f'), 72], [t('dash.col_stage'), 20]], $gr, t('dash.empty')) ?>
 <?= paginate($total, $page, $per, fn($n) => $qs(['page' => $n])) ?>
-<?php endif; ?></div></div>
+</div></div>

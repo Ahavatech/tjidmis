@@ -483,4 +483,5 @@ return [
     'about.oa_policy' => 'Open Access Policy', 'about.delayed_oa' => 'Delayed Open Access', 'about.delayed_oa_text' => 'The contents of this journal will be available in an open access format %s month(s) after an issue is published.', 'about.self_archive' => 'Author Self-Archive Policy',
     'grid.no_items' => 'No Items', 'grid.settings' => 'Settings', 'grid.edit' => 'Edit', 'grid.delete' => 'Delete', 'grid.order' => 'Order', 'grid.move_up' => 'Move up', 'grid.move_down' => 'Move down',
     'wizard.files' => 'Submission Files',
+    'dash.col_id' => 'ID', 'dash.col_stage' => 'Stage',
 ];
