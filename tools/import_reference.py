@@ -167,6 +167,15 @@ for iid, d in issues.items():
 if not current_id and archive_ids:
     current_id = archive_ids[0]
 
+# The brief: keep every issue but only 3 articles per issue. Prefer articles with a saved page and a PDF galley.
+PER_ISSUE = 3
+for d in issues.values():
+    flat = [(si, a) for si, (_, arts) in enumerate(d['secs']) for a in arts]
+    rank = lambda t: (0 if t[1]['galleys'] else 1, 0 if os.path.exists(os.path.join(REF, 'articles', str(t[1]['id']) + '.html')) else 1)
+    keep = {id(a) for _, a in sorted(flat, key=rank)[:PER_ISSUE]}
+    d['secs'] = [(st, [a for a in arts if id(a) in keep]) for st, arts in d['secs']]
+    d['secs'] = [(st, arts) for st, arts in d['secs'] if arts]
+
 for i, st in enumerate(sections, 1):
     w(f"INSERT INTO sections (id,journal_id,title,abbrev,policy,seq) VALUES ({i},1,{q(st)},{q(st[:3].upper())},'Section default policy',{i});")
 sec_id = {st: i for i, st in enumerate(sections, 1)}
