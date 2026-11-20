@@ -17,7 +17,13 @@ return [
     'reset.invalid' => 'Sorry, the link you clicked on has expired or is not valid. Please try resetting your password again.', 'reset.done' => 'Password has been updated successfully. Please login with updated password.',
     'reset.err_required' => 'You must enter your new password.', 'reset.failed' => 'Unable to complete password reset request because %s.',
     'reset.disabled' => 'Your account has been disabled. Please contact the administrator for more information',
-    // register
+    // register (messages as in OJS 3.3)
+    'form.errors_occurred' => 'Errors occurred processing this form',
+    'reg.err_username_exists' => 'The selected username is already in use by another user.', 'reg.err_username_required' => 'A username is required.',
+    'reg.err_password_required' => 'A password is required.', 'reg.err_given_required' => 'A given name is required.', 'reg.err_country_required' => 'A country is required.',
+    'reg.err_email_required' => 'A valid email address is required.', 'reg.err_email_exists' => 'The selected email address is already in use by another user.',
+    'reg.err_consent_required' => 'You must agree to the terms of the privacy statement.',
+    'reg.err_username_format' => 'The username can contain only lower-case alphanumeric characters, underscores, and hyphens, and must begin and end with an alphanumeric character.',
     'reg.profile' => 'Profile', 'reg.login' => 'Login', 'reg.given' => 'Given Name', 'reg.family' => 'Family Name', 'reg.affiliation' => 'Affiliation', 'reg.country' => 'Country',
     'reg.email' => 'Email', 'reg.username' => 'Username', 'reg.username_help' => 'Lowercase letters and numbers; hyphens and underscores allowed between them.',
     'reg.password' => 'Password', 'reg.password2' => 'Repeat password', 'reg.privacy_options' => 'Privacy Options',
@@ -27,8 +33,8 @@ return [
     'reg.email_taken' => 'An account with this email address already exists.', 'reg.username_taken' => 'This username is already taken.',
     'reg.username_rule' => 'Use 3 to 32 lowercase letters and numbers, optionally separated by hyphens or underscores.',
     'reg.consent_required' => 'You must agree to the privacy statement to register.', 'reg.welcome_note' => 'Welcome to %s. Your account has been created.',
-    'reg.complete' => 'Registration Complete', 'reg.complete_text' => 'Thank you for registering with this journal. You are now logged in.',
-    'reg.view_submissions' => 'View Submissions', 'reg.new_submission' => 'Make a new Submission', 'reg.edit_profile' => 'Edit My Profile', 'reg.continue' => 'Continue Browsing',
+    'reg.complete' => 'Registration complete', 'reg.complete_text' => 'Thanks for registering! What would you like to do next?',
+    'reg.view_submissions' => 'View Submissions', 'reg.new_submission' => 'Make a New Submission', 'reg.edit_profile' => 'Edit My Profile', 'reg.continue' => 'Continue Browsing',
     // back-end shell
     'menu.label' => 'Main menu', 'menu.submissions' => 'Submissions', 'menu.issues' => 'Issues', 'menu.announcements' => 'Announcements', 'menu.settings' => 'Settings',
     'menu.settings_journal' => 'Journal', 'menu.settings_website' => 'Website', 'menu.settings_workflow' => 'Workflow', 'menu.settings_distribution' => 'Distribution',

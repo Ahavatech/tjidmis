@@ -90,6 +90,15 @@ ok "$(curl -s -D - -o /dev/null "$BASE" | grep -ci '^X-Frame-Options: SAMEORIGIN
 P=$(python3 -c "import urllib.parse;print(urllib.parse.quote(\"<img src=x onerror=XSSMARK>\"))" 2>/dev/null || python -c "import urllib.parse;print(urllib.parse.quote('<img src=x onerror=XSSMARK>'))")
 ok "$(curl -s "$BASE/search/search?query=$P" | grep -c '<img src=x onerror=XSSMARK')" 0 "reflected XSS is escaped"
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/search/search?query=%27%20OR%201%3D1--")" 200 "SQL injection probe is harmless"
+echo "== registration (OJS 3.3 validation messages and success page)"
+FORM=/user/register; post regj /user/register -d givenName=A -d country=NG -d email=editor@example.com -d username=Editor -d password=abc -d password2=abd >/dev/null
+ok "$(has 'Errors occurred processing this form')" 1 "error list heading"
+ok "$(has 'The password must be at least 8 characters')" 1 "short password message"
+ok "$(has 'The selected email address is already in use')" 1 "duplicate email message"
+ok "$(has 'You must agree to the terms of the privacy statement')" 1 "consent message"
+post regj /user/register -d givenName=Smoke -d country=NG -d email=smoke-reg@example.com -d username=smokereg -d password=Abcdefg1 -d password2=Abcdefg1 -d privacyConsent=1 >/dev/null
+ok "$(loc | grep -c 'user/register')" 1 "success redirects to /user/register"
+code regj /user/register >/dev/null
 echo "== text is translated (a missing language key shows up as a raw key)"
 ok "$(curl -s "$BASE/user/register" | grep -c 'Privacy Options')" 1 "register page strings present"
 ok "$(curl -s "$BASE/login/lostPassword" | grep -c 'Registered user')" 1 "lost password strings present"
