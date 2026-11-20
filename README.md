@@ -2,14 +2,23 @@
 
 A school-project clone of https://jidmis.org/index.php/jidmis built as our own PHP 8.1 + MySQL app (no OJS install, no framework, PDO only).
 It reproduces the OJS 3.3 markup, URLs (`/index.php/jidmis/article/view/182`), CSS, fonts and content of the reference site.
-Not for public hosting under the real journal's identity.
+Local use only: not for public hosting under the real journal's identity.
 
-## Run it locally
+## Run it locally (Docker, recommended)
 ```
-php -S localhost:8000 router.php
+docker compose up -d                          # our app (PHP 8.1 + Apache) and MariaDB
+ADMIN_PASS='Your@Pass123' bash tools/dev_install.sh   # once; also resets the app database
 ```
-Open http://localhost:8000/install.php, enter a MySQL/MariaDB database and an admin account, tick "Load demo data" (issues, articles, demo users).
-Then visit http://localhost:8000/index.php/jidmis
+Open http://localhost:8081/index.php/jidmis (admin account: `admin` and the password you gave). Data lives in Docker volumes and survives restarts.
+
+The real OJS 3.3.0-22 can run beside it as a private reference for comparing behaviour (never the journal's identity on the public internet):
+```
+docker compose --profile reference up -d
+ADMIN_PASS='Your@Pass123' bash tools/dev_install_ojs.sh   # once; creates the journal "jidmis"
+```
+OJS is at http://localhost:8082/jidmis. Our OAI endpoint (`/oai`) and sitemap (`/sitemap`) follow its output.
+
+Without Docker: `php -S localhost:8000 router.php`, then open http://localhost:8000/install.php and enter a MySQL/MariaDB database and an admin account.
 
 ## Deploy to cPanel
 1. Upload the project (Extract in `public_html`).
@@ -42,4 +51,8 @@ The login page matches the live site exactly and shows no credentials; the accou
 4. Change or delete the demo accounts (`Demo@12345`).
 5. Set the `smtp` block, then check it: `php tools/smtp_check.php you@example.org`.
 6. Optional: `php tools/sanitizer_check.php` (XSS payloads), `php tools/audit_routes.php` (route list for review).
-7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 74 checks, submit to publish).
+7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 81 checks, submit to publish).
+
+## Also in place (after phase 9)
+OAI-PMH endpoint and XML sitemap (same shapes as OJS), automated review reminders run from page requests like OJS's acron (Workflow > Review > Setup), the back-end menu is ordered like OJS (Submissions, Issues, Settings, Statistics, Tools, Administration) and Statistics has Articles, Editorial Activity, Users and Reports (CSV downloads).
+Still different from OJS: the back-end look (own design), only the `oai_dc` metadata format, no Crossref deposit, English only.

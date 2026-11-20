@@ -11,7 +11,7 @@ class AnnouncementManageController {
     public function index(): void {
         $this->guard(); $per = 20; $page = max(1, (int)($_GET['page'] ?? 1)); $jid = $this->jid();
         $total = (int)DB::val('SELECT COUNT(*) FROM announcements WHERE journal_id=?', [$jid]);
-        View::render('backend/announcements_list', ['title' => t('menu.announcements'), 'menu' => 'announcements', 'rows' => DB::all("SELECT * FROM announcements WHERE journal_id=? ORDER BY date_posted DESC, id DESC LIMIT $per OFFSET " . (($page - 1) * $per), [$jid]),
+        View::render('backend/announcements_list', ['title' => t('menu.announcements'), 'menu' => 'settings', 'rows' => DB::all("SELECT * FROM announcements WHERE journal_id=? ORDER BY date_posted DESC, id DESC LIMIT $per OFFSET " . (($page - 1) * $per), [$jid]),
             'total' => $total, 'page' => $page, 'per' => $per, 'enabled' => Settings::get('announcementsEnabled', '1') === '1'], 'backend');
     }
     public function form(string $id = ''): void {
@@ -33,7 +33,7 @@ class AnnouncementManageController {
             }
             $a = array_merge($a ?: [], $p);
         }
-        View::render('backend/announcement_form', ['title' => t('ann.edit'), 'menu' => 'announcements', 'a' => $a ?: [], 'errors' => $errors, 'isEdit' => $id !== ''], 'backend');
+        View::render('backend/announcement_form', ['title' => t('ann.edit'), 'menu' => 'settings', 'a' => $a ?: [], 'errors' => $errors, 'isEdit' => $id !== ''], 'backend');
     }
     public function delete(string $id = ''): void {
         $this->guard(); if (Request::isPost()) { DB::exec('DELETE FROM announcements WHERE id=? AND journal_id=?', [(int)$id, $this->jid()]); flash(t('set.deleted')); }

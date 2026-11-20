@@ -24,7 +24,7 @@ class SettingsController {
         'workflow' => [
             'submission' => [['submissionsDisabled', 'checkbox'], ['authorGuidelines', 'html'], ['submissionChecklist', 'lines'], ['metaKeywords', 'checkbox'], ['metaReferences', 'checkbox'], ['components', 'lines']],
             'review' => [['defaultReviewMode', 'select', ['options' => ['anonymous' => 'review.method_anonymous', 'double_anonymous' => 'review.method_double', 'open' => 'review.method_open'], 'translate' => 1]],
-                ['numWeeksPerResponse', 'number', ['min' => 1, 'max' => 26]], ['numWeeksPerReview', 'number', ['min' => 1, 'max' => 52]], ['reviewGuidelines', 'html'], ['competingInterests', 'html'], ['reviewerUploads', 'checkbox']],
+                ['numWeeksPerResponse', 'number', ['min' => 1, 'max' => 26]], ['numWeeksPerReview', 'number', ['min' => 1, 'max' => 52]], ['numDaysBeforeInviteReminder', 'number', ['min' => 0, 'max' => 90]], ['numDaysBeforeSubmitReminder', 'number', ['min' => 0, 'max' => 90]], ['reviewGuidelines', 'html'], ['competingInterests', 'html'], ['reviewerUploads', 'checkbox']],
             'emails' => [['emailSignature', 'textarea'], ['mailFrom', 'email']],
         ],
         'distribution' => [

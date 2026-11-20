@@ -35,3 +35,4 @@ if (!headers_sent()) {   // baseline security headers on every response
     if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') header('Strict-Transport-Security: max-age=31536000');
 }
 App\Core\Auth::start();
+if (is_file(ROOT . '/install.lock') || is_file(ROOT . '/config.php')) App\Services\ScheduledTaskService::register();

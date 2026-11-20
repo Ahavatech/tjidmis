@@ -31,7 +31,7 @@ class UsersController {
         $total = (int)DB::val("SELECT COUNT(*) FROM users u WHERE $where", $cp);
         $rows = DB::all("SELECT u.id,u.username,u.email,u.given_name,u.family_name,u.disabled,u.last_login_at, GROUP_CONCAT(DISTINCT g.name ORDER BY g.id SEPARATOR ', ') roles
             FROM users u LEFT JOIN user_user_groups x ON x.user_id=u.id LEFT JOIN user_groups g ON g.id=x.user_group_id AND (g.journal_id IS NULL OR g.journal_id=?) WHERE $where GROUP BY u.id ORDER BY u.family_name, u.given_name LIMIT $per OFFSET " . (($page - 1) * $per), $p);
-        View::render('backend/users', ['title' => t('menu.users'), 'menu' => 'users', 'sub' => 'users', 'rows' => $rows, 'q' => $q, 'role' => $role, 'groups' => $this->assignable(), 'total' => $total, 'page' => $page, 'per' => $per, 'me' => Auth::id()], 'backend');
+        View::render('backend/users', ['title' => t('menu.users'), 'menu' => 'settings', 'sub' => 'users', 'rows' => $rows, 'q' => $q, 'role' => $role, 'groups' => $this->assignable(), 'total' => $total, 'page' => $page, 'per' => $per, 'me' => Auth::id()], 'backend');
     }
     private function validate(array $p, ?array $u, bool $creating): array {
         $e = []; $email = strtolower(trim((string)($p['email'] ?? ''))); $uname = strtolower(trim((string)($p['username'] ?? '')));
@@ -63,7 +63,7 @@ class UsersController {
             }
             $u = array_merge($u ?: [], $p);
         }
-        View::render('backend/user_form', ['title' => $u && !empty($u['id']) ? t('users.edit') : t('users.add'), 'menu' => 'users', 'sub' => 'users', 'u' => $u ?: [], 'errors' => $errors, 'groups' => $groups, 'isEdit' => $id !== '', 'chosen' => array_map('intval', (array)($_POST['groups'] ?? []))], 'backend');
+        View::render('backend/user_form', ['title' => $u && !empty($u['id']) ? t('users.edit') : t('users.add'), 'menu' => 'settings', 'sub' => 'users', 'u' => $u ?: [], 'errors' => $errors, 'groups' => $groups, 'isEdit' => $id !== '', 'chosen' => array_map('intval', (array)($_POST['groups'] ?? []))], 'backend');
     }
     public function editRoles(string $id = ''): void {
         $u = $this->user($id); if ($this->protectedAdmin($u)) WorkflowController::deny(403); $groups = $this->assignable(); $gids = array_map('intval', array_column($groups, 'id'));
@@ -76,7 +76,7 @@ class UsersController {
             foreach ($new as $g) DB::exec('INSERT IGNORE INTO user_user_groups (user_id,user_group_id) VALUES (?,?)', [$u['id'], $g]);
             flash(t('users.roles_saved')); redirect(url('users'));
         }
-        View::render('backend/user_roles', ['title' => t('users.edit_roles'), 'menu' => 'users', 'sub' => 'users', 'u' => $u, 'groups' => $groups, 'chosen' => array_map('intval', array_column(DB::all('SELECT user_group_id FROM user_user_groups WHERE user_id=?', [$u['id']]), 'user_group_id'))], 'backend');
+        View::render('backend/user_roles', ['title' => t('users.edit_roles'), 'menu' => 'settings', 'sub' => 'users', 'u' => $u, 'groups' => $groups, 'chosen' => array_map('intval', array_column(DB::all('SELECT user_group_id FROM user_user_groups WHERE user_id=?', [$u['id']]), 'user_group_id'))], 'backend');
     }
     public function email(string $id = ''): void {
         $u = $this->user($id); $errors = [];
@@ -85,7 +85,7 @@ class UsersController {
             if ($sub === '') $errors['subject'] = t('form.required_field'); if ($body === '') $errors['body'] = t('form.required_field');
             if (!$errors) { Mailer::send($u['email'], mb_substr($sub, 0, 255), $body); flash(t('users.emailed', $u['email'])); redirect(url('users')); }
         }
-        View::render('backend/user_email', ['title' => t('users.email'), 'menu' => 'users', 'sub' => 'users', 'u' => $u, 'errors' => $errors], 'backend');
+        View::render('backend/user_email', ['title' => t('users.email'), 'menu' => 'settings', 'sub' => 'users', 'u' => $u, 'errors' => $errors], 'backend');
     }
     public function toggle(string $id = ''): void {
         $u = $this->user($id);
@@ -123,11 +123,11 @@ class UsersController {
         }
         $groups = DB::all('SELECT * FROM user_groups WHERE journal_id=? ORDER BY id', [$jid]); $st = [];
         foreach (DB::all('SELECT * FROM user_group_stages') as $r) $st[$r['user_group_id']][$r['stage_id']] = true;
-        View::render('backend/roles_grid', ['title' => t('users.roles'), 'menu' => 'users', 'sub' => 'roles', 'groups' => $groups, 'st' => $st], 'backend');
+        View::render('backend/roles_grid', ['title' => t('users.roles'), 'menu' => 'settings', 'sub' => 'roles', 'groups' => $groups, 'st' => $st], 'backend');
     }
     public function access(): void {
         $this->guard();
         if (Request::isPost()) { Settings::setSite('allowRegistration', empty($_POST['allowRegistration']) ? '0' : '1'); Settings::setSite('requireConsent', empty($_POST['requireConsent']) ? '0' : '1'); flash(t('profile.saved')); redirect(url('users', 'access')); }
-        View::render('backend/site_access', ['title' => t('users.access'), 'menu' => 'users', 'sub' => 'access', 'allow' => Settings::site('allowRegistration', '1') === '1', 'consent' => Settings::site('requireConsent', '1') === '1'], 'backend');
+        View::render('backend/site_access', ['title' => t('users.access'), 'menu' => 'settings', 'sub' => 'access', 'allow' => Settings::site('allowRegistration', '1') === '1', 'consent' => Settings::site('requireConsent', '1') === '1'], 'backend');
     }
 }

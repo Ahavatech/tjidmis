@@ -45,6 +45,7 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 <?php elseif ($tab === 'access'): ?><p><?= e(t('set.access_text')) ?></p>
 
 <?php else: ?>
+<?php if ($area === 'website' && $tab === 'announcements'): ?><p><a class="be_btn be_btn_primary" href="<?= e(url('manageAnnouncements')) ?>"><?= e(t('menu.announcements')) ?></a></p><?php endif; ?>
 <form class="cmp_form be_form" method="post" action="<?= e($post) ?>"<?= $multipart ? ' enctype="multipart/form-data"' : '' ?>><?= csrf_field() ?><div class="fields">
 <?php foreach ($fields as $f): [$k, $type] = $f; $o = $f[2] ?? []; $val = $values[$k] ?? ''; ?>
 <?php switch ($type):

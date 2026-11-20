@@ -90,6 +90,14 @@ ok "$(curl -s -D - -o /dev/null "$BASE" | grep -ci '^X-Frame-Options: SAMEORIGIN
 P=$(python3 -c "import urllib.parse;print(urllib.parse.quote(\"<img src=x onerror=XSSMARK>\"))" 2>/dev/null || python -c "import urllib.parse;print(urllib.parse.quote('<img src=x onerror=XSSMARK>'))")
 ok "$(curl -s "$BASE/search/search?query=$P" | grep -c '<img src=x onerror=XSSMARK')" 0 "reflected XSS is escaped"
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/search/search?query=%27%20OR%201%3D1--")" 200 "SQL injection probe is harmless"
+echo "== indexing feeds and reports (same shapes as OJS 3.3)"
+ok "$(curl -s "$BASE/oai?verb=Identify" | grep -c '<repositoryName>')" 1 "OAI Identify"
+ok "$(curl -s "$BASE/oai?verb=ListSets" | grep -c 'setSpec')" 2 "OAI sets (journal and Articles)"
+ok "$(curl -s "$BASE/oai?verb=GetRecord&identifier=oai:ojs2.jidmis.org:article/182&metadataPrefix=oai_dc" | grep -c '<dc:title')" 1 "OAI record in Dublin Core"
+ok "$(curl -s "$BASE/oai?verb=Nope" | grep -c 'code="badVerb"')" 1 "OAI bad verb error"
+ok "$(curl -s "$BASE/sitemap" | grep -c 'article/view/182')" 1 "sitemap lists articles"
+ok "$(code admin /statistics/editorial)" 200 "statistics: editorial activity"
+ok "$(curl -s -b "$T/admin" "$BASE/statistics/report/users" | head -1 | grep -c 'Username')" 1 "users report (CSV)"
 echo "== registration (OJS 3.3 validation messages and success page)"
 FORM=/user/register; post regj /user/register -d givenName=A -d country=NG -d email=editor@example.com -d username=Editor -d password=abc -d password2=abd >/dev/null
 ok "$(has 'Errors occurred processing this form')" 1 "error list heading"
