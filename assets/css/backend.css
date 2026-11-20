@@ -182,3 +182,26 @@ form.is_busy button[type=submit],form.is_busy input[type=submit]{opacity:.6;curs
 .be_filterpanel{flex:1 1 100%}.be_filterpanel summary{display:inline-block;cursor:pointer;list-style:none}.be_filterpanel summary::-webkit-details-marker{display:none}
 .be_filtergroups{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:1rem;padding:1rem 0}.be_filtergroups fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:.35rem}
 .be_filtergroups legend{font-weight:600;margin-bottom:.3rem;padding:0}.be_filteractions{grid-column:1/-1}
+
+/* OJS-style grids */
+.pkp_controllers_grid{margin:1rem 0}
+.pkp_controllers_grid .header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--theme-color);padding-bottom:.4rem}
+.pkp_controllers_grid .header h4{margin:0;font-family:var(--font-head);font-size:1rem}
+.pkp_controllers_grid .actions{list-style:none;margin:0;padding:0;display:flex;gap:1rem}
+.pkp_controllers_grid .actions a{font-size:.85rem;font-weight:700}
+.pkp_controllers_grid table{width:100%;font-size:.9rem;border-collapse:collapse}
+.pkp_controllers_grid th{text-align:left;font-family:var(--font-head);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:.5rem;border-bottom:1px solid var(--line)}
+.pkp_controllers_grid td{padding:.55rem .5rem;border-bottom:1px solid var(--line);vertical-align:middle}
+.pkp_controllers_grid .gridRow.has_extras td.first_column{position:relative;padding-left:1.6rem}
+.pkp_controllers_grid .show_extras{position:absolute;left:.4rem;top:50%;width:.8rem;height:.8rem;margin-top:-.4rem}
+.pkp_controllers_grid .show_extras:before{content:"\25B8";position:absolute;left:0;top:-.15rem;color:var(--muted);font-size:.9rem;line-height:1}
+.pkp_controllers_grid .gridRow.expanded .show_extras:before{content:"\25BE"}
+.pkp_controllers_grid .row_controls{display:none;background:#f7f7f7}
+.pkp_controllers_grid .row_controls.expanded{display:table-row}
+.pkp_controllers_grid .row_controls td{padding:.4rem .5rem .4rem 1.6rem}
+.pkp_controllers_grid .grid_row_form{display:flex;gap:1rem;margin:0}
+.pkp_controllers_grid .grid_row_form button{background:none;border:0;padding:0;font:inherit;font-size:.85rem;color:var(--link,#006798);cursor:pointer;text-decoration:underline}
+.pkp_controllers_grid .grid_row_form button[disabled]{color:var(--muted);cursor:default;text-decoration:none}
+.pkp_controllers_grid .grid_row_form .pkp_linkaction_icon_delete{color:#d00a6c}
+.pkp_controllers_grid .grid_row_form a{font-size:.85rem}
+.pkp_controllers_grid tbody.empty td{color:var(--muted);text-align:center}

@@ -481,4 +481,5 @@ return [
     'set.delayedOpenAccessDuration' => 'Delayed Open Access', 'set.delayedOpenAccessDuration_help' => 'Subscription journals can provide \'delayed open access\' to their published content, as well as permit \'author self-archiving\' (both of which increase readership and citation of content). Months after an issue is published until it becomes open access; 0 for none.',
     'set.delayedOpenAccessPolicy' => 'Delayed Open Access Policy', 'set.authorSelfArchivePolicy' => 'Author Self-Archive Policy',
     'about.oa_policy' => 'Open Access Policy', 'about.delayed_oa' => 'Delayed Open Access', 'about.delayed_oa_text' => 'The contents of this journal will be available in an open access format %s month(s) after an issue is published.', 'about.self_archive' => 'Author Self-Archive Policy',
+    'grid.no_items' => 'No Items', 'grid.settings' => 'Settings', 'grid.edit' => 'Edit', 'grid.delete' => 'Delete', 'grid.order' => 'Order', 'grid.move_up' => 'Move up', 'grid.move_down' => 'Move down',
 ];

@@ -4,9 +4,6 @@
 <?= field(t('rf.title'), 'title', $v('title'), ['required' => true, 'maxlength' => 255, 'error' => $er('title')]) ?>
 <?= field(t('rf.description'), 'description', $v('description'), ['type' => 'textarea', 'rows' => 6]) ?>
 </div><div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button><a href="<?= e(url('settings', 'index', ['workflow', 'reviewForms'])) ?>"><?= e(t('wizard.cancel')) ?></a></div></form></div>
-<?php if (!empty($f['id'])): ?><div class="be_card"><h3 class="be_group"><?= e(t('rf.items')) ?></h3>
-<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'reviewFormItem', [$f['id']])) ?>"><?= e(t('rf.item_create')) ?></a></p>
-<table class="be_table"><thead><tr><th><?= e(t('rf.item')) ?></th><th><?= e(t('rf.item_type')) ?></th><th><?= e(t('rf.required')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($items as $it): ?><tr><td><a href="<?= e(url('content', 'reviewFormItem', [$f['id'], $it['id']])) ?>"><?= strip_tags($it['question']) ?></a></td><td><?= e(t(RF::TYPES[$it['element_type']])) ?></td><td><?= $it['required'] ? e(t('rf.yes')) : e(t('rf.no')) ?></td>
-<td><form method="post" class="be_inline"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'reviewFormItemDelete', [$f['id'], $it['id']])) ?>" onclick="return confirm('<?= e($inUse ? t('rf.confirm_item_delete') : t('rf.confirm_delete')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr>
-<?php endforeach; ?><?php if (!$items): ?><tr><td colspan="4" class="muted"><?= e(t('rf.items_none')) ?></td></tr><?php endif; ?></tbody></table></div><?php endif; ?></div>
+<?php if (!empty($f['id'])): ?><div class="be_card"><?php $rows = []; foreach ($items as $it) $rows[] = ['cells' => [strip_tags($it['question']), e(t(RF::TYPES[$it['element_type']])), $it['required'] ? e(t('rf.yes')) : e(t('rf.no'))], 'actions' => [
+  [t('wizard.edit'), url('content', 'reviewFormItem', [$f['id'], $it['id']])], [t('wizard.delete'), url('content', 'reviewFormItemDelete', [$f['id'], $it['id']]), ['post' => 1, 'class' => 'delete', 'confirm' => $inUse ? t('rf.confirm_item_delete') : t('rf.confirm_delete')]]]]; ?>
+<?= grid(t('rf.items'), [[t('rf.item_create'), url('content', 'reviewFormItem', [$f['id']])]], [[t('rf.item'), 50], [t('rf.item_type'), 30], [t('rf.required'), 20]], $rows, t('rf.items_none')) ?></div><?php endif; ?></div>

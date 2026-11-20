@@ -31,37 +31,33 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 
 <?php elseif ($tab === 'reviewForms'): ?>
 <p class="muted"><?= e(t('rf.list_description')) ?></p>
-<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'reviewForm')) ?>"><?= e(t('rf.create')) ?></a></p>
-<table class="be_table"><thead><tr><th><?= e(t('rf.title')) ?></th><th><?= e(t('rf.in_review')) ?></th><th><?= e(t('rf.completed')) ?></th><th><?= e(t('rf.active')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($forms as $f): ?><tr><td><a href="<?= e(url('content', 'reviewForm', [$f['id']])) ?>"><?= e($f['title']) ?></a></td><td><?= (int)$f['in_review'] ?></td><td><?= (int)$f['completed'] ?></td><td><?= $f['active'] ? e(t('rf.yes')) : e(t('rf.no')) ?></td>
-<td><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'reviewFormPreview', [$f['id']])) ?>"><?= e(t('rf.preview')) ?></a>
-<button class="be_btn" type="submit" formaction="<?= e(url('content', 'reviewFormCopy', [$f['id']])) ?>" onclick="return confirm('<?= e(t('rf.confirm_copy')) ?>')"><?= e(t('rf.copy')) ?></button>
-<button class="be_btn" type="submit" formaction="<?= e(url('content', 'reviewFormToggle', [$f['id']])) ?>" onclick="return confirm('<?= e($f['active'] ? t('rf.confirm_deactivate') : t('rf.confirm_activate')) ?>')"><?= e($f['active'] ? t('rf.deactivate') : t('rf.activate')) ?></button>
-<button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'reviewFormDelete', [$f['id']])) ?>" onclick="return confirm('<?= e(t('rf.confirm_delete')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr>
-<?php endforeach; ?><?php if (!$forms): ?><tr><td colspan="5" class="muted"><?= e(t('rf.none_created')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $rows = []; foreach ($forms as $f) $rows[] = ['cells' => ['<a href="' . e(url('content', 'reviewForm', [$f['id']])) . '">' . e($f['title']) . '</a>', (int)$f['in_review'], (int)$f['completed'], $f['active'] ? e(t('rf.yes')) : e(t('rf.no'))], 'actions' => [
+  [t('wizard.edit'), url('content', 'reviewForm', [$f['id']])], [t('rf.preview'), url('content', 'reviewFormPreview', [$f['id']]), ['class' => 'preview']],
+  [t('rf.copy'), url('content', 'reviewFormCopy', [$f['id']]), ['post' => 1, 'class' => 'copy', 'confirm' => t('rf.confirm_copy')]],
+  [$f['active'] ? t('rf.deactivate') : t('rf.activate'), url('content', 'reviewFormToggle', [$f['id']]), ['post' => 1, 'class' => 'edit', 'confirm' => $f['active'] ? t('rf.confirm_deactivate') : t('rf.confirm_activate')]],
+  [t('wizard.delete'), url('content', 'reviewFormDelete', [$f['id']]), ['post' => 1, 'class' => 'delete', 'confirm' => t('rf.confirm_delete')]]]]; ?>
+<?= grid(t('rf.title'), [[t('rf.create'), url('content', 'reviewForm')]], [[t('rf.title'), 40], [t('rf.in_review'), 20], [t('rf.completed'), 20], [t('rf.active'), 20, 'center']], $rows, t('rf.none_created')) ?>
 
 <?php elseif ($tab === 'pluginGallery'): ?>
 <table class="be_table"><thead><tr><th><?= e(t('gal.name')) ?></th><th><?= e(t('gal.summary')) ?></th><th><?= e(t('gal.status')) ?></th></tr></thead><tbody><tr><td colspan="3" class="muted"><?= e(t('gal.none')) ?></td></tr></tbody></table>
 <p class="muted be_small"><?= e(t('gal.offline')) ?></p>
 
 <?php elseif ($tab === 'library'): ?>
-<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'library')) ?>"><?= e(t('lib.add')) ?></a></p>
-<table class="be_table"><thead><tr><th><?= e(t('cat.name')) ?></th><th><?= e(t('lib.type')) ?></th><th><?= e(t('lib.date')) ?></th><th><?= e(t('lib.public')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($files as $f): ?><tr><td><a href="<?= e(url('content', 'libraryDownload', [$f['id']])) ?>"><?= e($f['name']) ?></a></td><td><?= e(t('lib.type_' . (int)$f['file_type'])) ?></td><td><?= e(fmt_date($f['created_at'])) ?></td><td><?= $f['public_access'] ? e(t('lib.yes')) : '' ?></td><td class="be_actions"><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'library', [$f['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
-<button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'libraryDelete', [$f['id']])) ?>" onclick="return confirm('<?= e(t('set.confirm_delete')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?><?php if (!$files): ?><tr><td colspan="5" class="muted"><?= e(t('lib.none')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $rows = []; foreach ($files as $f) $rows[] = ['cells' => ['<a href="' . e(url('content', 'libraryDownload', [$f['id']])) . '">' . e($f['name']) . '</a>', e(t('lib.type_' . (int)$f['file_type'])), e(fmt_date($f['created_at'])), $f['public_access'] ? e(t('lib.yes')) : ''], 'actions' => [
+  [t('wizard.edit'), url('content', 'library', [$f['id']])], [t('wizard.delete'), url('content', 'libraryDelete', [$f['id']]), ['post' => 1, 'class' => 'delete', 'confirm' => t('set.confirm_delete')]]]]; ?>
+<?= grid(t('set.tab_library'), [[t('lib.add'), url('content', 'library')]], [[t('cat.name'), 40], [t('lib.type'), 20], [t('lib.date'), 20], [t('lib.public'), 20]], $rows, t('lib.none')) ?>
 
 <?php elseif ($tab === 'categories'): ?>
-<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'category')) ?>"><?= e(t('cat.add')) ?></a></p>
-<table class="be_table"><thead><tr><th><?= e(t('cat.name')) ?></th><th><?= e(t('cat.path')) ?></th><th><?= e(t('cat.parent')) ?></th><th><?= e(t('iss.articles')) ?></th><th></th></tr></thead><tbody>
-<?php foreach ($categories as $c): ?><tr><td><?= e($c['title']) ?></td><td><a href="<?= e(url('catalog', 'category', [$c['path']])) ?>" target="_blank">/<?= e($c['path']) ?></a></td><td><?= e($c['parent_title'] ?? '') ?></td><td><?= (int)$c['used'] ?></td><td class="be_actions"><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'category', [$c['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
-<button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'categoryDelete', [$c['id']])) ?>" onclick="return confirm('<?= e(t('cat.confirm_remove')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?><?php if (!$categories): ?><tr><td colspan="5" class="muted"><?= e(t('cat.none')) ?></td></tr><?php endif; ?></tbody></table>
+<?php $rows = []; foreach ($categories as $c) $rows[] = ['cells' => [e($c['title']), '<a href="' . e(url('catalog', 'category', [$c['path']])) . '" target="_blank">/' . e($c['path']) . '</a>', e($c['parent_title'] ?? ''), (int)$c['used']], 'actions' => [
+  [t('wizard.edit'), url('content', 'category', [$c['id']])], [t('wizard.delete'), url('content', 'categoryDelete', [$c['id']]), ['post' => 1, 'class' => 'delete', 'confirm' => t('cat.confirm_remove')]]]]; ?>
+<?= grid(t('set.tab_categories'), [[t('cat.add'), url('content', 'category')]], [[t('cat.name'), 35], [t('cat.path'), 25], [t('cat.parent'), 25], [t('iss.articles'), 15]], $rows, t('cat.none')) ?>
 
 <?php elseif ($tab === 'sections'): ?>
-<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'section')) ?>"><?= e(t('set.add_section')) ?></a></p>
-<table class="be_table"><thead><tr><th><?= e(t('set.title')) ?></th><th><?= e(t('set.abbrev')) ?></th><th><?= e(t('iss.articles')) ?></th><th></th></tr></thead><tbody>
-<?php $n = count($sections); foreach ($sections as $i => $s): ?><tr><td><?= e($s['title']) ?></td><td><?= e($s['abbrev']) ?></td><td><?= (int)$s['used'] ?></td><td class="be_actions"><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'section', [$s['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
-<button class="be_btn" type="submit" formaction="<?= e(url('content', 'sectionMove', [$s['id'], 'up'])) ?>"<?= $i === 0 ? ' disabled' : '' ?>>&uarr;</button><button class="be_btn" type="submit" formaction="<?= e(url('content', 'sectionMove', [$s['id'], 'down'])) ?>"<?= $i === $n - 1 ? ' disabled' : '' ?>>&darr;</button>
-<button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'sectionDelete', [$s['id']])) ?>" onclick="return confirm('<?= e(t('set.confirm_delete')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?></tbody></table>
+<?php $rows = []; $n = count($sections); foreach ($sections as $i => $sc) $rows[] = ['cells' => [e($sc['title']), e($sc['abbrev']), (int)$sc['used']], 'actions' => [
+  [t('wizard.edit'), url('content', 'section', [$sc['id']])],
+  [t('grid.move_up'), url('content', 'sectionMove', [$sc['id'], 'up']), ['post' => 1, 'class' => 'order_items', 'disabled' => $i === 0]], [t('grid.move_down'), url('content', 'sectionMove', [$sc['id'], 'down']), ['post' => 1, 'class' => 'order_items', 'disabled' => $i === $n - 1]],
+  [t('wizard.delete'), url('content', 'sectionDelete', [$sc['id']]), ['post' => 1, 'class' => 'delete', 'confirm' => t('set.confirm_delete')]]]]; ?>
+<?= grid(t('set.tab_sections'), [[t('set.add_section'), url('content', 'section')]], [[t('set.title'), 45], [t('set.abbrev'), 35], [t('iss.articles'), 20]], $rows) ?>
 
 <?php elseif ($tab === 'navigation'): ?>
 <p class="muted"><?= e(t('set.nav_help')) ?></p><p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'navItem')) ?>"><?= e(t('set.add_nav')) ?></a></p>
@@ -74,14 +70,14 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 <button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'navDelete', [$c['id']])) ?>"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?><?php endforeach; ?></tbody></table>
 
 <?php elseif ($tab === 'staticPages'): ?>
-<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'page')) ?>"><?= e(t('set.add_page')) ?></a></p>
-<table class="be_table"><thead><tr><th><?= e(t('set.title')) ?></th><th><?= e(t('set.path')) ?></th><th></th></tr></thead><tbody><?php foreach ($pages as $pg): ?><tr><td><?= e($pg['title']) ?></td><td><a href="<?= e(url($pg['path'])) ?>" target="_blank">/<?= e($pg['path']) ?></a></td><td class="be_actions"><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'page', [$pg['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
-<button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'pageDelete', [$pg['id']])) ?>" onclick="return confirm('<?= e(t('set.confirm_delete')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?></tbody></table>
+<?php $rows = []; foreach ($pages as $pg) $rows[] = ['cells' => [e($pg['title']), '<a href="' . e(url($pg['path'])) . '" target="_blank">/' . e($pg['path']) . '</a>'], 'actions' => [
+  [t('wizard.edit'), url('content', 'page', [$pg['id']])], [t('wizard.delete'), url('content', 'pageDelete', [$pg['id']]), ['post' => 1, 'class' => 'delete', 'confirm' => t('set.confirm_delete')]]]]; ?>
+<?= grid(t('set.tab_staticPages'), [[t('set.add_page'), url('content', 'page')]], [[t('set.title'), 50], [t('set.path'), 50]], $rows) ?>
 
 <?php elseif ($tab === 'blocks'): ?>
-<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'block')) ?>"><?= e(t('set.add_block')) ?></a></p>
-<table class="be_table"><thead><tr><th><?= e(t('set.title')) ?></th><th><?= e(t('set.block_name')) ?></th><th></th></tr></thead><tbody><?php foreach ($blocks as $b): ?><tr><td><?= e($b['title']) ?></td><td><?= e($b['name']) ?></td><td class="be_actions"><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'block', [$b['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
-<button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'blockDelete', [$b['id']])) ?>" onclick="return confirm('<?= e(t('set.confirm_delete')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?></tbody></table>
+<?php $rows = []; foreach ($blocks as $b) $rows[] = ['cells' => [e($b['title']), e($b['name'])], 'actions' => [
+  [t('wizard.edit'), url('content', 'block', [$b['id']])], [t('wizard.delete'), url('content', 'blockDelete', [$b['id']]), ['post' => 1, 'class' => 'delete', 'confirm' => t('set.confirm_delete')]]]]; ?>
+<?= grid(t('set.tab_blocks'), [[t('set.add_block'), url('content', 'block')]], [[t('set.title'), 50], [t('set.block_name'), 50]], $rows) ?>
 <p class="muted"><?= e(t('set.blocks_help')) ?></p>
 
 <?php elseif ($tab === 'plugins'): ?>

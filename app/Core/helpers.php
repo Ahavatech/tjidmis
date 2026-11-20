@@ -112,6 +112,44 @@ function errors_summary(array $errors): string {
     return $h . '</ul></div>';
 }
 
+/** OJS-style grid: header with title and add-links, columns, rows whose Edit/Delete links open under the row, "No Items" when empty.
+ *  $cols: [[label, width%, align]]; $rows: [['cells' => [html...], 'actions' => [[label, url, ['post' => bool, 'confirm' => text, 'disabled' => bool, 'class' => 'delete']]]]]. Cell html must already be escaped. */
+function grid(string $title, array $links, array $cols, array $rows, ?string $empty = null): string {
+    static $n = 0; $id = 'grid' . (++$n); $span = count($cols);
+    $h = '<div id="' . $id . '" class="pkp_controllers_grid"><div class="header"><h4>' . e($title) . '</h4>';
+    if ($links) { $h .= '<ul class="actions">'; foreach ($links as $l) $h .= '<li><a class="pkp_controllers_linkAction pkp_linkaction_icon_add" href="' . e($l[1]) . '">' . e($l[0]) . '</a></li>'; $h .= '</ul>'; }
+    $h .= '</div><table id="' . $id . '-table"><colgroup>';
+    foreach ($cols as $c) $h .= '<col class="grid-column"' . (!empty($c[1]) ? ' style="width: ' . (int)$c[1] . '%;"' : '') . '>';
+    $h .= '</colgroup><thead><tr>';
+    foreach ($cols as $c) $h .= '<th scope="col" style="text-align: ' . e($c[2] ?? 'left') . ';">' . e($c[0]) . '</th>';
+    $h .= '</tr></thead>';
+    if ($rows) {
+        $h .= '<tbody>';
+        foreach ($rows as $i => $r) {
+            $acts = $r['actions'] ?? []; $rid = $id . '-row-' . ($i + 1);
+            $h .= '<tr id="' . $rid . '" class="gridRow' . ($acts ? ' has_extras' : '') . '">';
+            foreach ($r['cells'] as $k => $cell) {
+                $first = $k === 0;
+                $h .= '<td' . ($first ? ' class="first_column"' : (($cols[$k][2] ?? '') === 'center' ? ' class="pkp_helpers_text_center"' : '')) . '>';
+                if ($first && $acts) $h .= '<a href="#" class="show_extras" aria-expanded="false"><span class="pkp_screen_reader">' . e(t('grid.settings')) . '</span></a>';
+                $h .= '<span class="gridCellContainer"><span class="label">' . $cell . '</span></span></td>';
+            }
+            $h .= '</tr>';
+            if ($acts) {
+                $h .= '<tr id="' . $rid . '-control-row" class="row_controls"><td colspan="' . $span . '"><form method="post" class="grid_row_form">' . csrf_field();
+                foreach ($acts as $a) {
+                    $o = $a[2] ?? []; $cls = 'pkp_controllers_linkAction pkp_linkaction_icon_' . e($o['class'] ?? 'edit');
+                    if (!empty($o['post'])) $h .= '<button type="submit" class="' . $cls . '" formaction="' . e($a[1]) . '"' . (!empty($o['disabled']) ? ' disabled' : '') . (!empty($o['confirm']) ? ' onclick="return confirm(' . e(json_encode($o['confirm'])) . ')"' : '') . '>' . e($a[0]) . '</button>';
+                    else $h .= '<a class="' . $cls . '" href="' . e($a[1]) . '">' . e($a[0]) . '</a>';
+                }
+                $h .= '</form></td></tr>';
+            }
+        }
+        $h .= '</tbody>';
+    } else $h .= '<tbody class="empty"><tr><td colspan="' . $span . '">' . e($empty ?? t('grid.no_items')) . '</td></tr></tbody>';
+    return $h . '</table></div>';
+}
+
 /** Expands the portable tokens stored in imported HTML (__JURL__, __PUBLIC__, __ASSETS__, __SUBMIT_URL__). */
 function rich(?string $html): string {
     if ($html === null || $html === '') return '';

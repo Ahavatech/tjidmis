@@ -13,3 +13,9 @@ document.addEventListener('submit', function (e) {
   setTimeout(function () { f.removeAttribute('data-busy'); f.classList.remove('is_busy'); }, 8000);
 });
 window.addEventListener('pageshow', function () { document.querySelectorAll('form.is_busy').forEach(function (f) { f.removeAttribute('data-busy'); f.classList.remove('is_busy'); }); });
+document.addEventListener('click', function (e) {
+  var a = e.target.closest ? e.target.closest('.pkp_controllers_grid .show_extras') : null; if (!a) return;
+  e.preventDefault(); var row = a.closest('tr'), next = row.nextElementSibling, open = row.classList.toggle('expanded');
+  if (next && next.classList.contains('row_controls')) next.classList.toggle('expanded', open);
+  a.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
