@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers\Backend;
 use App\Core\{View, Auth, DB, Settings, Request, Sanitizer, Upload};
+use App\Services\ReviewFormService as RF;
 
 /** Settings screens that manage rows: sections, menu items, static pages, custom blocks, e-mail templates. */
 class ContentSettingsController {
@@ -228,5 +229,83 @@ class ContentSettingsController {
             if (isset($defaults[$e['email_key']])) { DB::exec('UPDATE email_templates SET subject=?, body=?, enabled=1, is_custom=0 WHERE id=?', [$defaults[$e['email_key']][0], $defaults[$e['email_key']][1], $e['id']]); flash(t('set.email_reset')); }
         }
         $this->back('workflow', 'templates');
+    }
+
+    // ---------------------------------------------------------------- review forms
+    private function reviewFormRow(string $id): array {
+        $f = DB::one('SELECT * FROM review_forms WHERE id=? AND journal_id=?', [(int)$id, $this->jid()]); if (!$f) $this->notFound(); return $f;
+    }
+    public function reviewForm(string $id = ''): void {
+        $this->guard(); $jid = $this->jid(); $f = $id !== '' ? $this->reviewFormRow($id) : null; $errors = [];
+        if (Request::isPost()) {
+            $p = $_POST; $title = trim((string)($p['title'] ?? ''));
+            if ($title === '') $errors['title'] = t('rf.err_title');
+            if (!$errors) {
+                $desc = Sanitizer::clean((string)($p['description'] ?? '')) ?: null;
+                if ($f) { DB::exec('UPDATE review_forms SET title=?, description=? WHERE id=?', [mb_substr($title, 0, 255), $desc, $f['id']]); $fid = (int)$f['id']; }
+                else $fid = DB::insert('review_forms', ['journal_id' => $jid, 'title' => mb_substr($title, 0, 255), 'description' => $desc, 'active' => 0, 'seq' => 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM review_forms WHERE journal_id=?', [$jid])]);
+                flash(t('rf.saved')); redirect(url('content', 'reviewForm', [$fid]));
+            }
+            $f = array_merge($f ?: [], $p);
+        }
+        View::render('backend/review_form_edit', ['title' => t('rf.edit'), 'menu' => 'settings', 'area' => 'workflow', 'tab' => 'reviewForms', 'f' => $f ?: [], 'errors' => $errors,
+            'items' => !empty($f['id']) ? RF::elements((int)$f['id']) : [], 'inUse' => !empty($f['id']) && RF::inUse((int)$f['id'])], 'backend');
+    }
+    public function reviewFormToggle(string $id = ''): void {
+        $this->guard();
+        if (Request::isPost()) {
+            $f = $this->reviewFormRow($id);
+            if ($f['active'] && RF::inUse((int)$f['id'])) flash(t('rf.err_in_use'), 'error');
+            else { DB::exec('UPDATE review_forms SET active=? WHERE id=?', [$f['active'] ? 0 : 1, $f['id']]); flash(t('rf.saved')); }
+        }
+        $this->back('workflow', 'reviewForms');
+    }
+    public function reviewFormCopy(string $id = ''): void {
+        $this->guard();
+        if (Request::isPost()) {
+            $f = $this->reviewFormRow($id); $jid = $this->jid();
+            $n = DB::insert('review_forms', ['journal_id' => $jid, 'title' => mb_substr(t('rf.copy_of', $f['title']), 0, 255), 'description' => $f['description'], 'active' => 0, 'seq' => 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM review_forms WHERE journal_id=?', [$jid])]);
+            foreach (RF::elements((int)$f['id']) as $e) DB::insert('review_form_elements', ['review_form_id' => $n, 'seq' => $e['seq'], 'question' => $e['question'], 'description' => $e['description'], 'element_type' => $e['element_type'], 'options' => $e['options'], 'required' => $e['required'], 'included' => $e['included']]);
+            flash(t('rf.saved'));
+        }
+        $this->back('workflow', 'reviewForms');
+    }
+    public function reviewFormDelete(string $id = ''): void {
+        $this->guard();
+        if (Request::isPost()) {
+            $f = $this->reviewFormRow($id);
+            if (DB::val('SELECT 1 FROM review_assignments WHERE review_form_id=?', [$f['id']])) flash(t('rf.err_in_use'), 'error');
+            else { DB::exec('DELETE FROM review_forms WHERE id=?', [$f['id']]); flash(t('set.deleted')); }
+        }
+        $this->back('workflow', 'reviewForms');
+    }
+    public function reviewFormPreview(string $id = ''): void {
+        $this->guard(); $f = $this->reviewFormRow($id);
+        View::render('backend/review_form_preview', ['title' => t('rf.preview'), 'menu' => 'settings', 'f' => $f, 'items' => RF::elements((int)$f['id'])], 'backend');
+    }
+    public function reviewFormItem(string $fid = '', string $id = ''): void {
+        $this->guard(); $f = $this->reviewFormRow($fid); $errors = [];
+        $it = $id !== '' ? DB::one('SELECT * FROM review_form_elements WHERE id=? AND review_form_id=?', [(int)$id, $f['id']]) : null;
+        if ($id !== '' && !$it) $this->notFound();
+        if (Request::isPost()) {
+            $p = $_POST; $q = trim((string)($p['question'] ?? '')); $type = (int)($p['element_type'] ?? 0);
+            if ($q === '') $errors['question'] = t('rf.err_question');
+            if (!isset(RF::TYPES[$type])) $errors['element_type'] = t('rf.err_type');
+            if (!$errors) {
+                $opts = null;
+                if (RF::hasChoices($type)) $opts = json_encode(array_values(array_filter(array_map(fn($x) => mb_substr(trim((string)$x), 0, 255), (array)($p['options'] ?? [])), 'strlen')), JSON_UNESCAPED_UNICODE);
+                $row = ['question' => Sanitizer::clean($q), 'description' => Sanitizer::clean((string)($p['description'] ?? '')) ?: null, 'element_type' => $type, 'options' => $opts, 'required' => empty($p['required']) ? 0 : 1, 'included' => empty($p['included']) ? 0 : 1];
+                if ($it) DB::exec('UPDATE review_form_elements SET question=?, description=?, element_type=?, options=?, required=?, included=? WHERE id=?', [$row['question'], $row['description'], $row['element_type'], $row['options'], $row['required'], $row['included'], $it['id']]);
+                else DB::insert('review_form_elements', $row + ['review_form_id' => $f['id'], 'seq' => 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM review_form_elements WHERE review_form_id=?', [$f['id']])]);
+                flash(t('rf.saved')); redirect(url('content', 'reviewForm', [$f['id']]));
+            }
+            $it = array_merge($it ?: [], $p); $it['options_list'] = array_values((array)($p['options'] ?? []));
+        } elseif ($it) $it['options_list'] = RF::choices($it);
+        View::render('backend/review_form_item', ['title' => t(!empty($it['id']) ? 'rf.item_edit' : 'rf.item_create'), 'menu' => 'settings', 'area' => 'workflow', 'tab' => 'reviewForms', 'f' => $f, 'it' => $it ?: [], 'errors' => $errors], 'backend');
+    }
+    public function reviewFormItemDelete(string $fid = '', string $id = ''): void {
+        $this->guard(); $f = $this->reviewFormRow($fid);
+        if (Request::isPost()) { DB::exec('DELETE FROM review_form_elements WHERE id=? AND review_form_id=?', [(int)$id, $f['id']]); flash(t('set.deleted')); }
+        redirect(url('content', 'reviewForm', [$f['id']]));
     }
 }

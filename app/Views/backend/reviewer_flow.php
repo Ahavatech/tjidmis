@@ -27,8 +27,12 @@ $su = fn($i) => url('reviewer', 'submission', [$aid, $i]); $blind = $ra['review_
 <h2><?= e(t('rflow.download_review')) ?></h2>
 <table class="be_table"><thead><tr><th><?= e(t('wizard.file')) ?></th><th><?= e(t('wizard.component')) ?></th></tr></thead><tbody><?php foreach ($files as $f): ?><tr><td><a href="<?= e(url('reviewer', 'download', [$aid, $f['id']])) ?>"><?= e($f['original_name']) ?></a></td><td><?= e($f['genre']) ?></td></tr><?php endforeach; ?><?php if (!$files): ?><tr><td colspan="2" class="muted"><?= e(t('wizard.no_files')) ?></td></tr><?php endif; ?></tbody></table>
 <form class="cmp_form be_form" method="post" action="<?= e(url('reviewer', 'saveReview', [$aid])) ?>"><?= csrf_field() ?><div class="fields">
+<?php if ($rfEls): ?><?php if ($rfForm['description']): ?><div class="be_notice"><?= rich($rfForm['description']) ?></div><?php endif; ?>
+<?php foreach ($rfEls as $el): ?><div class="rf_item"><span class="label"><?= strip_tags($el['question']) ?><?= $el['required'] ? ' <span class="required" aria-hidden="true">*</span>' : '' ?></span><?php if ($el['description']): ?><p class="muted"><?= strip_tags($el['description']) ?></p><?php endif; ?><?= \App\Services\ReviewFormService::input($el, $rfAns[(int)$el['id']] ?? '') ?></div>
+<?php endforeach; ?><?php else: ?>
 <?= field(t('rflow.comments_author'), 'comments_author', strip_tags(str_replace(['</p>', '<br>'], "\n\n", (string)$ra['comments_author'])), ['type' => 'textarea', 'rows' => 8, 'help' => t('rflow.comments_author_help')]) ?>
 <?= field(t('rflow.comments_editor'), 'comments_editor', strip_tags(str_replace(['</p>', '<br>'], "\n\n", (string)$ra['comments_editor'])), ['type' => 'textarea', 'rows' => 5]) ?>
+<?php endif; ?>
 <?= field(t('wf.recommendation'), 'recommendation', $ra['recommendation'], ['type' => 'select', 'options' => array_map(fn($k) => t($k), ReviewService::RECOMMENDATIONS)]) ?></div>
 <div class="buttons"><a class="be_btn" href="<?= e($su(2)) ?>"><?= e(t('wizard.back')) ?></a><button class="be_btn" type="submit" name="action" value="save"><?= e(t('rflow.save_later')) ?></button><button class="submit" type="submit" name="action" value="submit" onclick="return confirm('<?= e(t('rflow.confirm_submit')) ?>')"><?= e(t('rflow.submit')) ?></button></div></form>
 <?php if (\App\Core\Settings::get('reviewerUploads', '1') === '1'): ?><h2><?= e(t('rflow.attachments')) ?></h2>

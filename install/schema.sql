@@ -199,10 +199,26 @@ CREATE TABLE review_assignments (
   status ENUM('awaiting_response','accepted','declined','review_submitted','thanked','cancelled') NOT NULL DEFAULT 'awaiting_response',
   competing_interests TEXT NULL, recommendation ENUM('accept','pending_revisions','resubmit_here','resubmit_elsewhere','decline','see_comments') NULL,
   comments_author MEDIUMTEXT NULL, comments_editor MEDIUMTEXT NULL, date_assigned DATETIME NOT NULL, date_notified DATETIME NULL, date_response_due DATETIME NULL,
-  date_due DATETIME NULL, date_confirmed DATETIME NULL, date_completed DATETIME NULL, date_acknowledged DATETIME NULL, date_reminded DATETIME NULL, quality TINYINT NULL,
+  date_due DATETIME NULL, date_confirmed DATETIME NULL, date_completed DATETIME NULL, date_acknowledged DATETIME NULL, date_reminded DATETIME NULL, quality TINYINT NULL, review_form_id INT UNSIGNED NULL,
   KEY (submission_id), KEY (review_round_id), KEY (reviewer_id),
   FOREIGN KEY (submission_id) REFERENCES submissions(id) ON DELETE CASCADE, FOREIGN KEY (review_round_id) REFERENCES review_rounds(id) ON DELETE CASCADE,
   FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE review_forms (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, journal_id INT UNSIGNED NOT NULL, title VARCHAR(255) NOT NULL, description TEXT NULL, seq INT NOT NULL DEFAULT 0, active TINYINT(1) NOT NULL DEFAULT 0,
+  KEY (journal_id), FOREIGN KEY (journal_id) REFERENCES journals(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE review_form_elements (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, review_form_id INT UNSIGNED NOT NULL, seq INT NOT NULL DEFAULT 0, question TEXT NOT NULL, description TEXT NULL,
+  element_type TINYINT NOT NULL DEFAULT 1, options TEXT NULL, required TINYINT(1) NOT NULL DEFAULT 0, included TINYINT(1) NOT NULL DEFAULT 0,
+  KEY (review_form_id), FOREIGN KEY (review_form_id) REFERENCES review_forms(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE review_form_responses (
+  review_assignment_id INT UNSIGNED NOT NULL, review_form_element_id INT UNSIGNED NOT NULL, response_value TEXT NULL, PRIMARY KEY (review_assignment_id, review_form_element_id),
+  FOREIGN KEY (review_assignment_id) REFERENCES review_assignments(id) ON DELETE CASCADE, FOREIGN KEY (review_form_element_id) REFERENCES review_form_elements(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE review_round_files (

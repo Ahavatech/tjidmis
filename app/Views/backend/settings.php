@@ -29,6 +29,17 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 <tr><td>English</td><td><input type="radio" checked disabled aria-label="<?= e(t('lang.primary')) ?>"></td><td><input type="checkbox" checked disabled></td><td><input type="checkbox" checked disabled></td><td><input type="checkbox" checked disabled></td></tr></tbody></table>
 <p class="muted be_small"><?= e(t('lang.only_english')) ?></p>
 
+<?php elseif ($tab === 'reviewForms'): ?>
+<p class="muted"><?= e(t('rf.list_description')) ?></p>
+<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'reviewForm')) ?>"><?= e(t('rf.create')) ?></a></p>
+<table class="be_table"><thead><tr><th><?= e(t('rf.title')) ?></th><th><?= e(t('rf.in_review')) ?></th><th><?= e(t('rf.completed')) ?></th><th><?= e(t('rf.active')) ?></th><th></th></tr></thead><tbody>
+<?php foreach ($forms as $f): ?><tr><td><a href="<?= e(url('content', 'reviewForm', [$f['id']])) ?>"><?= e($f['title']) ?></a></td><td><?= (int)$f['in_review'] ?></td><td><?= (int)$f['completed'] ?></td><td><?= $f['active'] ? e(t('rf.yes')) : e(t('rf.no')) ?></td>
+<td><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'reviewFormPreview', [$f['id']])) ?>"><?= e(t('rf.preview')) ?></a>
+<button class="be_btn" type="submit" formaction="<?= e(url('content', 'reviewFormCopy', [$f['id']])) ?>" onclick="return confirm('<?= e(t('rf.confirm_copy')) ?>')"><?= e(t('rf.copy')) ?></button>
+<button class="be_btn" type="submit" formaction="<?= e(url('content', 'reviewFormToggle', [$f['id']])) ?>" onclick="return confirm('<?= e($f['active'] ? t('rf.confirm_deactivate') : t('rf.confirm_activate')) ?>')"><?= e($f['active'] ? t('rf.deactivate') : t('rf.activate')) ?></button>
+<button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'reviewFormDelete', [$f['id']])) ?>" onclick="return confirm('<?= e(t('rf.confirm_delete')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr>
+<?php endforeach; ?><?php if (!$forms): ?><tr><td colspan="5" class="muted"><?= e(t('rf.none_created')) ?></td></tr><?php endif; ?></tbody></table>
+
 <?php elseif ($tab === 'library'): ?>
 <p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'library')) ?>"><?= e(t('lib.add')) ?></a></p>
 <table class="be_table"><thead><tr><th><?= e(t('cat.name')) ?></th><th><?= e(t('lib.type')) ?></th><th><?= e(t('lib.date')) ?></th><th><?= e(t('lib.public')) ?></th><th></th></tr></thead><tbody>

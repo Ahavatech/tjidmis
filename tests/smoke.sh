@@ -49,6 +49,33 @@ ok "$(code reviewer1 /workflow/index/$S)" 403 "reviewer cannot open the workflow
 FORM=/reviewer/submission/$A; code reviewer1 /reviewer/submission/$A >/dev/null; post reviewer1 /reviewer/accept/$A -d competing=no -d consent=1 >/dev/null
 FORM=/reviewer/submission/$A/3; code reviewer1 $FORM >/dev/null; post reviewer1 /reviewer/saveReview/$A -d action=submit -d "comments_author=Good work." -d "comments_editor=ok" -d recommendation=accept >/dev/null
 ok "$(code reviewer1 /reviewer/submission/$A/4)" 200 "review submitted"
+R2=$(db "select id from users where username='reviewer2'")
+echo "== review forms (OJS 3.3: create, items, activate, assign, reviewer fills, editor reads)"
+FORM=/settings/index/workflow/reviewForms; ok "$(code admin $FORM)" 200 "review forms tab"; ok "$(has 'Create Review Form')" 1 "tab lists Create Review Form"
+FORM=/content/reviewForm; code admin $FORM >/dev/null; post admin /content/reviewForm -d title= >/dev/null; ok "$(has 'A title is required for the review form')" 1 "form title required"
+post admin /content/reviewForm -d 'title=Smoke Form' -d 'description=Please answer.' >/dev/null; RF=$(db "select max(id) from review_forms")
+ok "$([ -n "$RF" ] && echo y)" y "review form created"
+FORM=/content/reviewFormItem/$RF; code admin $FORM >/dev/null; post admin $FORM -d question= -d element_type=3 >/dev/null; ok "$(has 'A question is required for the form item')" 1 "item question required"
+post admin $FORM -d 'question=Is the method sound?' -d element_type=3 -d required=1 >/dev/null
+post admin $FORM -d 'question=Overall quality' -d element_type=5 -d 'options[]=Poor' -d 'options[]=Good' >/dev/null
+ok "$(db "select count(*) from review_form_elements where review_form_id=$RF")" 2 "two form items saved"
+ok "$(code admin /content/reviewFormPreview/$RF)" 200 "preview opens"; ok "$(has 'Is the method sound')" 1 "preview shows items"
+FORM=/review/add/$S/$R2; code editor $FORM >/dev/null; ok "$(has 'Smoke Form')" 0 "inactive form is not offered"
+FORM=/settings/index/workflow/reviewForms; code admin $FORM >/dev/null; post admin /content/reviewFormToggle/$RF >/dev/null; ok "$(db "select active from review_forms where id=$RF")" 1 "form activated"
+FORM=/review/add/$S/$R2; code editor $FORM >/dev/null; ok "$(has 'None / Free Form Review')" 1 "assign page offers None / Free Form Review"
+post editor /review/add/$S/$R2 -d method=anonymous -d review_form_id=$RF -d response_due=2030-01-10 -d review_due=2030-02-01 -d subject=R -d 'body=Link {$reviewUrl}' -d skip_email=1 >/dev/null
+A2=$(db "select max(id) from review_assignments"); ok "$(db "select review_form_id from review_assignments where id=$A2")" "$RF" "form stored on the assignment"
+login rev2 reviewer2 "$PASS"; FORM=/reviewer/submission/$A2; code rev2 $FORM >/dev/null; post rev2 /reviewer/accept/$A2 -d competing=no -d consent=1 >/dev/null
+code rev2 /reviewer/submission/$A2/3 >/dev/null; ok "$(has 'Is the method sound')" 1 "reviewer sees the form items"; ok "$(has 'name="comments_author"')" 0 "free comment boxes are replaced"
+FORM=/reviewer/submission/$A2/3; post rev2 /reviewer/saveReview/$A2 -d action=submit -d recommendation=accept -d rf_$(db "select min(id) from review_form_elements where review_form_id=$RF")= >/dev/null
+code rev2 /reviewer/submission/$A2/3 >/dev/null; ok "$(has 'Please fill in required fields')" 1 "required item enforced"
+E1=$(db "select min(id) from review_form_elements where review_form_id=$RF"); E2=$(db "select max(id) from review_form_elements where review_form_id=$RF")
+post rev2 /reviewer/saveReview/$A2 -d action=submit -d recommendation=accept -d "rf_$E1=Yes, it is." -d "rf_$E2=1" >/dev/null
+ok "$(db "select status from review_assignments where id=$A2")" review_submitted "review with form submitted"
+ok "$(db "select response_value from review_form_responses where review_assignment_id=$A2 and review_form_element_id=$E2")" 1 "choice response stored"
+code editor /review/details/$S/$A2 >/dev/null; ok "$(has 'Yes, it is.')" 1 "editor reads the response"; ok "$(has 'Good')" 1 "choice shown as its label"
+FORM=/settings/index/workflow/reviewForms; code admin $FORM >/dev/null; post admin /content/reviewFormDelete/$RF >/dev/null; ok "$(db "select count(*) from review_forms where id=$RF")" 1 "form in use cannot be deleted"
+post admin /content/reviewFormCopy/$RF >/dev/null; ok "$(db "select count(*) from review_forms where title like 'Copy of%'")" 1 "form copied"
 code author /workflow/index/$S/3 >/dev/null; ok "$(has 'Reviewer')" 0 "author never sees reviewer identity"
 FORM=/decision/index/$S/accept; code editor /decision/index/$S/accept >/dev/null; post editor /decision/save/$S/accept -d subject=Accepted -d body=Yes >/dev/null
 FORM=/decision/index/$S/send_to_production; code editor /decision/index/$S/send_to_production >/dev/null; post editor /decision/save/$S/send_to_production -d subject=P -d body=P -d skip_email=1 >/dev/null

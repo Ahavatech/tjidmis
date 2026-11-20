@@ -42,9 +42,11 @@ class ReviewController {
             if (!$this->validDate($rd)) $errors['response_due'] = t('rev.err_date');
             if (!$this->validDate($vd)) $errors['review_due'] = t('rev.err_date');
             if (!$errors && strtotime($vd) < strtotime($rd)) $errors['review_due'] = t('rev.err_order');
+            $formId = (int)($_POST['review_form_id'] ?? 0);
+            if ($formId && !DB::val('SELECT 1 FROM review_forms WHERE id=? AND journal_id=? AND active=1', [$formId, $jid])) $formId = 0;
             if (!$errors) {
                 $now = date('Y-m-d H:i:s'); $send = empty($_POST['skip_email']);
-                $aid = DB::insert('review_assignments', ['submission_id' => $sub['id'], 'review_round_id' => $round['id'], 'reviewer_id' => $rv['id'], 'review_method' => $method, 'status' => 'awaiting_response',
+                $aid = DB::insert('review_assignments', ['review_form_id' => $formId ?: null, 'submission_id' => $sub['id'], 'review_round_id' => $round['id'], 'reviewer_id' => $rv['id'], 'review_method' => $method, 'status' => 'awaiting_response',
                     'date_assigned' => $now, 'date_notified' => $send ? $now : null, 'date_response_due' => $rd . ' 23:59:59', 'date_due' => $vd . ' 23:59:59']);
                 if ($send) Mailer::send($rv['email'], trim((string)$_POST['subject']), str_replace('{$reviewUrl}', abs_url(url('reviewer', 'submission', [$aid])), (string)$_POST['body']), (int)$sub['id']);
                 NotificationService::add((int)$rv['id'], $jid, 'review_request', t('notif.review_request', $sub['title']), 'review_assignment', $aid);
@@ -54,7 +56,7 @@ class ReviewController {
             }
         }
         View::render('backend/review_add', ['title' => t('rev.add'), 'menu' => 'submissions', 'sub' => $sub, 'rv' => $rv, 'mail' => $mail, 'respDue' => $_POST['response_due'] ?? $respDue, 'revDue' => $_POST['review_due'] ?? $revDue,
-            'method' => $_POST['method'] ?? Settings::get('defaultReviewMode', 'anonymous'), 'errors' => $errors], 'backend');
+            'method' => $_POST['method'] ?? Settings::get('defaultReviewMode', 'anonymous'), 'errors' => $errors, 'forms' => \App\Services\ReviewFormService::active($jid), 'formId' => (int)($_POST['review_form_id'] ?? 0)], 'backend');
     }
     public function edit(string $sid = '', string $aid = ''): void {
         $sub = $this->ctx($sid); $ra = $this->assignment($sub, $aid); $errors = [];
@@ -114,6 +116,8 @@ class ReviewController {
         $sub = WorkflowController::load($sid); if (!PermissionService::canManage($sub)) WorkflowController::deny(403);
         $ra = $this->assignment($sub, $aid);
         View::render('backend/review_details', ['title' => t('rev.details'), 'menu' => 'submissions', 'sub' => $sub, 'ra' => $ra,
-            'files' => DB::all("SELECT * FROM submission_files WHERE submission_id=? AND file_stage='review_attachment' AND assoc_type=1 AND assoc_id=?", [$sub['id'], $ra['id']])], 'backend');
+            'files' => DB::all("SELECT * FROM submission_files WHERE submission_id=? AND file_stage='review_attachment' AND assoc_type=1 AND assoc_id=?", [$sub['id'], $ra['id']]),
+            'form' => $ra['review_form_id'] ? DB::one('SELECT * FROM review_forms WHERE id=?', [$ra['review_form_id']]) : null, 'formEls' => $ra['review_form_id'] ? \App\Services\ReviewFormService::elements((int)$ra['review_form_id']) : [],
+            'answers' => \App\Services\ReviewFormService::responses((int)$ra['id'])], 'backend');
     }
 }

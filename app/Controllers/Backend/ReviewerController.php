@@ -25,7 +25,8 @@ class ReviewerController {
         if ($ra['status'] === 'awaiting_response' || $ra['status'] === 'declined') { $max = 1; $n = 1; }
         else { $max = $this->done($ra) ? 4 : 3; $n = (int)$step ?: ($this->done($ra) ? 4 : 2); $n = max(1, min($max, $n)); }
         $authors = $ra['review_method'] === 'double_anonymous' ? [] : SubmissionRepo::authors((int)$ra['pid']);
-        View::render('backend/reviewer_flow', ['title' => t('rflow.title'), 'menu' => 'submissions', 'ra' => $ra, 'n' => $n, 'max' => $max, 'authors' => $authors,
+        $rfEls = !empty($ra['review_form_id']) ? \App\Services\ReviewFormService::elements((int)$ra['review_form_id']) : [];
+        View::render('backend/reviewer_flow', ['rfEls' => $rfEls, 'rfForm' => $rfEls ? DB::one('SELECT * FROM review_forms WHERE id=?', [$ra['review_form_id']]) : null, 'rfAns' => $rfEls ? \App\Services\ReviewFormService::responses((int)$ra['id']) : [], 'title' => t('rflow.title'), 'menu' => 'submissions', 'ra' => $ra, 'n' => $n, 'max' => $max, 'authors' => $authors,
             'files' => $max === 1 ? [] : $this->files($ra), 'attachments' => $this->attachments($ra), 'guidelines' => Settings::get('reviewGuidelines', ''),
             'competing' => Settings::get('competingInterests', ''), 'readonly' => $this->done($ra)], 'backend');
     }
@@ -50,10 +51,15 @@ class ReviewerController {
         $ra = $this->load($aid); if (!Request::isPost() || $ra['status'] !== 'accepted') redirect(url('reviewer', 'submission', [$aid]));
         $rec = array_key_exists($_POST['recommendation'] ?? '', ReviewService::RECOMMENDATIONS) ? $_POST['recommendation'] : null;
         $wrap = function ($t) { $t = trim((string)$t); if ($t === '') return null; return Sanitizer::clean(stripos($t, '<p') === false ? implode('', array_map(fn($x) => '<p>' . nl2br(e(trim($x))) . '</p>', preg_split('/\R{2,}/', $t))) : $t); };
-        DB::exec('UPDATE review_assignments SET comments_author=?, comments_editor=?, recommendation=? WHERE id=?', [$wrap($_POST['comments_author'] ?? ''), $wrap($_POST['comments_editor'] ?? ''), $rec, $ra['id']]);
+        $els = $ra['review_form_id'] ? \App\Services\ReviewFormService::elements((int)$ra['review_form_id']) : []; $missing = false;
+        if ($els) {   // review form assigned: its items replace the two free comment boxes
+            [$vals, $missing] = \App\Services\ReviewFormService::fromPost($els, $_POST); \App\Services\ReviewFormService::save((int)$ra['id'], $vals);
+            DB::exec('UPDATE review_assignments SET recommendation=? WHERE id=?', [$rec, $ra['id']]);
+        } else DB::exec('UPDATE review_assignments SET comments_author=?, comments_editor=?, recommendation=? WHERE id=?', [$wrap($_POST['comments_author'] ?? ''), $wrap($_POST['comments_editor'] ?? ''), $rec, $ra['id']]);
         if (($_POST['action'] ?? '') === 'save') { flash(t('rflow.saved')); redirect(url('reviewer', 'submission', [$aid, 3])); }
+        if ($missing) { flash(t('rf.err_required'), 'error'); redirect(url('reviewer', 'submission', [$aid, 3])); }
         $r = DB::one('SELECT * FROM review_assignments WHERE id=?', [$ra['id']]);
-        if (!$r['recommendation'] || (!$r['comments_author'] && !$r['comments_editor'])) { flash(t('rflow.err_review'), 'error'); redirect(url('reviewer', 'submission', [$aid, 3])); }
+        if (!$r['recommendation'] || (!$els && !$r['comments_author'] && !$r['comments_editor'])) { flash(t('rflow.err_review'), 'error'); redirect(url('reviewer', 'submission', [$aid, 3])); }
         DB::exec("UPDATE review_assignments SET status='review_submitted', date_completed=NOW() WHERE id=?", [$ra['id']]);
         $this->notifyEditors($ra, 'REVIEW_COMPLETE', t('notif.review_complete', $ra['title']), []);
         DB::exec('UPDATE submissions SET date_last_activity=NOW() WHERE id=?', [$ra['submission_id']]);

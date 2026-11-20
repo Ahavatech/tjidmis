@@ -40,7 +40,7 @@ class SettingsController {
                 ['numDaysBeforeInviteReminder', 'number', ['min' => 0, 'max' => 90]], ['numDaysBeforeSubmitReminder', 'number', ['min' => 0, 'max' => 90]]],
             'reviewerGuidance' => [['reviewGuidelines', 'html'], ['competingInterests', 'html']],
             'emailSetup' => [['emailSignature', 'textarea'], ['mailFrom', 'email']],
-            'library' => [], 'templates' => [],
+            'library' => [], 'templates' => [], 'reviewForms' => [],
         ],
         'distribution' => [
             'license' => [['copyrightHolderType', 'select', ['options' => ['author' => 'set.holder_author', 'journal' => 'set.holder_journal', 'other' => 'set.holder_other'], 'translate' => 1]], ['copyrightHolderOther', 'text'],
@@ -54,7 +54,7 @@ class SettingsController {
     const NAV = [
         'journal' => ['masthead' => ['masthead'], 'contact' => ['contact'], 'sections' => ['sections'], 'categories' => ['categories']],
         'website' => ['appearance' => ['theme', 'appearanceSetup', 'appearanceAdvanced'], 'setup' => ['information', 'languages', 'navigation', 'announcements', 'lists', 'privacy', 'datetime'], 'plugins' => ['plugins', 'staticPages', 'blocks', 'doi']],
-        'workflow' => ['submission' => ['disableSubmissions', 'metadata', 'components', 'checklist', 'authorGuidelines'], 'review' => ['reviewSetup', 'reviewerGuidance'], 'library' => ['library'], 'emails' => ['emailSetup', 'templates']],
+        'workflow' => ['submission' => ['disableSubmissions', 'metadata', 'components', 'checklist', 'authorGuidelines'], 'review' => ['reviewSetup', 'reviewerGuidance', 'reviewForms'], 'library' => ['library'], 'emails' => ['emailSetup', 'templates']],
         'distribution' => ['license' => ['license'], 'searchIndexing' => ['indexing'], 'payments' => ['payments'], 'access' => ['access']],
     ];
     const DEFAULT_ON = ['enableOai', 'announcementsEnabled', 'reviewerUploads'];
@@ -78,6 +78,7 @@ class SettingsController {
             case 'website/staticPages': $data['pages'] = DB::all('SELECT * FROM static_pages WHERE journal_id=? ORDER BY title', [$jid]); break;
             case 'website/blocks': $data['blocks'] = DB::all('SELECT * FROM custom_blocks WHERE journal_id=? ORDER BY title', [$jid]); break;
             case 'website/plugins': $data['features'] = array_merge(array_fill_keys(self::FEATURES, true), Settings::json('enabledFeatures', [])); break;
+            case 'workflow/reviewForms': $data['forms'] = DB::all('SELECT f.*, (SELECT COUNT(*) FROM review_assignments a WHERE a.review_form_id=f.id AND a.date_completed IS NULL AND a.status NOT IN (\'cancelled\',\'declined\')) in_review, (SELECT COUNT(*) FROM review_assignments a WHERE a.review_form_id=f.id AND a.date_completed IS NOT NULL) completed FROM review_forms f WHERE f.journal_id=? ORDER BY f.seq,f.id', [$jid]); break;
             case 'workflow/library': $data['files'] = DB::all('SELECT * FROM library_files WHERE journal_id=? ORDER BY name', [$jid]); break;
             case 'workflow/templates': $data['templates'] = DB::all('SELECT id,email_key,subject,enabled,is_custom FROM email_templates WHERE journal_id=? ORDER BY email_key', [$jid]); break;
         }
