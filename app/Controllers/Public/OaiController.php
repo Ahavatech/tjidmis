@@ -19,6 +19,7 @@ class OaiController {
     private function error(string $code, string $msg): void { $this->out($this->head('', [], $code) . "\t" . '<error code="' . $code . '">' . $this->x($msg) . '</error>' . "\n"); }
 
     public function index(): void {
+        if (Settings::get('enableOai', '1') !== '1') { http_response_code(404); header('Content-Type: text/plain; charset=utf-8'); echo 'Not found'; return; }   // Distribution > Access > Enable OAI
         $p = $_GET + $_POST; $verb = (string)($p['verb'] ?? '');
         $j = Settings::journal(); $jid = (int)$j['id'];
         $args = $p; unset($args['verb']);

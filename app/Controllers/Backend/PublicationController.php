@@ -47,7 +47,10 @@ class PublicationController {
             case 'metadata':
                 $split = fn($t) => array_values(array_unique(array_filter(array_map('trim', preg_split('/[;\n,]+/', (string)$t)))));
                 $kw = $split($p['keywords'] ?? ''); $sj = $split($p['subjects'] ?? '');
-                DB::exec('UPDATE publications SET keywords=?, subjects=? WHERE id=?', [$kw ? json_encode($kw, JSON_UNESCAPED_UNICODE) : null, $sj ? json_encode($sj, JSON_UNESCAPED_UNICODE) : null, $pid]); break;
+                DB::exec('UPDATE publications SET keywords=?, subjects=? WHERE id=?', [$kw ? json_encode($kw, JSON_UNESCAPED_UNICODE) : null, $sj ? json_encode($sj, JSON_UNESCAPED_UNICODE) : null, $pid]);
+                DB::exec('DELETE FROM publication_categories WHERE publication_id=?', [$pid]);
+                foreach (array_unique(array_map('intval', (array)($p['categories'] ?? []))) as $cid) if (DB::val('SELECT 1 FROM categories WHERE id=? AND journal_id=?', [$cid, (int)$sub['journal_id']])) DB::exec('INSERT IGNORE INTO publication_categories (publication_id, category_id) VALUES (?,?)', [$pid, $cid]);
+                break;
             case 'references':
                 $refs = implode('', array_map(fn($x) => '<p>' . e(trim($x)) . '</p>', array_filter(preg_split('/\R+/', (string)($p['references'] ?? '')), fn($x) => trim($x) !== '')));
                 DB::exec('UPDATE publications SET references_text=? WHERE id=?', [$refs ?: null, $pid]); break;

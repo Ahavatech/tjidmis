@@ -109,6 +109,12 @@ CREATE TABLE announcements (
   KEY (journal_id), FOREIGN KEY (journal_id) REFERENCES journals(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE categories (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, journal_id INT UNSIGNED NOT NULL, parent_id INT UNSIGNED NULL, title VARCHAR(255) NOT NULL, path VARCHAR(100) NOT NULL,
+  description TEXT NULL, seq INT NOT NULL DEFAULT 0, UNIQUE KEY (journal_id, path),
+  FOREIGN KEY (journal_id) REFERENCES journals(id) ON DELETE CASCADE, FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE submissions (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, journal_id INT UNSIGNED NOT NULL, section_id INT UNSIGNED NULL, locale VARCHAR(10) NOT NULL DEFAULT 'en',
   stage_id TINYINT NOT NULL DEFAULT 1, status ENUM('incomplete','queued','scheduled','published','declined') NOT NULL DEFAULT 'incomplete',
@@ -137,6 +143,11 @@ CREATE TABLE publications (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ALTER TABLE submissions ADD FOREIGN KEY (current_publication_id) REFERENCES publications(id) ON DELETE SET NULL;
 
+CREATE TABLE publication_categories (
+  publication_id INT UNSIGNED NOT NULL, category_id INT UNSIGNED NOT NULL, PRIMARY KEY (publication_id, category_id),
+  FOREIGN KEY (publication_id) REFERENCES publications(id) ON DELETE CASCADE, FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE authors (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, publication_id INT UNSIGNED NOT NULL, given_name VARCHAR(1000) NOT NULL, family_name VARCHAR(120) NOT NULL DEFAULT '',
   email VARCHAR(190) NULL, country CHAR(2) NULL, affiliation VARCHAR(255) NULL, orcid VARCHAR(40) NULL, url VARCHAR(255) NULL, bio TEXT NULL,
@@ -151,6 +162,12 @@ CREATE TABLE submission_files (
   uploader_user_id INT UNSIGNED NULL, review_round_id INT UNSIGNED NULL, assoc_type INT NULL, assoc_id INT UNSIGNED NULL, viewable TINYINT NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL, KEY (submission_id), KEY (uploader_user_id), KEY (review_round_id),
   FOREIGN KEY (submission_id) REFERENCES submissions(id) ON DELETE CASCADE, FOREIGN KEY (uploader_user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE library_files (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, journal_id INT UNSIGNED NOT NULL, name VARCHAR(255) NOT NULL, original_name VARCHAR(255) NOT NULL, stored_name VARCHAR(100) NOT NULL,
+  file_type TINYINT NOT NULL DEFAULT 5, public_access TINYINT NOT NULL DEFAULT 0, mime VARCHAR(100) NULL, size INT NOT NULL DEFAULT 0, created_at DATETIME NOT NULL,
+  FOREIGN KEY (journal_id) REFERENCES journals(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE galleys (

@@ -82,6 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // files dir
             $fd = rtrim($v['files_dir'], '/\\');
             foreach (['logs', 'journals/1/submissions', 'tmp'] as $d) if (!is_dir("$fd/$d") && !@mkdir("$fd/$d", 0775, true)) throw new RuntimeException("Cannot create $fd/$d. Check the path and permissions.");
+            foreach (glob($root . '/install/seed_library/*', GLOB_ONLYDIR) ?: [] as $ld) {   // publisher library files shipped with the seed
+                $dst = "$fd/library/" . basename($ld); if (!is_dir($dst)) mkdir($dst, 0775, true);
+                foreach (glob("$ld/*") ?: [] as $lf) copy($lf, "$dst/" . basename($lf));
+            }
             if (!empty($v['demo'])) {
                 $run('seed_demo.sql', ['{{HASH}}' => password_hash('Demo@12345', PASSWORD_DEFAULT)]);
                 foreach ($pdo->query('SELECT f.id,f.submission_id,f.stored_name,p.title FROM submission_files f JOIN galleys g ON g.submission_file_id=f.id JOIN publications p ON p.id=g.publication_id') as $f) {

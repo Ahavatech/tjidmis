@@ -14,14 +14,14 @@ class SettingsController {
                 ['description', 'html', ['group' => 'set.group_keyinfo']], ['editorialTeam', 'html'], ['about', 'html', ['group' => 'set.group_description']]],
             'contact' => [['contactName', 'text', ['required' => 1, 'group' => 'set.group_principal']], ['contactEmail', 'email', ['required' => 1]], ['contactPhone', 'text'], ['contactAffiliation', 'text'], ['contactMailingAddress', 'textarea'],
                 ['supportName', 'text', ['required' => 1, 'group' => 'set.group_technical']], ['supportEmail', 'email', ['required' => 1]], ['supportPhone', 'text']],
-            'sections' => [],
+            'sections' => [], 'categories' => [],
         ],
         'website' => [
             'theme' => [['themeColor', 'color']],
             'appearanceSetup' => [['logo', 'image'], ['homepageImage', 'image'], ['pageFooter', 'html']],
             'appearanceAdvanced' => [['journalStyleSheet', 'css'], ['favicon', 'image'], ['additionalHomeContent', 'html']],
             'information' => [['readerInfo', 'html'], ['authorInfo', 'html'], ['librarianInfo', 'html']],
-            'navigation' => [],
+            'languages' => [], 'navigation' => [],
             'announcements' => [['announcementsEnabled', 'checkbox'], ['announcementsIntro', 'html'], ['numAnnouncementsHomepage', 'number', ['min' => 0, 'max' => 10]]],
             'lists' => [['itemsPerPage', 'number', ['min' => 5, 'max' => 100]]],
             'privacy' => [['privacyStatement', 'html']],
@@ -40,24 +40,24 @@ class SettingsController {
                 ['numDaysBeforeInviteReminder', 'number', ['min' => 0, 'max' => 90]], ['numDaysBeforeSubmitReminder', 'number', ['min' => 0, 'max' => 90]]],
             'reviewerGuidance' => [['reviewGuidelines', 'html'], ['competingInterests', 'html']],
             'emailSetup' => [['emailSignature', 'textarea'], ['mailFrom', 'email']],
-            'templates' => [],
+            'library' => [], 'templates' => [],
         ],
         'distribution' => [
             'license' => [['copyrightHolderType', 'select', ['options' => ['author' => 'set.holder_author', 'journal' => 'set.holder_journal', 'other' => 'set.holder_other'], 'translate' => 1]], ['copyrightHolderOther', 'text'],
                 ['licenseUrl', 'text'], ['copyrightYearBasis', 'select', ['options' => ['issue' => 'set.year_issue', 'submission' => 'set.year_submission'], 'translate' => 1]], ['licenseTerms', 'html']],
             'indexing' => [['searchDescription', 'textarea'], ['customHeaders', 'textarea']],
             'payments' => [['apcEnabled', 'checkbox'], ['apcFee', 'number', ['min' => 0, 'max' => 1000000]], ['apcCurrency', 'text'], ['apcInstructions', 'html']],
-            'access' => [],
+            'access' => [['enableOai', 'checkbox']],
         ],
     ];
     /** The tab layout, as in OJS 3.3: area => [tab => [sub-tab leaves]]. A tab with one leaf has no second row. */
     const NAV = [
-        'journal' => ['masthead' => ['masthead'], 'contact' => ['contact'], 'sections' => ['sections']],
-        'website' => ['appearance' => ['theme', 'appearanceSetup', 'appearanceAdvanced'], 'setup' => ['information', 'navigation', 'announcements', 'lists', 'privacy', 'datetime'], 'plugins' => ['plugins', 'staticPages', 'blocks', 'doi']],
-        'workflow' => ['submission' => ['disableSubmissions', 'metadata', 'components', 'checklist', 'authorGuidelines'], 'review' => ['reviewSetup', 'reviewerGuidance'], 'emails' => ['emailSetup', 'templates']],
+        'journal' => ['masthead' => ['masthead'], 'contact' => ['contact'], 'sections' => ['sections'], 'categories' => ['categories']],
+        'website' => ['appearance' => ['theme', 'appearanceSetup', 'appearanceAdvanced'], 'setup' => ['information', 'languages', 'navigation', 'announcements', 'lists', 'privacy', 'datetime'], 'plugins' => ['plugins', 'staticPages', 'blocks', 'doi']],
+        'workflow' => ['submission' => ['disableSubmissions', 'metadata', 'components', 'checklist', 'authorGuidelines'], 'review' => ['reviewSetup', 'reviewerGuidance'], 'library' => ['library'], 'emails' => ['emailSetup', 'templates']],
         'distribution' => ['license' => ['license'], 'searchIndexing' => ['indexing'], 'payments' => ['payments'], 'access' => ['access']],
     ];
-    const DEFAULT_ON = ['announcementsEnabled', 'metaKeywords', 'metaReferences', 'reviewerUploads'];
+    const DEFAULT_ON = ['enableOai', 'announcementsEnabled', 'metaKeywords', 'metaReferences', 'reviewerUploads'];
     const FEATURES = ['staticPages', 'customBlocks', 'webFeeds', 'googleScholar', 'usageStats', 'orcid'];
     private function jid(): int { return (int)Settings::journal()['id']; }
     private function guard(): void { Auth::require(self::ROLES); }
@@ -71,12 +71,14 @@ class SettingsController {
         unset($_SESSION['set_errors']);
         $jid = $this->jid();
         switch ("$area/$tab") {
+            case 'journal/categories': $data['categories'] = DB::all('SELECT c.*, p.title parent_title, (SELECT COUNT(*) FROM publication_categories x WHERE x.category_id=c.id) used FROM categories c LEFT JOIN categories p ON p.id=c.parent_id WHERE c.journal_id=? ORDER BY c.parent_id IS NOT NULL, c.seq, c.title', [$jid]); break;
             case 'journal/sections': $data['sections'] = DB::all('SELECT s.*, (SELECT COUNT(*) FROM submissions x WHERE x.section_id=s.id) used FROM sections s WHERE s.journal_id=? ORDER BY s.seq,s.id', [$jid]); break;
             case 'website/appearanceSetup': $data += $this->sidebarData($jid); break;
             case 'website/navigation': $data['items'] = $this->navTree($jid); $data['pages'] = DB::all('SELECT id,title FROM static_pages WHERE journal_id=? ORDER BY title', [$jid]); break;
             case 'website/staticPages': $data['pages'] = DB::all('SELECT * FROM static_pages WHERE journal_id=? ORDER BY title', [$jid]); break;
             case 'website/blocks': $data['blocks'] = DB::all('SELECT * FROM custom_blocks WHERE journal_id=? ORDER BY title', [$jid]); break;
             case 'website/plugins': $data['features'] = array_merge(array_fill_keys(self::FEATURES, true), Settings::json('enabledFeatures', [])); break;
+            case 'workflow/library': $data['files'] = DB::all('SELECT * FROM library_files WHERE journal_id=? ORDER BY name', [$jid]); break;
             case 'workflow/templates': $data['templates'] = DB::all('SELECT id,email_key,subject,enabled,is_custom FROM email_templates WHERE journal_id=? ORDER BY email_key', [$jid]); break;
         }
         if ($area === 'workflow' && $tab === 'checklist') $data['values']['submissionChecklist'] = implode("\n", Settings::json('submissionChecklist', []));

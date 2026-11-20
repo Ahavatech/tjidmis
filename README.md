@@ -51,7 +51,7 @@ The login page matches the live site exactly and shows no credentials; the accou
 4. Change or delete the demo accounts (`Demo@12345`).
 5. Set the `smtp` block, then check it: `php tools/smtp_check.php you@example.org`.
 6. Optional: `php tools/sanitizer_check.php` (XSS payloads), `php tools/audit_routes.php` (route list for review).
-7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 86 checks, submit to publish).
+7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 95 checks, submit to publish).
 
 ## Also in place (after phase 9)
 OAI-PMH endpoint and XML sitemap (same shapes as OJS), automated review reminders run from page requests like OJS's acron (Workflow > Review > Setup), the back-end menu is ordered like OJS (Submissions, Issues, Settings, Statistics, Tools, Administration) and Statistics has Articles, Editorial Activity, Users and Reports (CSV downloads).

@@ -27,7 +27,7 @@ class Catalog {
     }
     private static function ph(array $ids): string { return implode(',', array_fill(0, count($ids), '?')); }
     /** Attach authors (as list + joined string) and galleys to article rows keyed by publication id (pid). */
-    private static function decorate(array $rows): array {
+    public static function decorate(array $rows): array {
         if (!$rows) return [];
         $pids = array_column($rows, 'pid');
         $auth = $gal = [];
@@ -39,6 +39,14 @@ class Catalog {
             $r['galleys'] = $gal[$r['pid']] ?? [];
         }
         return $rows;
+    }
+    /** Published articles in a category and its subcategories, newest first. */
+    public static function categoryArticles(int $jid, int $catId): array {
+        $ids = [$catId];
+        foreach (DB::all('SELECT id FROM categories WHERE journal_id=? AND parent_id=?', [$jid, $catId]) as $c) $ids[] = (int)$c['id'];
+        $rows = DB::all("SELECT DISTINCT p.id pid, p.title, p.pages, p.doi, p.date_published, s.id sid FROM publication_categories pc JOIN publications p ON p.id=pc.publication_id
+            JOIN submissions s ON s.id=p.submission_id AND s.current_publication_id=p.id WHERE pc.category_id IN (" . self::ph($ids) . ") AND p.status='published' AND s.status='published' ORDER BY p.date_published DESC, s.id DESC", $ids);
+        return self::decorate($rows);
     }
     /** @return array<int,array{title:string,hide:bool,articles:array}> */
     public static function toc(int $issueId): array {

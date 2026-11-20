@@ -10,7 +10,25 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 <?php if (count($nav[$top] ?? []) > 1): ?><ul class="be_subtabs"><?php foreach ($nav[$top] as $tb): ?><li class="<?= $tb === $tab ? 'active' : '' ?>"><a href="<?= e(url('settings', 'index', [$area, $tb])) ?>"><?= e(t('set.tab_' . $tb)) ?></a></li><?php endforeach; ?></ul><?php endif; ?>
 <?= $errors ? errors_summary(array_values($errors)) : '' ?>
 
-<?php if ($tab === 'sections'): ?>
+<?php if ($tab === 'languages'): ?>
+<p class="muted"><?= e(t('lang.instructions')) ?></p>
+<table class="be_table"><thead><tr><th><?= e(t('lang.language')) ?></th><th><?= e(t('lang.primary')) ?></th><th><?= e(t('lang.ui')) ?></th><th><?= e(t('lang.forms')) ?></th><th><?= e(t('lang.submissions')) ?></th></tr></thead><tbody>
+<tr><td>English</td><td><input type="radio" checked disabled aria-label="<?= e(t('lang.primary')) ?>"></td><td><input type="checkbox" checked disabled></td><td><input type="checkbox" checked disabled></td><td><input type="checkbox" checked disabled></td></tr></tbody></table>
+<p class="muted be_small"><?= e(t('lang.only_english')) ?></p>
+
+<?php elseif ($tab === 'library'): ?>
+<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'library')) ?>"><?= e(t('lib.add')) ?></a></p>
+<table class="be_table"><thead><tr><th><?= e(t('cat.name')) ?></th><th><?= e(t('lib.type')) ?></th><th><?= e(t('lib.date')) ?></th><th><?= e(t('lib.public')) ?></th><th></th></tr></thead><tbody>
+<?php foreach ($files as $f): ?><tr><td><a href="<?= e(url('content', 'libraryDownload', [$f['id']])) ?>"><?= e($f['name']) ?></a></td><td><?= e(t('lib.type_' . (int)$f['file_type'])) ?></td><td><?= e(fmt_date($f['created_at'])) ?></td><td><?= $f['public_access'] ? e(t('lib.yes')) : '' ?></td><td class="be_actions"><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'library', [$f['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
+<button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'libraryDelete', [$f['id']])) ?>" onclick="return confirm('<?= e(t('set.confirm_delete')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?><?php if (!$files): ?><tr><td colspan="5" class="muted"><?= e(t('lib.none')) ?></td></tr><?php endif; ?></tbody></table>
+
+<?php elseif ($tab === 'categories'): ?>
+<p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'category')) ?>"><?= e(t('cat.add')) ?></a></p>
+<table class="be_table"><thead><tr><th><?= e(t('cat.name')) ?></th><th><?= e(t('cat.path')) ?></th><th><?= e(t('cat.parent')) ?></th><th><?= e(t('iss.articles')) ?></th><th></th></tr></thead><tbody>
+<?php foreach ($categories as $c): ?><tr><td><?= e($c['title']) ?></td><td><a href="<?= e(url('catalog', 'category', [$c['path']])) ?>" target="_blank">/<?= e($c['path']) ?></a></td><td><?= e($c['parent_title'] ?? '') ?></td><td><?= (int)$c['used'] ?></td><td class="be_actions"><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'category', [$c['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
+<button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'categoryDelete', [$c['id']])) ?>" onclick="return confirm('<?= e(t('cat.confirm_remove')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr><?php endforeach; ?><?php if (!$categories): ?><tr><td colspan="5" class="muted"><?= e(t('cat.none')) ?></td></tr><?php endif; ?></tbody></table>
+
+<?php elseif ($tab === 'sections'): ?>
 <p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'section')) ?>"><?= e(t('set.add_section')) ?></a></p>
 <table class="be_table"><thead><tr><th><?= e(t('set.title')) ?></th><th><?= e(t('set.abbrev')) ?></th><th><?= e(t('iss.articles')) ?></th><th></th></tr></thead><tbody>
 <?php $n = count($sections); foreach ($sections as $i => $s): ?><tr><td><?= e($s['title']) ?></td><td><?= e($s['abbrev']) ?></td><td><?= (int)$s['used'] ?></td><td class="be_actions"><form method="post" class="be_inline"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'section', [$s['id']])) ?>"><?= e(t('wizard.edit')) ?></a>
@@ -43,9 +61,9 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 <?php foreach (SC::FEATURES as $k): ?><?= checkbox($k, '<strong>' . e(t('set.feat_' . $k)) . '</strong> <span class="muted">&mdash; ' . e(t('set.feat_' . $k . '_help')) . '</span>', !empty($features[$k])) ?><?php endforeach; ?></div>
 <div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></form>
 
-<?php elseif ($tab === 'access'): ?><p><?= e(t('set.access_text')) ?></p>
 
 <?php else: ?>
+<?php if ($area === 'distribution' && $tab === 'access'): ?><p><?= e(t('set.access_text')) ?></p><?php endif; ?>
 <?php if ($area === 'website' && $tab === 'announcements'): ?><p><a class="be_btn be_btn_primary" href="<?= e(url('manageAnnouncements')) ?>"><?= e(t('menu.announcements')) ?></a></p><?php endif; ?>
 <?php if ($fields): ?>
 <form class="cmp_form be_form" method="post" action="<?= e($post) ?>"<?= $multipart ? ' enctype="multipart/form-data"' : '' ?>><?= csrf_field() ?><div class="fields">

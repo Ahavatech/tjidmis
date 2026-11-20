@@ -101,6 +101,20 @@ ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/about")" 302 "site restricte
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/login")" 200 "login page stays reachable"
 post admin /users/access -d disableUserReg=0 >/dev/null
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/about")" 200 "all options off again"
+echo "== categories, publisher library, languages, OAI switch"
+FORM=/content/category; post admin /content/category -d title=Medicine -d path=medicine >/dev/null
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/catalog/category/medicine")" 200 "category page"
+ok "$(post admin /content/category -d title=Again -d path=medicine >/dev/null; has 'already exists')" 1 "duplicate category path refused"
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/libraryFiles/downloadPublic/1")" 200 "seeded public library file downloads"
+FORM=/content/library; t=$(tok admin $FORM); ok "$(curl -s -b "$T/admin" -c "$T/admin" -o /dev/null -w '%{http_code}' "$BASE/content/library" -F csrfToken=$t -F "name=Smoke file" -F file_type=4 -F file=@"$T/test.pdf")" 302 "library file uploaded"
+LID=$(db "select max(id) from library_files" 2>/dev/null | head -1); [ -z "$LID" ] && LID=3
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/libraryFiles/downloadPublic/$LID")" 404 "private library file is not public"
+ok "$(code admin /content/libraryDownload/$LID)" 200 "manager can download it"
+ok "$(code admin /settings/index/website/languages)" 200 "languages tab"
+FORM=/settings/index/distribution/access; post admin /settings/save/distribution/access >/dev/null
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/oai?verb=Identify")" 404 "OAI switched off"
+post admin /settings/save/distribution/access -d enableOai=1 >/dev/null
+ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/oai?verb=Identify")" 200 "OAI switched on"
 echo "== indexing feeds and reports (same shapes as OJS 3.3)"
 ok "$(curl -s "$BASE/oai?verb=Identify" | grep -c '<repositoryName>')" 1 "OAI Identify"
 ok "$(curl -s "$BASE/oai?verb=ListSets" | grep -c 'setSpec')" 2 "OAI sets (journal and Articles)"

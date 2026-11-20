@@ -1,17 +1,84 @@
 <?php
 namespace App\Controllers\Backend;
-use App\Core\{View, Auth, DB, Settings, Request, Sanitizer};
+use App\Core\{View, Auth, DB, Settings, Request, Sanitizer, Upload};
 
 /** Settings screens that manage rows: sections, menu items, static pages, custom blocks, e-mail templates. */
 class ContentSettingsController {
     const RESERVED = ['index', 'about', 'issue', 'article', 'announcement', 'information', 'search', 'gateway', 'user', 'login', 'submissions', 'submission', 'workflow', 'notification', 'management', 'participant',
-        'decision', 'review', 'reviewer', 'discussion', 'publication', 'manageIssues', 'settings', 'users', 'statistics', 'admin', 'libraryFiles', 'css', 'manageAnnouncements', 'content'];
+        'decision', 'review', 'reviewer', 'discussion', 'publication', 'manageIssues', 'settings', 'users', 'statistics', 'admin', 'libraryFiles', 'css', 'manageAnnouncements', 'content', 'catalog', 'oai', 'sitemap'];
     const NAV_TYPES = ['about', 'editorial_team', 'submissions', 'privacy', 'contact', 'current', 'archives', 'announcements', 'search', 'information_readers', 'information_authors', 'information_librarians', 'static_page', 'custom_url'];
     private function jid(): int { return (int)Settings::journal()['id']; }
     private function guard(): void { Auth::require(SettingsController::ROLES); }
     private function back(string $area, string $tab): never { redirect(url('settings', 'index', [$area, $tab])); }
     private function notFound(): never { WorkflowController::deny(404); }
 
+    // ---------------------------------------------------------------- publisher library
+    public function library(string $id = ''): void {
+        $this->guard(); $jid = $this->jid(); $f = $id !== '' ? DB::one('SELECT * FROM library_files WHERE id=? AND journal_id=?', [(int)$id, $jid]) : null; $errors = [];
+        if ($id !== '' && !$f) $this->notFound();
+        if (Request::isPost()) {
+            $p = $_POST; $name = trim((string)($p['name'] ?? '')); $type = (int)($p['file_type'] ?? 0); $hasFile = !empty($_FILES['file']['name']);
+            if ($name === '') $errors['name'] = t('lib.err_name');
+            if ($type < 1 || $type > 5) $errors['file_type'] = t('lib.err_type');
+            if (!$f && !$hasFile) $errors['file'] = t('lib.err_file');
+            if (!$errors) {
+                $up = null;
+                if ($hasFile) { try { $up = Upload::store($_FILES['file'], 'library/tmp'); } catch (\RuntimeException $x) { $errors['file'] = $x->getMessage(); } }
+                if (!$errors) {
+                    $pub = empty($p['public_access']) ? 0 : 1;
+                    if ($f) DB::exec('UPDATE library_files SET name=?, file_type=?, public_access=? WHERE id=?', [mb_substr($name, 0, 255), $type, $pub, $f['id']]);
+                    else $fid = DB::insert('library_files', ['journal_id' => $jid, 'name' => mb_substr($name, 0, 255), 'original_name' => $up['original_name'], 'stored_name' => $up['stored_name'], 'file_type' => $type, 'public_access' => $pub, 'mime' => $up['mime'], 'size' => $up['size'], 'created_at' => date('Y-m-d H:i:s')]);
+                    if ($up) {   // new upload (or replacement): move it into the file's own folder
+                        $fid = (int)($f['id'] ?? $fid); $dir = Upload::baseDir() . '/library/' . $fid; if (!is_dir($dir)) mkdir($dir, 0775, true);
+                        if ($f) { @unlink($dir . '/' . $f['stored_name']); DB::exec('UPDATE library_files SET original_name=?, stored_name=?, mime=?, size=? WHERE id=?', [$up['original_name'], $up['stored_name'], $up['mime'], $up['size'], $fid]); }
+                        rename(Upload::baseDir() . '/' . $up['path'], $dir . '/' . $up['stored_name']);
+                    }
+                    flash(t('lib.saved')); $this->back('workflow', 'library');
+                }
+            }
+            $f = array_merge($f ?: [], $p);
+        }
+        View::render('backend/library_form', ['title' => t(!empty($f['id']) ? 'lib.edit' : 'lib.add'), 'menu' => 'settings', 'area' => 'workflow', 'tab' => 'library', 'f' => $f ?: [], 'errors' => $errors], 'backend');
+    }
+    public function libraryDelete(string $id = ''): void {
+        $this->guard();
+        if (Request::isPost()) {
+            $f = DB::one('SELECT * FROM library_files WHERE id=? AND journal_id=?', [(int)$id, $this->jid()]);
+            if ($f) { @unlink(Upload::baseDir() . '/library/' . (int)$f['id'] . '/' . $f['stored_name']); DB::exec('DELETE FROM library_files WHERE id=?', [$f['id']]); flash(t('set.deleted')); }
+        }
+        $this->back('workflow', 'library');
+    }
+    public function libraryDownload(string $id = ''): void {
+        $this->guard(); $f = DB::one('SELECT * FROM library_files WHERE id=? AND journal_id=?', [(int)$id, $this->jid()]);
+        if (!$f) $this->notFound();
+        \App\Controllers\Public\LibraryController::send($f);
+    }
+    // ---------------------------------------------------------------- categories
+    public function category(string $id = ''): void {
+        $this->guard(); $jid = $this->jid(); $c = $id !== '' ? DB::one('SELECT * FROM categories WHERE id=? AND journal_id=?', [(int)$id, $jid]) : null; $errors = [];
+        if ($id !== '' && !$c) $this->notFound();
+        if (Request::isPost()) {
+            $p = $_POST; $title = trim((string)($p['title'] ?? '')); $path = trim((string)($p['path'] ?? '')); $parent = (int)($p['parent_id'] ?? 0);
+            if ($title === '') $errors['title'] = t('cat.err_name');
+            if (!preg_match('/^[A-Za-z0-9]+$/', $path)) $errors['path'] = t('cat.err_path');
+            elseif (DB::val('SELECT 1 FROM categories WHERE journal_id=? AND path=? AND id<>?', [$jid, $path, (int)($c['id'] ?? 0)])) $errors['path'] = t('cat.err_path_exists');
+            if ($parent && (!DB::val('SELECT 1 FROM categories WHERE id=? AND journal_id=?', [$parent, $jid]) || $parent === (int)($c['id'] ?? 0))) $parent = 0;
+            if (!$errors) {
+                $row = ['title' => mb_substr($title, 0, 255), 'path' => $path, 'description' => Sanitizer::clean((string)($p['description'] ?? '')) ?: null, 'parent_id' => $parent ?: null];
+                if ($c) DB::exec('UPDATE categories SET title=?, path=?, description=?, parent_id=? WHERE id=?', [$row['title'], $row['path'], $row['description'], $row['parent_id'], $c['id']]);
+                else { $row += ['journal_id' => $jid, 'seq' => 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM categories WHERE journal_id=?', [$jid])]; DB::insert('categories', $row); }
+                flash(t('cat.saved')); $this->back('journal', 'categories');
+            }
+            $c = array_merge($c ?: [], $p);
+        }
+        $parents = DB::all('SELECT id, title FROM categories WHERE journal_id=? AND parent_id IS NULL AND id<>? ORDER BY title', [$jid, (int)($c['id'] ?? 0)]);
+        View::render('backend/category_form', ['title' => t('cat.add'), 'menu' => 'settings', 'area' => 'journal', 'tab' => 'categories', 'c' => $c ?: [], 'errors' => $errors, 'parents' => $parents], 'backend');
+    }
+    public function categoryDelete(string $id = ''): void {
+        $this->guard();
+        if (Request::isPost()) { DB::exec('DELETE FROM categories WHERE id=? AND journal_id=?', [(int)$id, $this->jid()]); flash(t('set.deleted')); }
+        $this->back('journal', 'categories');
+    }
     // ---------------------------------------------------------------- sections
     public function section(string $id = ''): void {
         $this->guard(); $jid = $this->jid(); $s = $id !== '' ? DB::one('SELECT * FROM sections WHERE id=? AND journal_id=?', [(int)$id, $jid]) : null; $errors = [];

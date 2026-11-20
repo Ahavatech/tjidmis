@@ -7,6 +7,7 @@ class Router {
     private array $routes = [
         'index'        => [P\IndexController::class, 'index'],
         'oai'          => [P\OaiController::class, 'index'],
+        'catalog'      => [P\CatalogController::class, 'index'],
         'sitemap'      => [P\SitemapController::class, 'index'],
         'about'        => [P\AboutController::class, 'index'],
         'issue'        => [P\IssueController::class, 'current'],

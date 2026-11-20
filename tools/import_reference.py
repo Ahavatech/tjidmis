@@ -131,6 +131,8 @@ for b in home.select('div.pkp_structure_sidebar > div.pkp_block'):
 S['sidebarBlocks'] = json.dumps(order)
 for k, v in S.items():
     w(f"INSERT INTO journal_settings (journal_id,name,value) VALUES (1,{q(k)},{q(v)});")
+w("INSERT INTO library_files (id,journal_id,name,original_name,stored_name,file_type,public_access,mime,size,created_at) VALUES (1,1,'Word Template','JIDMIS-Word-Template-OTH.docx','JIDMIS-Word-Template-OTH.docx',5,1,'application/vnd.openxmlformats-officedocument.wordprocessingml.document',550224,NOW());")
+w("INSERT INTO library_files (id,journal_id,name,original_name,stored_name,file_type,public_access,mime,size,created_at) VALUES (2,1,'Copyright Form','JIDMIS-Copyright-Form-OTH.pdf','JIDMIS-Copyright-Form-OTH.pdf',5,1,'application/pdf',194231,NOW());")
 for name, title, content, show in blocks:
     w(f"INSERT INTO custom_blocks (journal_id,name,title,content,show_title) VALUES (1,{q(name)},{q(title)},{q(content)},{show});")
 

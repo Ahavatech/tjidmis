@@ -29,6 +29,8 @@ $er = fn($k) => $errors[$k] ?? ''; ?>
 <?php elseif ($tab === 'metadata'): ?>
 <form class="cmp_form be_form" method="post" action="<?= e($save) ?>"><?= csrf_field() ?><fieldset <?= $locked ? 'disabled' : '' ?> class="be_plain"><div class="fields">
 <?= field(t('wizard.keywords'), 'keywords', implode('; ', $keywords), ['help' => t('pub.keywords_help')]) ?><?= field(t('pub.subjects'), 'subjects', implode('; ', $subjects), ['help' => t('pub.keywords_help')]) ?>
+<?php $allCats = \App\Core\DB::all('SELECT id, title, parent_id FROM categories WHERE journal_id=? ORDER BY parent_id IS NOT NULL, seq, title', [(int)$sub['journal_id']]); if ($allCats): $mine = array_map('intval', array_column(\App\Core\DB::all('SELECT category_id FROM publication_categories WHERE publication_id=?', [(int)$pub['id']]), 'category_id')); ?>
+<fieldset class="be_fs"><legend><?= e(t('cat.categories')) ?></legend><?php foreach ($allCats as $cat): ?><div class="optin"><label><input type="checkbox" name="categories[]" value="<?= (int)$cat['id'] ?>"<?= in_array((int)$cat['id'], $mine, true) ? ' checked' : '' ?>> <?= e(($cat['parent_id'] ? '- ' : '') . $cat['title']) ?></label></div><?php endforeach; ?></fieldset><?php endif; ?>
 <p class="muted"><?= e(t('pub.language')) ?>: English</p></div><div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></fieldset></form>
 
 <?php elseif ($tab === 'references'): ?>
