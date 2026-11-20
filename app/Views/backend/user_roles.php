@@ -1,3 +1,0 @@
-<div class="be_page"><div class="be_pagehead"><h1><?= e(t('users.edit_roles')) ?>: <?= e(trim($u['given_name'] . ' ' . $u['family_name'])) ?></h1></div><div class="be_card">
-<form class="cmp_form be_form" method="post" action="<?= e(url('users', 'editRoles', [$u['id']])) ?>"><?= csrf_field() ?><div class="fields"><?php foreach ($groups as $g): ?><?= checkbox('groups[]', e($g['name']) . ($g['journal_id'] === null ? ' <span class="muted">(' . e(t('users.site_level')) . ')</span>' : ''), in_array((int)$g['id'], $chosen, true), (string)$g['id']) ?><?php endforeach; ?></div>
-<div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button><a href="<?= e(url('users')) ?>"><?= e(t('wizard.cancel')) ?></a></div></form></div></div>

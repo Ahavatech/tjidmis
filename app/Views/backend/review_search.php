@@ -1,6 +1,0 @@
-<div class="be_page"><div class="be_pagehead"><h1><?= e(t('rev.add')) ?> <span class="muted">#<?= (int)$sub['id'] ?></span></h1></div><div class="be_card">
-<form class="be_filters" method="get" action="<?= e(url('review', 'search', [$sub['id']])) ?>"><input type="search" name="q" value="<?= e($q) ?>" placeholder="<?= e(t('rev.search_ph')) ?>" aria-label="<?= e(t('rev.search_ph')) ?>"><button class="be_btn" type="submit"><?= e(t('dash.filter')) ?></button></form>
-<?php $gr = []; foreach ($results as $r) $gr[] = ['cells' => [e(trim($r['given_name'] . ' ' . $r['family_name'])) . '<div class="muted be_small">' . e($r['affiliation']) . '</div>', e($r['reviewing_interests'] ?: '-'), (int)$r['active_reviews'], e($r['last_completed'] ? fmt_date($r['last_completed']) : '-'), $r['avg_days'] !== null ? e($r['avg_days']) : '-'],
-  'actions' => in_array((int)$r['id'], $taken, true) ? [] : [[t('rev.select'), url('review', 'add', [$sub['id'], $r['id']]), ['class' => 'add']]]]; ?>
-<?= grid(t('rev.add'), [], [[t('users.name'), 28], [t('rev.interests'), 27], [t('rev.active'), 12], [t('rev.last'), 18], [t('rev.avg'), 15]], $gr, t('rev.none_found')) ?>
-<p><a href="<?= e(url('workflow', 'index', [$sub['id'], 3])) ?>"><?= e(t('wizard.cancel')) ?></a></p></div></div>

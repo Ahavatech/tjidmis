@@ -1,7 +1,0 @@
-<?php $er = fn($k) => $errors[$k] ?? ''; ?>
-<div class="be_page"><div class="be_pagehead"><h1><?= e(t('disc.add')) ?> <span class="muted">#<?= (int)$sub['id'] ?></span></h1></div><div class="be_card"><?= errors_summary($errors) ?>
-<form class="cmp_form be_form" method="post" action="<?= e(url('discussion', 'create', [$sub['id'], $stage])) ?>"><?= csrf_field() ?><div class="fields">
-<fieldset class="be_fs"><legend><?= e(t('disc.participants')) ?></legend><?php foreach ($people as $p): ?><div class="optin"><label><input type="checkbox" name="participants[]" value="<?= (int)$p['id'] ?>"<?= in_array($p['id'], $_POST['participants'] ?? []) ? ' checked' : '' ?>> <?= e(trim($p['given_name'] . ' ' . $p['family_name'])) ?> <span class="muted">(<?= e($p['role_name']) ?>)</span></label></div><?php endforeach; ?>
-<?= $er('participants') ? '<span class="field_error" role="alert">' . e($er('participants')) . '</span>' : '' ?></fieldset>
-<?= field(t('wf.subject'), 'subject', $_POST['subject'] ?? '', ['required' => true, 'maxlength' => 255, 'error' => $er('subject')]) ?><?= field(t('disc.message'), 'message', $_POST['message'] ?? '', ['type' => 'textarea', 'rows' => 8, 'required' => true, 'error' => $er('message')]) ?></div>
-<div class="buttons"><button class="submit" type="submit"><?= e(t('disc.start')) ?></button><a href="<?= e(url('workflow', 'index', [$sub['id'], $stage])) ?>"><?= e(t('wizard.cancel')) ?></a></div></form></div></div>

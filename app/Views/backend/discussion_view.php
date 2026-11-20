@@ -1,6 +1,0 @@
-<div class="be_page"><div class="be_pagehead"><div><div class="muted"><a href="<?= e(url('workflow', 'index', [$sub['id'], $q['stage_id']])) ?>">#<?= (int)$sub['id'] ?> <?= e($sub['title']) ?></a></div><h1><?= e($q['subject']) ?></h1></div>
-<?php if ($canClose): ?><form method="post" action="<?= e(url('discussion', 'close', [$q['id']])) ?>"><?= csrf_field() ?><button class="be_btn" type="submit"><?= e($q['closed'] ? t('disc.reopen') : t('disc.close')) ?></button></form><?php endif; ?></div>
-<p class="muted"><?= e(t('disc.with')) ?> <?= e(implode(', ', array_column($people, 'name'))) ?></p>
-<div class="be_card"><?php foreach ($notes as $n): ?><div class="be_note"><div class="be_notehead"><strong><?= e($n['who'] ?: t('wf.system')) ?></strong> <span class="muted"><?= e($n['created_at']) ?></span></div><div><?= $n['contents'] ?></div></div><?php endforeach; ?>
-<?php if (!$q['closed']): ?><form class="cmp_form be_form" method="post" action="<?= e(url('discussion', 'reply', [$q['id']])) ?>"><?= csrf_field() ?><div class="fields"><?= field(t('disc.reply'), 'message', '', ['type' => 'textarea', 'rows' => 5, 'required' => true]) ?></div><div class="buttons"><button class="submit" type="submit"><?= e(t('disc.send')) ?></button></div></form>
-<?php else: ?><p class="muted"><?= e(t('disc.closed_note')) ?></p><?php endif; ?></div></div>

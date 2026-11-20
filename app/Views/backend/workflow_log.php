@@ -1,4 +1,0 @@
-<div class="be_page"><div class="be_pagehead"><h1><?= e(t('wf.log')) ?> <span class="muted">#<?= (int)$sub['id'] ?></span></h1><a class="be_btn" href="<?= e(url('workflow', 'index', [$sub['id']])) ?>"><?= e(t('wf.back')) ?></a></div>
-<div class="be_card"><ul class="be_list"><?php foreach ($log as $l): ?><li><span><?= e($l['message'] ?: $l['event']) ?> <span class="muted">&mdash; <?= e($l['who'] ?: t('wf.system')) ?></span></span><span class="muted"><?= e($l['created_at']) ?></span></li><?php endforeach; ?></ul></div>
-<div class="be_card"><?php $gr = []; foreach ($emails as $m) $gr[] = ['cells' => [e($m['to_addr']), e($m['subject']), '<span class="muted">' . e($m['created_at']) . ($m['sent'] ? '' : ' (' . e(t('wf.logged_only')) . ')') . '</span>']]; ?>
-<?= grid(t('wf.emails'), [], [[t('wf.to'), 30], [t('wf.subject'), 45], [t('wf.sent'), 25]], $gr) ?></div></div>

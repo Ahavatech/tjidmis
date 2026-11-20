@@ -1,5 +1,0 @@
-<div class="be_page"><div class="be_pagehead"><h1><?= e(t('menu.announcements')) ?></h1></div>
-<?php if (!$enabled): ?><div class="be_notice"><?= e(t('ann.disabled_note')) ?> <a href="<?= e(url('settings', 'index', ['website', 'announcements'])) ?>"><?= e(t('set.tab_announcements')) ?></a></div><?php endif; ?>
-<div class="be_card"><?php $gr = []; foreach ($rows as $r) $gr[] = ['cells' => [e($r['title']), e(fmt_date($r['date_posted'])), e($r['date_expire'] ? fmt_date($r['date_expire']) : '-')], 'actions' => [
-  [t('wizard.edit'), url('manageAnnouncements', 'form', [$r['id']])], [t('wizard.delete'), url('manageAnnouncements', 'delete', [$r['id']]), ['post' => 1, 'class' => 'delete', 'confirm' => t('set.confirm_delete')]]]]; ?>
-<?= grid(t('menu.announcements'), [[t('ann.add'), url('manageAnnouncements', 'form')]], [[t('set.title'), 50], [t('iss.date'), 25], [t('ann.expires'), 25]], $gr, t('ann.none')) ?><?= paginate($total, $page, $per, fn($n) => url('manageAnnouncements', 'index', [], ['page' => $n])) ?></div></div>

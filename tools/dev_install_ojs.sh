@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# One-time install of the real OJS 3.3.0-22 reference (profile `reference`) and creation of the journal "jidmis".
-#   docker compose --profile reference up -d ; ADMIN_PASS='Your@Pass123' bash tools/dev_install_ojs.sh
+# One-time install of the real OJS 3.3.0-22 reference and creation of the journal "jidmis".
+#   docker compose up -d ; ADMIN_PASS='Your@Pass123' bash tools/dev_install_ojs.sh
 set -e
 cd "$(dirname "$0")/.."; export MSYS_NO_PATHCONV=1
 ADMIN_PASS=${ADMIN_PASS:-Admin@12345}; URL=${URL:-http://localhost:8082}

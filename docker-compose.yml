@@ -1,6 +1,6 @@
-# Local setup (not for public hosting):
-#   docker compose up -d                       our app at http://localhost:8081/index.php/jidmis  (then run tools/dev_install.sh once)
-#   docker compose --profile reference up -d   also starts the real OJS 3.3.0-22 at http://localhost:8082  (then tools/dev_install_ojs.sh once)
+# Local OJS 3.3.0-22 for development and testing (not for public hosting):
+#   docker compose up -d                 -> OJS at http://localhost:8082  (then run tools/dev_install_ojs.sh once)
+# The JIDMIS theme is mounted into OJS; see README.md for importing content and deploying.
 services:
   db:
     image: mariadb:10.4
@@ -9,15 +9,7 @@ services:
       - db_data:/var/lib/mysql
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck: { test: ["CMD", "mysqladmin", "ping", "-uroot", "-proot", "--silent"], interval: 3s, timeout: 3s, retries: 40 }
-  app:
-    build: { context: ., dockerfile: docker/app.Dockerfile }
-    depends_on: { db: { condition: service_healthy } }
-    ports: ["8081:80"]
-    volumes:
-      - .:/var/www/html
-      - journal_files:/var/journal_files
   ojs:
-    profiles: ["reference"]
     image: pkpofficial/ojs:3_3_0-22
     depends_on: { db: { condition: service_healthy } }
     ports: ["8082:80"]
@@ -25,4 +17,4 @@ services:
       - ./ojs-theme/jidmis:/var/www/html/plugins/themes/jidmis:ro
       - ojs_files:/var/www/files
       - ojs_public:/var/www/html/public
-volumes: { db_data: {}, journal_files: {}, ojs_files: {}, ojs_public: {} }
+volumes: { db_data: {}, ojs_files: {}, ojs_public: {} }

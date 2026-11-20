@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# End-to-end workflow check against the LOCAL OJS 3.3 (docker compose --profile reference up -d).
+# End-to-end workflow check against the LOCAL OJS 3.3 (docker compose up -d).
 # author submits -> editor sends to review -> reviewer reviews -> editor accepts -> production -> publish.
 # Usage: bash tools/e2e_ojs.sh [--keep]     (default: deletes the test submission at the end)
 # Needs the demo accounts (bash tools/ojs_demo_users.sh create; password Demo@12345), curl and docker compose.

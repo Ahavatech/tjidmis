@@ -1,4 +1,0 @@
-<div class="be_page"><div class="be_pagehead"><h1><?= e(t('wizard.title')) ?></h1></div>
-<ol class="be_steps"><?php foreach (['wizard.step1', 'wizard.step2', 'wizard.step3', 'wizard.step4'] as $i => $k): ?><li class="done"><span><span class="be_stepno">&#10003;</span> <?= e(t($k)) ?></span></li><?php endforeach; ?><li class="active"><span><span class="be_stepno">5</span> <?= e(t('wizard.step5')) ?></span></li></ol>
-<div class="be_card"><h2><?= e(t('wizard.complete')) ?></h2><h3><?= e(t('wizard.whatnext')) ?></h3><p><?= e(t('wizard.complete_text', $sub['title'])) ?></p>
-<ul class="be_links"><li><a href="<?= e(url('workflow', 'index', [$sub['id']])) ?>"><?= e(t('wizard.review_submission')) ?></a></li><li><a href="<?= e(url('submission', 'wizard')) ?>"><?= e(t('wizard.new_submission')) ?></a></li><li><a href="<?= e(url('submissions')) ?>"><?= e(t('wizard.return_dashboard')) ?></a></li></ul></div></div>

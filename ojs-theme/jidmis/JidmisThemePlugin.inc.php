@@ -18,7 +18,14 @@ class JidmisThemePlugin extends DefaultThemePlugin
 	{
 		$file = $this->getPluginPath() . '/sidebar.html';
 		if (is_readable($file)) {
-			$args[2] .= file_get_contents($file);
+			$request = Application::get()->getRequest();
+			$base = rtrim($request->getBaseUrl(), '/');
+			$journalUrl = preg_replace('#/index$#', '', $request->url(null, 'index'));
+			$args[2] .= strtr(file_get_contents($file), array(
+				'__JURL__' => $journalUrl,
+				'__PUBLIC__' => $base . '/public',
+				'__THEME__' => $base . '/' . $this->getPluginPath(),
+			));
 		}
 		return false;
 	}
