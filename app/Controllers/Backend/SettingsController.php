@@ -31,7 +31,7 @@ class SettingsController {
         ],
         'workflow' => [
             'disableSubmissions' => [['submissionsDisabled', 'checkbox']],
-            'metadata' => [['metaKeywords', 'checkbox'], ['metaReferences', 'checkbox']],
+            'metadata' => [],
             'components' => [['components', 'lines']],
             'checklist' => [['submissionChecklist', 'lines']],
             'authorGuidelines' => [['authorGuidelines', 'html'], ['copyrightNotice', 'html']],
@@ -57,7 +57,7 @@ class SettingsController {
         'workflow' => ['submission' => ['disableSubmissions', 'metadata', 'components', 'checklist', 'authorGuidelines'], 'review' => ['reviewSetup', 'reviewerGuidance'], 'library' => ['library'], 'emails' => ['emailSetup', 'templates']],
         'distribution' => ['license' => ['license'], 'searchIndexing' => ['indexing'], 'payments' => ['payments'], 'access' => ['access']],
     ];
-    const DEFAULT_ON = ['enableOai', 'announcementsEnabled', 'metaKeywords', 'metaReferences', 'reviewerUploads'];
+    const DEFAULT_ON = ['enableOai', 'announcementsEnabled', 'reviewerUploads'];
     const FEATURES = ['staticPages', 'customBlocks', 'webFeeds', 'googleScholar', 'usageStats', 'orcid'];
     private function jid(): int { return (int)Settings::journal()['id']; }
     private function guard(): void { Auth::require(self::ROLES); }
@@ -99,6 +99,14 @@ class SettingsController {
         $this->guard(); $fields = self::SCHEMA[$area][$tab] ?? null;
         if ($fields === null || !Request::isPost()) redirect(url('settings', 'index', [$area ?: 'journal', $tab]));
         if ($area === 'website' && $tab === 'plugins') { $this->savePlugins(); return; }
+        if ($area === 'workflow' && $tab === 'metadata') {
+            if (!Request::isPost()) redirect(url('settings', 'index', ['workflow', 'metadata']));
+            foreach (array_keys(\App\Services\MetadataService::FIELDS) as $mf) {
+                $mode = (string)($_POST[$mf . '_mode'] ?? 'enable');
+                Settings::set($mf, !empty($_POST[$mf . '_on']) && in_array($mode, \App\Services\MetadataService::MODES, true) ? $mode : '0', $this->jid());
+            }
+            flash(t('profile.saved')); redirect(url('settings', 'index', ['workflow', 'metadata']));
+        }
         $jid = $this->jid(); $errors = []; $write = [];
         foreach ($fields as $f) {
             [$k, $type] = $f; $o = $f[2] ?? []; $raw = $_POST[$k] ?? '';

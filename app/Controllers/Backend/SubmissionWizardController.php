@@ -140,20 +140,23 @@ class SubmissionWizardController {
         $abs = trim((string)($p['abstract'] ?? ''));
         if ($abs !== '' && stripos($abs, '<p') === false)
             $abs = implode('', array_map(fn($x) => '<p>' . e(trim($x)) . '</p>', preg_split('/\R{2,}/', $abs)));
-        $kw = array_values(array_unique(array_filter(array_map('trim', preg_split('/[,;\n]+/', (string)($p['keywords'] ?? ''))))));
-        $refs = implode('', array_map(fn($x) => '<p>' . e(trim($x)) . '</p>', array_filter(preg_split('/\R+/', (string)($p['references'] ?? '')), fn($x) => trim($x) !== '')));
+        $extra = [];   // metadata fields this journal asks authors for (Workflow > Submission > Metadata)
+        foreach (array_keys(\App\Services\MetadataService::FIELDS) as $mf) if (\App\Services\MetadataService::asked($mf)) $extra[\App\Services\MetadataService::column($mf)] = \App\Services\MetadataService::fromPost($mf, $p['meta_' . $mf] ?? '');
         return ['prefix' => trim((string)($p['prefix'] ?? '')) ?: null, 'title' => trim((string)($p['title'] ?? '')), 'subtitle' => trim((string)($p['subtitle'] ?? '')) ?: null,
-            'abstract' => Sanitizer::clean($abs) ?: null, 'keywords' => $kw ? json_encode($kw, JSON_UNESCAPED_UNICODE) : null, 'references_text' => $refs ?: null];
+            'abstract' => Sanitizer::clean($abs) ?: null, 'extra' => $extra];
     }
     private function saveMetadata(array $sub): array {
         $m = $this->metadataFromPost(); $pid = (int)$sub['pid']; $action = (string)($_POST['action'] ?? 'continue');
-        DB::exec('UPDATE publications SET prefix=?, title=?, subtitle=?, abstract=?, keywords=?, references_text=? WHERE id=?', [$m['prefix'], mb_substr($m['title'], 0, 500), $m['subtitle'], $m['abstract'], $m['keywords'], $m['references_text'], $pid]);
+        $set = ['prefix=?', 'title=?', 'subtitle=?', 'abstract=?']; $vals = [$m['prefix'], mb_substr($m['title'], 0, 500), $m['subtitle'], $m['abstract']];
+        foreach ($m['extra'] as $col => $v) { $set[] = "`$col`=?"; $vals[] = $v; }
+        DB::exec('UPDATE publications SET ' . implode(', ', $set) . ' WHERE id=?', array_merge($vals, [$pid]));
         DB::exec('UPDATE submissions SET date_last_activity=NOW() WHERE id=?', [$sub['id']]);
         if ($action === 'add_contributor') redirect(url('submission', 'contributor', [$sub['id']]));
         if ($action === 'save') { flash(t('wizard.saved')); redirect(url('submission', 'wizard', [$sub['id'], 3])); }
         $e = [];
         if ($m['title'] === '') $e['title'] = t('form.required_field');
         if (!$m['abstract']) $e['abstract'] = t('form.required_field');
+        foreach (array_keys(\App\Services\MetadataService::FIELDS) as $mf) if (\App\Services\MetadataService::required($mf) && ($m['extra'][\App\Services\MetadataService::column($mf)] ?? null) === null) $e['meta_' . $mf] = t('form.required_field');
         if (!DB::val('SELECT COUNT(*) FROM authors WHERE publication_id=? AND email IS NOT NULL AND email<>""', [$pid])) $e['authors'] = t('wizard.err_contributor');
         if ($e) return $e;
         DB::exec('UPDATE submissions SET submission_progress=GREATEST(submission_progress,4) WHERE id=?', [$sub['id']]);
@@ -214,6 +217,7 @@ class SubmissionWizardController {
         if (!DB::val("SELECT COUNT(*) FROM submission_files WHERE submission_id=? AND file_stage='submission' AND genre='Article Text'", [$sub['id']])) $m[] = t('wizard.err_article_text');
         if (trim((string)$sub['title']) === '') $m[] = t('wizard.err_title');
         if (!$sub['abstract']) $m[] = t('wizard.err_abstract');
+        foreach (array_keys(\App\Services\MetadataService::FIELDS) as $mf) if (\App\Services\MetadataService::required($mf) && trim((string)($sub[\App\Services\MetadataService::column($mf)] ?? '')) === '') $m[] = t('meta.' . $mf) . ': ' . t('form.required_field');
         if (!DB::val('SELECT COUNT(*) FROM authors WHERE publication_id=? AND email<>""', [$pid])) $m[] = t('wizard.err_contributor');
         return $m;
     }

@@ -45,9 +45,9 @@ class PublicationController {
                 if (trim((string)($p['title'] ?? '')) === '') { flash(t('wizard.err_title'), 'error'); $this->back($sub, $tab); }
                 DB::exec('UPDATE publications SET prefix=?, title=?, subtitle=?, abstract=? WHERE id=?', [trim((string)($p['prefix'] ?? '')) ?: null, mb_substr(trim($p['title']), 0, 500), trim((string)($p['subtitle'] ?? '')) ?: null, Sanitizer::clean($abs) ?: null, $pid]); break;
             case 'metadata':
-                $split = fn($t) => array_values(array_unique(array_filter(array_map('trim', preg_split('/[;\n,]+/', (string)$t)))));
-                $kw = $split($p['keywords'] ?? ''); $sj = $split($p['subjects'] ?? '');
-                DB::exec('UPDATE publications SET keywords=?, subjects=? WHERE id=?', [$kw ? json_encode($kw, JSON_UNESCAPED_UNICODE) : null, $sj ? json_encode($sj, JSON_UNESCAPED_UNICODE) : null, $pid]);
+                $set = []; $vals = [];
+                foreach (array_keys(\App\Services\MetadataService::FIELDS) as $mf) if (\App\Services\MetadataService::enabled($mf) && $mf !== 'citations') { $set[] = '`' . \App\Services\MetadataService::column($mf) . '`=?'; $vals[] = \App\Services\MetadataService::fromPost($mf, $p['meta_' . $mf] ?? ''); }
+                if ($set) DB::exec('UPDATE publications SET ' . implode(', ', $set) . ' WHERE id=?', array_merge($vals, [$pid]));
                 DB::exec('DELETE FROM publication_categories WHERE publication_id=?', [$pid]);
                 foreach (array_unique(array_map('intval', (array)($p['categories'] ?? []))) as $cid) if (DB::val('SELECT 1 FROM categories WHERE id=? AND journal_id=?', [$cid, (int)$sub['journal_id']])) DB::exec('INSERT IGNORE INTO publication_categories (publication_id, category_id) VALUES (?,?)', [$pid, $cid]);
                 break;

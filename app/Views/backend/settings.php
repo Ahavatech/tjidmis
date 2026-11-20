@@ -10,7 +10,15 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 <?php if (count($nav[$top] ?? []) > 1): ?><ul class="be_subtabs"><?php foreach ($nav[$top] as $tb): ?><li class="<?= $tb === $tab ? 'active' : '' ?>"><a href="<?= e(url('settings', 'index', [$area, $tb])) ?>"><?= e(t('set.tab_' . $tb)) ?></a></li><?php endforeach; ?></ul><?php endif; ?>
 <?= $errors ? errors_summary(array_values($errors)) : '' ?>
 
-<?php if ($tab === 'languages'): ?>
+<?php if ($area === 'workflow' && $tab === 'metadata'): ?>
+<form class="cmp_form be_form" method="post" action="<?= e($post) ?>"><?= csrf_field() ?><div class="fields">
+<?php foreach (array_keys(\App\Services\MetadataService::FIELDS) as $mf): $mode = \App\Services\MetadataService::mode($mf); ?>
+<fieldset class="be_metafield"><legend><?= e(t('meta.' . $mf)) ?></legend><p class="muted"><?= e(t('meta.' . $mf . '_desc')) ?></p>
+<div class="optin"><label><input type="checkbox" name="<?= $mf ?>_on" value="1"<?= $mode !== '0' ? ' checked' : '' ?>> <?= e(t('meta.enable_' . $mf)) ?></label></div>
+<?php foreach (\App\Services\MetadataService::MODES as $m): ?><div class="optin be_metamode"><label><input type="radio" name="<?= $mf ?>_mode" value="<?= $m ?>"<?= ($mode === $m || ($mode === '0' && $m === 'enable')) ? ' checked' : '' ?>> <?= e(t('meta.' . $mf . '_' . $m)) ?></label></div><?php endforeach; ?></fieldset>
+<?php endforeach; ?></div><div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></form>
+
+<?php elseif ($tab === 'languages'): ?>
 <p class="muted"><?= e(t('lang.instructions')) ?></p>
 <table class="be_table"><thead><tr><th><?= e(t('lang.language')) ?></th><th><?= e(t('lang.primary')) ?></th><th><?= e(t('lang.ui')) ?></th><th><?= e(t('lang.forms')) ?></th><th><?= e(t('lang.submissions')) ?></th></tr></thead><tbody>
 <tr><td>English</td><td><input type="radio" checked disabled aria-label="<?= e(t('lang.primary')) ?>"></td><td><input type="checkbox" checked disabled></td><td><input type="checkbox" checked disabled></td><td><input type="checkbox" checked disabled></td></tr></tbody></table>

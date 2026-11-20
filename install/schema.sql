@@ -134,6 +134,7 @@ CREATE TABLE apc_payments (
 CREATE TABLE publications (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, submission_id INT UNSIGNED NOT NULL, version INT NOT NULL DEFAULT 1, title VARCHAR(500) NOT NULL DEFAULT '',
   subtitle VARCHAR(500) NULL, prefix VARCHAR(50) NULL, abstract MEDIUMTEXT NULL, keywords JSON NULL, subjects JSON NULL, references_text MEDIUMTEXT NULL,
+  coverage TEXT NULL, rights TEXT NULL, `source` VARCHAR(500) NULL, dc_type VARCHAR(255) NULL, dc_languages VARCHAR(255) NULL, disciplines JSON NULL, agencies JSON NULL,
   issue_id INT UNSIGNED NULL, section_id INT UNSIGNED NULL, pages VARCHAR(50) NULL, url_path VARCHAR(64) NULL, cover_image VARCHAR(255) NULL,
   doi VARCHAR(255) NULL, copyright_holder TEXT NULL, copyright_year INT NULL, license_url VARCHAR(255) NULL,
   status ENUM('unscheduled','scheduled','published') NOT NULL DEFAULT 'unscheduled', date_published DATE NULL, seq INT NOT NULL DEFAULT 0,

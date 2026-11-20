@@ -115,6 +115,14 @@ FORM=/settings/index/distribution/access; post admin /settings/save/distribution
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/oai?verb=Identify")" 404 "OAI switched off"
 post admin /settings/save/distribution/access -d enableOai=1 >/dev/null
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/oai?verb=Identify")" 200 "OAI switched on"
+echo "== metadata options (Workflow > Submission > Metadata)"
+FORM=/settings/index/workflow/metadata; code admin $FORM >/dev/null
+ok "$(has 'be_metafield')" 1 "metadata settings form"
+post admin /settings/save/workflow/metadata -d coverage_on=1 -d coverage_mode=request -d disciplines_on=1 -d disciplines_mode=enable -d keywords_on=1 -d keywords_mode=request >/dev/null
+code admin /publication/index/182/metadata >/dev/null; ok "$(has 'name="meta_disciplines"')" 1 "enabled field appears on the Publication tab"
+ok "$(grep -c 'publication/index/182/references' "$T/out")" 0 "References tab hidden when references are off"
+post admin /settings/save/workflow/metadata -d keywords_on=1 -d keywords_mode=request -d citations_on=1 -d citations_mode=request >/dev/null
+code admin /publication/index/182/metadata >/dev/null; ok "$(has 'name="meta_disciplines"')" 0 "switched off again"
 echo "== indexing feeds and reports (same shapes as OJS 3.3)"
 ok "$(curl -s "$BASE/oai?verb=Identify" | grep -c '<repositoryName>')" 1 "OAI Identify"
 ok "$(curl -s "$BASE/oai?verb=ListSets" | grep -c 'setSpec')" 2 "OAI sets (journal and Articles)"

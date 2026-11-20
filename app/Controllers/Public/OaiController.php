@@ -80,6 +80,9 @@ class OaiController {
         foreach (DB::all('SELECT given_name, family_name FROM authors WHERE publication_id=? ORDER BY seq, id', [$r['pid']]) as $a) $o .= $l('creator', trim($a['given_name'] . ' ' . $a['family_name']));
         $kw = $r['keywords'] ? implode('; ', (array)json_decode((string)$r['keywords'], true)) : '';
         $o .= $l('subject', $kw, true);
+        foreach (['subjects', 'disciplines'] as $mk) foreach (json_decode((string)($r[$mk] ?? '[]'), true) ?: [] as $v) $o .= $l('subject', (string)$v, true);   // extra metadata switched on under Workflow > Metadata
+        foreach (json_decode((string)($r['agencies'] ?? '[]'), true) ?: [] as $v) $o .= $l('contributor', (string)$v, true);
+        $o .= $l('coverage', $r['coverage'] ?? null, true) . $l('rights', $r['rights'] ?? null, true);
         $abs = trim(strip_tags((string)$r['abstract'])); if ($r['doi']) $abs .= ($abs !== '' ? "\r\n " : '') . 'DOI: https://doi.org/' . $r['doi'];
         $o .= $l('description', $abs, true) . $l('publisher', $jname, true) . $l('date', $r['date_published'] ? substr($r['date_published'], 0, 10) : null);
         $o .= "\t<dc:type>info:eu-repo/semantics/article</dc:type>\n\t<dc:type>info:eu-repo/semantics/publishedVersion</dc:type>\n\t<dc:type xml:lang=\"en-US\">Peer-reviewed Article</dc:type>\n";

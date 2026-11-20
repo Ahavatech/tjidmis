@@ -4,7 +4,7 @@ use App\Core\{DB, Auth};
 class SubmissionRepo {
     const STAGES = [1 => 'stage.submission', 3 => 'stage.review', 4 => 'stage.copyediting', 5 => 'stage.production'];
     public static function find(int $id, int $jid): ?array {
-        return DB::one('SELECT s.*, p.id pid, p.title, p.subtitle, p.prefix, p.abstract, p.keywords, p.references_text, p.primary_contact_id, sec.title section_title
+        return DB::one('SELECT s.*, p.id pid, p.title, p.subtitle, p.prefix, p.abstract, p.keywords, p.references_text, p.coverage, p.rights, p.`source`, p.dc_type, p.dc_languages, p.subjects, p.disciplines, p.agencies, p.primary_contact_id, sec.title section_title
             FROM submissions s LEFT JOIN publications p ON p.id=s.current_publication_id LEFT JOIN sections sec ON sec.id=s.section_id WHERE s.id=? AND s.journal_id=?', [$id, $jid]);
     }
     public static function authors(int $pid): array { return DB::all('SELECT * FROM authors WHERE publication_id=? ORDER BY seq,id', [$pid]); }
