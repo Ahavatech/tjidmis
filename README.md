@@ -19,13 +19,15 @@ the JIDMIS look, the migrated content and a few helper scripts.
 
 ## Deploying to cPanel
 
+**Full guide (install, configuration, email, users, verification, troubleshooting): [DEPLOY.md](./DEPLOY.md).** Short version:
+
 1. Install an official OJS 3.3.0-22 distribution on your host (PHP and extensions per
    PKP's requirements), HTTPS enabled. Create the database and the admin account.
    Set `files_dir` outside `public_html` and configure your own SMTP. Review PKP's
    security guidance: 3.3.0-22 is an older maintenance line.
 2. Create the journal with URL path `jidmis`.
 3. Upload `ojs-theme/jidmis` to `plugins/themes/jidmis` and run, from the OJS folder:
-   `php tools/upgrade.php upgrade` (registers the theme).
+   `php lib/pkp/tools/installPluginVersion.php plugins/themes/jidmis/version.xml` (registers the theme).
 4. Upload the contents of `ojs-public/` into OJS's `public/` folder (merge
    `site/` and `journals/1/`; check the journal's id if it is not 1).
 5. Import the content into the empty journal (not idempotent, run it once):
