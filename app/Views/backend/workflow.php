@@ -76,7 +76,7 @@ $isReviewStage = $stage === 3; $mgr = $manage; ?>
 <?php if ($mgr): ?><p><a class="be_btn be_btn_primary" href="<?= e(url('publication', 'index', [$sid, 'issue'])) ?>"><?= e(in_array($sub['status'], ['scheduled', 'published'], true) ? t('wf.open_publication') : t('pub.schedule')) ?></a></p><?php endif; ?>
 <?php endif; ?>
 
-<h2><?= e(t('wf.discussions')) ?> <?php if ($sub['status'] === 'queued' || $mgr): ?><a class="be_btn be_small" href="<?= e(url('discussion', 'create', [$sid, $stage])) ?>"><?= e(t('disc.add')) ?></a><?php endif; ?></h2>
+<h2><?= e(t('wf.discussions_' . (int)$stage)) ?> <?php if ($sub['status'] === 'queued' || $mgr): ?><a class="be_btn be_small" href="<?= e(url('discussion', 'create', [$sid, $stage])) ?>"><?= e(t('disc.add')) ?></a><?php endif; ?></h2>
 <?php if ($discussions): ?><ul class="be_list"><?php foreach ($discussions as $q): ?><li class="<?= !empty($q['unread']) ? 'unread' : '' ?>"><span><a href="<?= e(url('discussion', 'view', [$q['id']])) ?>"><?= e($q['subject']) ?></a><?= $q['closed'] ? ' <span class="be_chip">' . e(t('disc.closed')) . '</span>' : '' ?></span><span class="muted"><?= e(t('disc.messages', (int)$q['notes'])) ?><?= !empty($q['unread']) ? ' &middot; ' . e(t('disc.unread', (int)$q['unread'])) : '' ?></span></li><?php endforeach; ?></ul>
 <?php else: ?><p class="muted"><?= e(t('wf.no_discussions')) ?></p><?php endif; ?>
 </div>

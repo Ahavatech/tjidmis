@@ -1,5 +1,6 @@
 <?php
 return [
+    'wf.discussions_1' => 'Pre-Review Discussions', 'wf.discussions_3' => 'Review Discussions', 'wf.discussions_4' => 'Copyediting Discussions', 'wf.discussions_5' => 'Production Discussions', 'wizard.whatnext' => 'What Happens Next?',
     'log.decision_send_to_review' => 'Decision: sent to review (round 1)', 'log.decision_accept_skip_review' => 'Decision: accepted, review skipped', 'log.decision_decline' => 'Decision: declined',
     'log.decision_request_revisions' => 'Decision: revisions requested', 'log.decision_resubmit' => 'Decision: resubmit for review, round %d opened', 'log.decision_accept' => 'Decision: accepted',
     'log.decision_new_round' => 'New review round %d opened',
@@ -47,7 +48,7 @@ return [
     'rflow.saved' => 'Your review was saved.', 'rflow.err_review' => 'Choose a recommendation and write at least one comment before submitting.', 'rflow.submitted' => 'Your review was submitted. Thank you.',
     'rflow.complete' => 'Review Submitted', 'rflow.complete_text' => 'Thank you for your review. The editor has been notified.', 'rflow.none_declared' => 'None declared',
     // discussions
-    'disc.add' => 'Add Discussion', 'disc.participants' => 'Participants', 'disc.message' => 'Message', 'disc.start' => 'Start Discussion', 'disc.reply' => 'Reply', 'disc.send' => 'Send Message', 'disc.close' => 'Close',
+    'disc.add' => 'Add discussion', 'disc.participants' => 'Participants', 'disc.message' => 'Message', 'disc.start' => 'Start Discussion', 'disc.reply' => 'Reply', 'disc.send' => 'Send Message', 'disc.close' => 'Close',
     'disc.reopen' => 'Reopen', 'disc.closed' => 'Closed', 'disc.reopened' => 'Discussion reopened.', 'disc.created' => 'Discussion started.', 'disc.closed_note' => 'This discussion is closed.',
     'disc.err_participants' => 'Choose at least one participant.', 'disc.messages' => '%d message(s)', 'disc.unread' => '%d new', 'disc.with' => 'With:',
     // workflow page

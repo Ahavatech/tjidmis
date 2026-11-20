@@ -176,3 +176,9 @@ form.is_busy button[type=submit],form.is_busy input[type=submit]{opacity:.6;curs
 .be_areahead{font-family:var(--font-head);font-size:1.25rem;margin:.2rem 0 .8rem}
 .be_group{font-family:var(--font-head);font-size:1rem;margin:1.4rem 0 .4rem;padding-bottom:.3rem;border-bottom:1px solid var(--line)}
 .be_group:first-child{margin-top:0}
+
+.be_panelhead{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.8rem}.be_panelhead h2{margin:0;font-size:1.15rem}
+.be_dashfilters{display:flex;flex-wrap:wrap;align-items:flex-start;gap:.6rem}.be_dashfilters input[type=search]{flex:1 1 16rem}
+.be_filterpanel{flex:1 1 100%}.be_filterpanel summary{display:inline-block;cursor:pointer;list-style:none}.be_filterpanel summary::-webkit-details-marker{display:none}
+.be_filtergroups{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:1rem;padding:1rem 0}.be_filtergroups fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:.35rem}
+.be_filtergroups legend{font-weight:600;margin-bottom:.3rem;padding:0}.be_filteractions{grid-column:1/-1}

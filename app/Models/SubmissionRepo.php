@@ -56,9 +56,13 @@ class SubmissionRepo {
             $w[] = '(p.title LIKE ? OR s.id=? OR EXISTS (SELECT 1 FROM authors a WHERE a.publication_id=p.id AND CONCAT(a.given_name," ",a.family_name) LIKE ?))';
             array_push($p, $like, ctype_digit($f['q']) ? (int)$f['q'] : 0, $like);
         }
-        if (!empty($f['stage'])) { $w[] = 's.stage_id=?'; $p[] = (int)$f['stage']; }
-        if (!empty($f['section'])) { $w[] = 's.section_id=?'; $p[] = (int)$f['section']; }
+        $in = function (string $col, $v) use (&$w, &$p) { $v = array_values(array_filter(array_map('intval', (array)$v))); if ($v) { $w[] = "$col IN (" . implode(',', array_fill(0, count($v), '?')) . ')'; array_push($p, ...$v); } };
+        $in('s.stage_id', $f['stage'] ?? []); $in('s.section_id', $f['section'] ?? []);
         if (!empty($f['incomplete'])) $w[] = "s.status='incomplete'";
+        if (!empty($f['overdue'])) $w[] = "EXISTS (SELECT 1 FROM review_assignments ra WHERE ra.submission_id=s.id AND ((ra.status='awaiting_response' AND ra.date_response_due < NOW()) OR (ra.status='accepted' AND ra.date_due < NOW())))";
+        if (!empty($f['days'])) { $w[] = 's.date_last_activity <= DATE_SUB(NOW(), INTERVAL ? DAY)'; $p[] = (int)$f['days']; }
+        if (!empty($f['assigned'])) { $w[] = 'EXISTS (SELECT 1 FROM stage_assignments sa WHERE sa.submission_id=s.id AND sa.user_id=?)'; $p[] = (int)$f['assigned']; }
+        if (!empty($f['issue'])) { $w[] = 'p.issue_id=?'; $p[] = (int)$f['issue']; }
         $where = implode(' AND ', $w);
         $from = 'FROM submissions s LEFT JOIN publications p ON p.id=s.current_publication_id LEFT JOIN sections sec ON sec.id=s.section_id';
         $total = (int)DB::val("SELECT COUNT(*) $from WHERE $where", $p);
