@@ -1,5 +1,10 @@
 <?php use App\Core\{Settings, Auth}; ?>
-<div class="page page_submissions"><?= breadcrumb([[t('nav.submissions'), null]]) ?><h1><?= e(t('nav.submissions')) ?></h1>
+<div class="page page_submissions"><?= breadcrumb([[t('nav.submissions'), null]]) ?>
+
+	<h1>
+		<?= e(t('nav.submissions')) ?>
+	</h1>
+	
 <?php if (Settings::get('submissionsDisabled', '0') === '1'): ?><div class="cmp_notification"><?= e(t('wizard.disabled')) ?></div><?php else: ?><div class="cmp_notification">
 	<?php if (Auth::user()): ?><a href="<?= e(url('submissions')) ?>"><?= e(t('subm.make')) ?></a>
 	<?php else: ?><a href="<?= e(url('login')) ?>"><?= e(t('nav.login')) ?></a> <?= e(t('subm.or')) ?> <a href="<?= e(url('user', 'register')) ?>"><?= e(t('nav.register')) ?></a> <?= e(t('subm.to_make')) ?><?php endif; ?>

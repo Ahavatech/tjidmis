@@ -78,9 +78,10 @@ G=$(curl -s "$BASE/article/view/$S" | grep -o "article/view/$S/[0-9]*" | head -1
 ok "$(curl -s "$BASE" | grep -c 'Vol. 99 No. 1 (2099)' | sed 's/[2-9]/1/')" 1 "home page shows the new current issue"
 
 echo "== admin settings reach the public site"
+ORIG_FOOTER=$(db "select value from journal_settings where name='pageFooter' and journal_id=1" | head -c 4000)
 FORM=/settings/index/website/appearance; code admin $FORM >/dev/null; post admin /settings/save/website/appearance -d themeColor=#1a7f5a -d "pageFooter=<p>Smoke footer</p>" >/dev/null
 ok "$(curl -s "$BASE" | grep -c 'css/theme?v=')" 1 "recoloured theme linked"; ok "$(curl -s "$BASE/css/theme" | grep -ci '#1a7f5a' | sed 's/^[1-9][0-9]*$/1/')" 1 "theme css recoloured"; ok "$(curl -s "$BASE" | grep -c 'Smoke footer')" 1 "footer updated"
-post admin /settings/save/website/appearance -d themeColor=#d79f24 -d "pageFooter=<p>Journal footer</p>" >/dev/null
+post admin /settings/save/website/appearance -d themeColor=#d79f24 --data-urlencode "pageFooter=${ORIG_FOOTER:-<p>Journal footer</p>}" >/dev/null
 ok "$(curl -s "$BASE" | grep -c 'assets/css/theme.css')" 1 "original colour uses the static stylesheet again"
 ok "$(code admin /users)" 200 "users"; ok "$(code admin /statistics)" 200 "statistics"; ok "$(code admin /admin/index/system)" 200 "system information"
 
