@@ -47,6 +47,7 @@ class PublishingService {
         DB::exec("UPDATE publications SET status='published', date_published=COALESCE(date_published, CURDATE()) WHERE id=?", [$s['pid']]);
         DB::exec("UPDATE submissions SET status='published', stage_id=5, date_last_activity=NOW() WHERE id=?", [$sid]);
         SubmissionRepo::log($sid, $actor, 'published', t('log.published'));
+        if (Settings::get('doiAutoAssign', '') === '1') DoiService::assign($sid);
         $url = abs_url(url('article', 'view', [$sid]));
         foreach (WorkflowService::authorRecipients($sid) as $a) {
             EmailTemplateService::send('PUBLICATION_NOTIFY', $a['email'], ['authorName' => trim($a['given_name'] . ' ' . $a['family_name']), 'submissionTitle' => $s['title'], 'submissionUrl' => $url], $sid);

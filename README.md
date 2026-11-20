@@ -33,6 +33,7 @@ Set `'demo_mode' => false` in `config.php` to hide the credentials box on the lo
 ## Status by phase
 1 core + installer, 2 public site, 3 accounts, 4 dashboard + author submission wizard, 5 editorial workflow + peer review, 6 copyediting/production/publication/issues, 7 settings/users/statistics/admin: done.
 8 polish and hardening: done (see the checklist below and `DEMO.md`).
+9 stretch features: done. DOI pattern (Settings > Distribution > DOI: prefix, suffix pattern with %j %v %i %Y %a %p, optional auto-assign on publish) and manual APC tracking (Settings > Distribution > Payments, then a box on each submission's workflow page). No Crossref deposit and no payment gateway. Back-end screens checked at 390px (tables and tab bars scroll inside their cards). Remaining markup differences from the reference are deliberate (autocomplete and security attributes, the demo-accounts note, the PDF preview iframe source).
 
 ## Deploy and security checklist
 1. Upload everything (including `vendor/`), run `install.php` once, then **delete `install.php`** (the installer also writes `install.lock`).
@@ -41,4 +42,4 @@ Set `'demo_mode' => false` in `config.php` to hide the credentials box on the lo
 4. Change or delete the demo accounts (`Demo@12345`).
 5. Set the `smtp` block, then check it: `php tools/smtp_check.php you@example.org`.
 6. Optional: `php tools/sanitizer_check.php` (XSS payloads), `php tools/audit_routes.php` (route list for review).
-7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 52 checks, submit to publish).
+7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 58 checks, submit to publish).

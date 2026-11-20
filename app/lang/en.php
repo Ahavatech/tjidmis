@@ -28,7 +28,7 @@ return [
     // article
     'art.authors' => 'Authors', 'art.doi' => 'DOI:', 'art.keywords' => 'Keywords:', 'art.abstract' => 'Abstract', 'art.references' => 'References',
     'art.downloads' => 'Downloads', 'art.published' => 'Published', 'art.how_to_cite' => 'How to Cite', 'art.cite_format' => 'Citation format',
-    'art.issue' => 'Issue', 'art.section' => 'Section', 'art.license' => 'License', 'art.license_text' => '%s is published Open Access under a',
+    'art.issue' => 'Issue', 'art.section' => 'Section', 'art.license' => 'License', 'art.licensed_under' => 'This work is licensed under a', 'art.license_text' => '%s is published Open Access under a',
     'art.metrics' => 'Metrics', 'art.views' => 'Abstract views: %d', 'art.downloads_count' => 'Downloads: %d',
     'galley.return' => 'Return to Article Details', 'galley.download' => 'Download', 'galley.download_label' => 'Download %s', 'galley.title' => '%s of %s',
     // search

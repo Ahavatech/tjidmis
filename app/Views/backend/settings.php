@@ -42,7 +42,6 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 <?php foreach (SC::FEATURES as $k): ?><?= checkbox($k, '<strong>' . e(t('set.feat_' . $k)) . '</strong> <span class="muted">&mdash; ' . e(t('set.feat_' . $k . '_help')) . '</span>', !empty($features[$k])) ?><?php endforeach; ?></div>
 <div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></form>
 
-<?php elseif ($tab === 'payments'): ?><p class="muted"><?= e(t('set.payments_stub')) ?></p>
 <?php elseif ($tab === 'access'): ?><p><?= e(t('set.access_text')) ?></p>
 
 <?php else: ?>

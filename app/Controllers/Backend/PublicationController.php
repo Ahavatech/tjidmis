@@ -78,9 +78,18 @@ class PublicationController {
     /** "Assign DOI": prefix + submission id (editable afterwards). */
     public function assignDoi(string $id = ''): void {
         $sub = $this->ctx($id); if (Request::isPost() && !$this->locked($sub)) {
-            $prefix = trim((string)Settings::get('doiPrefix', '')); if ($prefix !== '') { DB::exec('UPDATE publications SET doi=? WHERE id=? AND (doi IS NULL OR doi="")', [$prefix . '.' . $sub['id'], $sub['pid']]); flash(t('pub.doi_assigned')); }
+            if (\App\Services\DoiService::assign((int)$sub['id'])) flash(t('pub.doi_assigned')); else flash(t('pub.err_doi_dup'), 'error');
         }
         $this->back($sub, 'identifiers');
+    }
+    /** Record the APC status of a submission (manual tracking). */
+    public function saveApc(string $id = ''): void {
+        $sub = $this->ctx($id);
+        if (Request::isPost() && \App\Services\ApcService::enabled()) {
+            $err = \App\Services\ApcService::save((int)$sub['id'], $_POST, Auth::id());
+            if ($err) flash(t('apc.err_' . $err), 'error'); else { SubmissionRepo::log((int)$sub['id'], Auth::id(), 'apc_saved', t('apc.title') . ': ' . t('apc.' . $_POST['status'])); flash(t('profile.saved')); }
+        }
+        redirect(url('workflow', 'index', [$sub['id']]));
     }
 
     // ------------------------------------------------------------ contributors

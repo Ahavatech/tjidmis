@@ -115,3 +115,11 @@ function theme_css_links(): string {
     if ($css) $h .= '<link rel="stylesheet" href="' . e($dyn ? url('css', 'journal', [], ['v' => $v]) : public_url($css)) . '" type="text/css" />';
     return $h;
 }
+
+/** Name and badge image of a Creative Commons licence URL, as OJS shows them on the article page. */
+function cc_license(string $url): array {
+    if (!preg_match('#creativecommons\.org/licenses/([a-z-]+)/(\d\.\d)#i', $url, $m)) return [$url, null];
+    $names = ['by' => 'Attribution', 'by-sa' => 'Attribution-ShareAlike', 'by-nc' => 'Attribution-NonCommercial', 'by-nd' => 'Attribution-NoDerivatives', 'by-nc-sa' => 'Attribution-NonCommercial-ShareAlike', 'by-nc-nd' => 'Attribution-NonCommercial-NoDerivatives'];
+    $type = strtolower($m[1]);
+    return ['Creative Commons ' . ($names[$type] ?? strtoupper($type)) . ' ' . $m[2] . ' International License', '//i.creativecommons.org/l/' . $type . '/' . $m[2] . '/88x31.png'];
+}

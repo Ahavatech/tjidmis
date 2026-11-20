@@ -31,7 +31,8 @@ class SettingsController {
             'license' => [['copyrightHolderType', 'select', ['options' => ['author' => 'set.holder_author', 'journal' => 'set.holder_journal', 'other' => 'set.holder_other'], 'translate' => 1]], ['copyrightHolderOther', 'text'],
                 ['licenseUrl', 'text'], ['copyrightYearBasis', 'select', ['options' => ['issue' => 'set.year_issue', 'submission' => 'set.year_submission'], 'translate' => 1]], ['copyrightNotice', 'html'], ['licenseTerms', 'html']],
             'indexing' => [['searchDescription', 'textarea'], ['customHeaders', 'textarea']],
-            'payments' => [], 'access' => [],
+            'doi' => [['doiPrefix', 'text'], ['doiPattern', 'text'], ['doiAutoAssign', 'checkbox']],
+            'payments' => [['apcEnabled', 'checkbox'], ['apcFee', 'number', ['min' => 0, 'max' => 1000000]], ['apcCurrency', 'text'], ['apcInstructions', 'html']], 'access' => [],
         ],
     ];
     const DEFAULT_ON = ['announcementsEnabled', 'metaKeywords', 'metaReferences', 'reviewerUploads'];

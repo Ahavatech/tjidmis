@@ -11,6 +11,7 @@ Site: `/index.php/jidmis`. Demo accounts (password `Demo@12345`): editor, sectio
 7. **Issue**: Issues > create a future issue, schedule the article to it, then publish the issue.
 8. **Public again**: the article now appears on the home page and issue page and its PDF downloads anonymously.
 9. **Admin** (`admin`): Settings > Website > Appearance, change the theme colour and footer, reload the public site. Also show Users and Roles, Statistics and Site Administration.
-10. **Security talking points**: CSRF on every POST, role checks on each route, uploads stored outside the web root and served through a permission-checked controller, sanitised rich text, login throttling.
+10. **Stretch features**: Settings > Distribution > DOI (set a pattern, tick automatic assignment) and Payments (enable APC). On a submission, show the Article Processing Charge box, mark it paid, and generate a DOI in Publication > Identifiers.
+11. **Security talking points**: CSRF on every POST, role checks on each route, uploads stored outside the web root and served through a permission-checked controller, sanitised rich text, login throttling.
 
 Automated check of steps 2 to 9: `bash tests/smoke.sh`.

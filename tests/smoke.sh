@@ -61,6 +61,17 @@ FORM=/manageIssues/form; code editor /manageIssues/form >/dev/null; post editor 
 ISS=$(loc | grep -o '[0-9]*$'); ok "$([ -n "$ISS" ] && echo y)" y "issue created"
 FORM=/publication/index/$S/issue; code editor $FORM >/dev/null; post editor /publication/save/$S/issue -d section_id=1 -d pages=1-9 >/dev/null; post editor /publication/schedule/$S -d issue_id=$ISS >/dev/null
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/article/view/$S")" 404 "hidden while scheduled"
+echo "== DOI pattern and APC tracking"
+FORM=/settings/index/distribution/doi; code admin $FORM >/dev/null; post admin /settings/save/distribution/doi -d doiPrefix=10.59543/jidmis -d 'doiPattern=v%vi%i.%a' -d doiAutoAssign=1 >/dev/null
+FORM=/settings/index/distribution/payments; code admin $FORM >/dev/null; post admin /settings/save/distribution/payments -d apcEnabled=1 -d apcFee=250 -d apcCurrency=usd >/dev/null
+FORM=/publication/index/$S/identifiers; code editor $FORM >/dev/null; post editor /publication/assignDoi/$S >/dev/null; code editor $FORM >/dev/null
+ok "$(has "10.59543/jidmis.v99i1.$S")" 1 "DOI generated from the pattern"
+code editor /workflow/index/$S/5 >/dev/null; ok "$(has 'Article Processing Charge')" 1 "APC box shown to editors"
+FORM=/workflow/index/$S/5; post editor /publication/saveApc/$S -d status=paid -d amount=250 -d currency=USD -d reference=TX1 >/dev/null
+code editor /workflow/index/$S/5 >/dev/null; ok "$(has 'Marked paid on')" 1 "APC marked paid"
+ok "$(post editor /publication/saveApc/$S -d status=bogus -d amount=1)" 302 "invalid APC status refused"
+code author /workflow/index/$S/5 >/dev/null; ok "$(has 'Article Processing Charge')" 0 "authors do not see the APC box"
+ok "$(code author /publication/index/$S/identifiers)" 403 "author cannot open publication tab"
 FORM=/manageIssues/edit/$ISS; code editor $FORM >/dev/null; post editor /manageIssues/publish/$ISS >/dev/null
 ok "$(curl -s -o "$T/a" -w '%{http_code}' "$BASE/article/view/$S")" 200 "article is public"; ok "$(grep -c 'Smoke Test Article' "$T/a" | sed 's/[2-9]/1/')" 1 "with its title"
 G=$(curl -s "$BASE/article/view/$S" | grep -o "article/view/$S/[0-9]*" | head -1 | cut -d/ -f4); ok "$(curl -s "$BASE/article/download/$S/$G/1" | head -c 4)" "%PDF" "anonymous PDF download"

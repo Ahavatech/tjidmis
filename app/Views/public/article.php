@@ -70,8 +70,10 @@ $kw = json_decode($a['keywords'] ?? '[]', true) ?: []; ?>
 						<div class="value"><?= e($a['sectitle']) ?></div>
 					</section><?php endif; ?>
 				</div>
-				<?php if ($a['license_url'] && ($lt = Settings::get('licenseTerms', ''))): ?><div class="item copyright">
+				<?php if ($a['license_url'] || ($lt = Settings::get('licenseTerms', ''))): $lt = Settings::get('licenseTerms', ''); ?><div class="item copyright">
 					<h2 class="label"><?= e(t('art.license')) ?></h2>
+					<?php if (!empty($a['copyright_holder'])): ?><p><?= e('Copyright (c) ' . $a['copyright_year'] . ' ' . $a['copyright_holder']) ?></p><?php endif; ?>
+					<?php if ($a['license_url']): [$ccName, $ccImg] = cc_license($a['license_url']); ?><a rel="license" href="<?= e($a['license_url']) ?>"><?php if ($ccImg): ?><img alt="Creative Commons License" src="<?= e($ccImg) ?>" /><?php endif; ?></a><p><?= e(t('art.licensed_under')) ?> <a rel="license" href="<?= e($a['license_url']) ?>"><?= e($ccName) ?></a>.</p><?php endif; ?>
 					<?= rich($lt) ?>
 				</div><?php endif; ?>
 				<?php if (Settings::get('showMetrics', '0') === '1'): ?><div class="item metrics"><h2 class="label"><?= e(t('art.metrics')) ?></h2><p><?= e(t('art.views', $metrics['abstract_view'])) ?><br><?= e(t('art.downloads_count', $metrics['galley_download'])) ?></p></div><?php endif; ?>

@@ -71,5 +71,5 @@ $er = fn($k) => $errors[$k] ?? ''; ?>
 <h2><?= e(t('pub.doi')) ?></h2>
 <form class="cmp_form be_form" method="post" action="<?= e($save) ?>"><?= csrf_field() ?><fieldset <?= $locked ? 'disabled' : '' ?> class="be_plain"><div class="fields"><?= field(t('pub.doi'), 'doi', $pub['doi'] ?? '', ['help' => t('pub.doi_help')]) ?></div>
 <div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></fieldset></form>
-<?php if (!$locked && empty($pub['doi']) && Settings::get('doiPrefix', '')): ?><form method="post" action="<?= e($act('assignDoi')) ?>"><?= csrf_field() ?><button class="be_btn" type="submit"><?= e(t('pub.assign_doi', \App\Core\Settings::get('doiPrefix') . '.' . $sid)) ?></button></form><?php endif; ?>
+<?php if (!$locked && empty($pub['doi']) && Settings::get('doiPrefix', '')): ?><form method="post" action="<?= e($act('assignDoi')) ?>"><?= csrf_field() ?><button class="be_btn" type="submit"><?= e(t('pub.assign_doi', \App\Services\DoiService::build($sid) ?? '')) ?></button></form><?php endif; ?>
 <?php endif; ?></div></div>

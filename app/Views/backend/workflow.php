@@ -83,6 +83,15 @@ $isReviewStage = $stage === 3; $mgr = $manage; ?>
 
 <aside class="be_wfside">
 <?php if ($decisions): ?><h2><?= e(t('wf.decision')) ?></h2><div class="be_decisions"><?php foreach ($decisions as $d): ?><a class="be_btn<?= $d === WorkflowService::DECLINE ? ' be_btn_danger' : ($d === WorkflowService::ACCEPT || $d === WorkflowService::SEND_REVIEW ? ' be_btn_primary' : '') ?>" href="<?= e(url('decision', 'index', [$sid, $d])) ?>"><?= e(t('dec.' . $d)) ?></a><?php endforeach; ?></div><?php endif; ?>
+<?php if ($mgr && \App\Services\ApcService::enabled()): $apc = \App\Services\ApcService::get($sid) ?: []; $apcd = \App\Services\ApcService::defaults(); ?>
+<h2><?= e(t('apc.title')) ?></h2>
+<form class="cmp_form be_form be_apc" method="post" action="<?= e(url('publication', 'saveApc', [$sid])) ?>"><?= csrf_field() ?><div class="fields">
+<?= field(t('apc.status'), 'status', $apc['status'] ?? 'pending', ['type' => 'select', 'options' => ['pending' => t('apc.pending'), 'paid' => t('apc.paid'), 'waived' => t('apc.waived')]]) ?>
+<?= field(t('apc.amount'), 'amount', $apc['amount'] ?? $apcd['amount'], ['maxlength' => 12]) ?><?= field(t('apc.currency'), 'currency', $apc['currency'] ?? $apcd['currency'], ['maxlength' => 3]) ?>
+<?= field(t('apc.reference'), 'reference', $apc['reference'] ?? '', ['maxlength' => 190]) ?><?= field(t('apc.note'), 'note', $apc['note'] ?? '', ['maxlength' => 255]) ?></div>
+<?php if (!empty($apc['paid_at'])): ?><p class="muted be_small"><?= e(t('apc.paid_on', fmt_date($apc['paid_at']))) ?></p><?php endif; ?>
+<div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></form>
+<?php endif; ?>
 <h2><?= e(t('wf.participants')) ?> <?php if ($mgr): ?><a class="be_btn be_small" href="<?= e(url('participant', 'assign', [$sid])) ?>"><?= e(t('part.assign')) ?></a><?php endif; ?></h2>
 <ul class="be_list"><?php foreach ($participants as $p): ?><li><span><?= e(trim($p['given_name'] . ' ' . $p['family_name'])) ?><br><span class="muted be_small"><?= e($p['role_name']) ?><?= $p['recommend_only'] ? ' (' . e(t('part.recommend_only')) . ')' : '' ?></span></span>
 <?php if ($mgr && $p['role_key'] !== 'author'): ?><form class="be_inline" method="post" action="<?= e(url('participant', 'remove', [$sid, $p['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger be_small" type="submit"><?= e(t('part.remove')) ?></button></form><?php endif; ?></li><?php endforeach; ?>

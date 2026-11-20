@@ -286,23 +286,26 @@ for iid, d in issues.items():
                 det['doi'] = re.sub(r'^https?://(dx\.)?doi\.org/', '', dd['href']) if dd else None
                 refs = s.select_one('section.item.references .value')
                 det['refs'] = inner(refs) if refs else None
+                lic = s.select_one('section.item.copyright a[rel=license], div.item.copyright a[rel=license]')
+                det['license'] = lic['href'] if lic else None
+                cp = next((m for m in (re.match(r'Copyright \(c\) (\d{4}) (.+)', p.get_text(' ', strip=True)) for p in s.select('div.item.copyright p, section.item.copyright p')) if m), None)
+                if cp:
+                    det['cyear'], det['holder'] = cp.group(1), cp.group(2).strip()
                 for li in s.select('ul.authors > li'):
                     orc = li.select_one('.orcid a')
                     det['authors'].append((text(li.select_one('.name')), text(li.select_one('.affiliation')), orc['href'] if orc else None))
                 pubd = text(s.select_one('.item.published .value span'))
                 if pdate(pubd):
                     det['date'] = pubd
-            if any(len(n) > 90 for n, _, _ in det['authors']):
-                det['authors'] = []
             if not det['authors']:
                 for n in [x.strip() for x in a['authors'].split(',') if x.strip()]:
                     det['authors'].append((n, '', None))
             rows['sub'].append(f"({aid},1,{sec_id[st]},5,'published',0,'{(det['date'] or '2025-01-01')} 09:00:00',NOW(),NULL)")
-            rows['pub'].append(f"({aid},{aid},1,{q(a['title'])},{q(det['abstract'])},{q(json.dumps(det['keywords'])) if det['keywords'] else 'NULL'},{q(det['refs'])},{iid},{sec_id[st]},{q(a['pages'] or None)},{q(det['doi'])},'The Authors',{(det['date'] or '2025')[:4]},'https://creativecommons.org/licenses/by/4.0/','published',{q(pdate(det['date']))},{seq})")
+            rows['pub'].append(f"({aid},{aid},1,{q(a['title'])},{q(det['abstract'])},{q(json.dumps(det['keywords'])) if det['keywords'] else 'NULL'},{q(det['refs'])},{iid},{sec_id[st]},{q(a['pages'] or None)},{q(det['doi'])},{q(det.get('holder'))},{det.get('cyear') or 'NULL'},{q(det['license'])},'published',{q(pdate(det['date']))},{seq})")
             for k, (nm, aff, orc) in enumerate(det['authors'], 1):
                 parts = nm.rsplit(' ', 1)
                 gv, fm = (parts[0], parts[1]) if len(parts) == 2 else (nm, '')
-                rows['au'].append(f"({aid},{q(gv[:120])},{q(fm[:120])},{q((aff or None) and aff[:255])},{q(orc)},{k})")
+                rows['au'].append(f"({aid},{q(gv[:1000])},{q(fm[:120])},{q((aff or None) and aff[:255])},{q(orc)},{k})")
             for gid, label in a['galleys']:
                 rows['file'].append(f"({gid},{aid},'galley','Article Text',{q('article-%d-%s.pdf' % (aid, gid))},{q('galley-%s.pdf' % gid)},'application/pdf',0,1,NOW())")
                 rows['gal'].append(f"({gid},{aid},{q(label)},{gid},1)")
