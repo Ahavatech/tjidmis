@@ -180,6 +180,47 @@ echo "== grids (OJS grid markup on back-end lists)"
 for g in submissions users users/roles manageIssues manageAnnouncements settings/index/journal/sections settings/index/journal/categories settings/index/workflow/reviewForms settings/index/workflow/templates settings/index/website/navigation statistics/articles statistics/users admin; do
   ok "$(code admin /$g >/dev/null; has 'pkp_controllers_grid')" 1 "grid markup: $g"; done
 ok "$(code author /submissions >/dev/null; has 'gridRow')" 1 "dashboard rows are grid rows"
+echo "== subscription mode and paywall (OJS 3.3 IssueAction rules)"
+ok "$(code admin /subscription)" 404 "Subscriptions screen hidden while the journal is open access"
+ok "$(code anon /about/subscriptions)" 404 "About > Subscriptions hidden in open access mode"
+SIID=$(db "select issue_id from publications where submission_id=182 limit 1"); [ -z "$SIID" ] && SIID=15
+FORM=/settings/index/distribution/access; code admin $FORM >/dev/null; post admin /settings/save/distribution/access -d publishingMode=subscription -d enableOai=1 >/dev/null
+ok "$(code admin /subscription)" 200 "Subscriptions screen opens in subscription mode"; ok "$(has 'Individual Subscriptions')" 1 "tabs listed"
+ok "$(code anon /article/download/182/29/29)" 200 "issue still open by default: galley downloads"
+FORM=/manageIssues/form/$SIID; code admin $FORM >/dev/null; ok "$(has 'Open access date')" 1 "issue form has access status and open access date"
+post admin /manageIssues/form/$SIID -d volume=1 -d number=1 -d year=2024 -d show_volume=1 -d show_number=1 -d show_year=1 -d access_status=2 >/dev/null
+ok "$(db "select access_status from issues where id=$SIID")" 2 "issue set to subscription"
+ok "$(code anon /article/view/182 >/dev/null; has 'obj_galley_link pdf restricted')" 1 "galley link marked restricted"; ok "$(has 'Requires Subscription')" 1 "screen reader text on restricted galley"
+ok "$(code anon /article/view/182/29)" 302 "anonymous reader is sent to log in"; ok "$(curl -s -o /dev/null -D - "$BASE/article/view/182/29" | grep -ic '^location:.*login')" 1 "redirect goes to the login page"
+ok "$(code anon /article/download/182/29/29)" 302 "download is protected too"
+ok "$(code editor /article/view/182/29)" 200 "editorial users can read"
+ok "$(code reader /article/view/182/29)" 302 "logged-in non-subscriber is sent on"; ok "$(curl -s -o /dev/null -D - -b "$T/reader" "$BASE/article/view/182/29" | grep -ic '^location:.*about/subscriptions')" 1 "to About > Subscriptions"
+FORM=/subscription/type; code admin $FORM >/dev/null; post admin /subscription/type -d name= -d cost=abc >/dev/null; ok "$(has 'A subscription type name is required')" 1 "type name required"
+post admin /subscription/type -d 'name=Smoke Individual' -d cost=25 -d currency=USD -d duration=12 -d format=1 >/dev/null
+post admin /subscription/type -d 'name=Smoke Institution' -d cost=300 -d currency=USD -d format=17 -d institutional=1 >/dev/null
+TI=$(db "select id from subscription_types where name='Smoke Individual'"); TN=$(db "select id from subscription_types where name='Smoke Institution'")
+ok "$(db "select count(*) from subscription_types")" 2 "two subscription types saved"
+code anon /about/subscriptions >/dev/null; ok "$(has 'Smoke Individual')" 1 "types listed on About > Subscriptions"; ok "$(has '1 year')" 1 "duration shown as years"
+FORM=/subscription/edit/individual; code admin $FORM >/dev/null; post admin /subscription/edit/individual -d username=nobody -d type_id=$TI -d status=1 -d date_start=2024-01-01 >/dev/null; ok "$(has 'No user has that username')" 1 "unknown username refused"
+post admin /subscription/edit/individual -d username=reader -d type_id=$TI -d status=1 -d date_start=2020-01-01 -d date_end=2020-12-31 >/dev/null
+ok "$(code reader /article/view/182/29)" 302 "expired subscription gives no access"
+SID1=$(db "select max(id) from subscriptions"); FORM=/subscription/edit/individual/$SID1; code admin $FORM >/dev/null
+post admin /subscription/edit/individual/$SID1 -d username=reader -d type_id=$TI -d status=1 -d date_start=2020-01-01 -d date_end=2099-12-31 >/dev/null
+ok "$(code reader /article/view/182/29)" 200 "active individual subscription gives access"
+post admin /subscription/edit/individual/$SID1 -d username=reader -d type_id=$TI -d status=17 -d date_start=2020-01-01 -d date_end=2099-12-31 >/dev/null
+ok "$(code reader /article/view/182/29)" 302 "a subscription that is not Active gives no access"
+FORM=/subscription/edit/institutional; code admin $FORM >/dev/null; post admin /subscription/edit/institutional -d institution_name=Uni -d type_id=$TN -d status=1 -d date_start=2020-01-01 >/dev/null; ok "$(has 'Enter a domain or at least one IP range')" 1 "institution needs domain or IP"
+post admin /subscription/edit/institutional -d institution_name=Uni -d type_id=$TN -d status=1 -d date_start=2020-01-01 -d date_end=2099-12-31 -d 'ip_ranges=10.255.255.1' >/dev/null
+ok "$(code anon /article/view/182/29)" 302 "IP outside the institution's ranges is refused"
+SID2=$(db "select max(id) from subscriptions"); FORM=/subscription/edit/institutional/$SID2; code admin $FORM >/dev/null
+post admin /subscription/edit/institutional/$SID2 -d institution_name=Uni -d type_id=$TN -d status=1 -d date_start=2020-01-01 -d date_end=2099-12-31 -d 'ip_ranges=0.0.0.0/0' >/dev/null
+ok "$(code anon /article/view/182/29)" 200 "visitor inside an institutional IP range reads without logging in"
+post admin /subscription/delete/$SID2 >/dev/null; ok "$(code anon /article/view/182/29)" 302 "deleting the subscription removes access"
+FORM=/manageIssues/form/$SIID; code admin $FORM >/dev/null; post admin /manageIssues/form/$SIID -d volume=1 -d number=1 -d year=2024 -d show_volume=1 -d show_number=1 -d show_year=1 -d access_status=2 -d open_access_date=2020-01-01 >/dev/null
+ok "$(code anon /article/view/182/29)" 200 "open access date in the past opens the issue (delayed open access)"
+post admin /manageIssues/form/$SIID -d volume=1 -d number=1 -d year=2024 -d show_volume=1 -d show_number=1 -d show_year=1 -d access_status=1 >/dev/null
+FORM=/settings/index/distribution/access; code admin $FORM >/dev/null; post admin /settings/save/distribution/access -d publishingMode=open -d enableOai=1 >/dev/null
+ok "$(code anon /article/view/182/29)" 200 "back to open access: galleys open"; ok "$(code anon /article/view/182 >/dev/null; has 'restricted')" 0 "no restricted markup in open access mode"
 echo "== indexing feeds and reports (same shapes as OJS 3.3)"
 ok "$(curl -s "$BASE/oai?verb=Identify" | grep -c '<repositoryName>')" 1 "OAI Identify"
 ok "$(curl -s "$BASE/oai?verb=ListSets" | grep -c 'setSpec')" 2 "OAI sets (journal and Articles)"

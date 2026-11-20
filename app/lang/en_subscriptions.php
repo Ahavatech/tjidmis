@@ -1,0 +1,26 @@
+<?php
+/** Subscriptions and paywall strings; wording from the OJS 3.3 locale files where OJS has it. */
+return [
+    'sub.menu' => 'Subscriptions', 'sub.individual' => 'Individual Subscriptions', 'sub.institutional' => 'Institutional Subscriptions', 'sub.types' => 'Subscription Types', 'sub.policies' => 'Subscription Policies',
+    'sub.create' => 'Create New Subscription', 'sub.edit' => 'Edit Subscription', 'sub.confirm_delete' => 'Are you sure you want to delete this subscription?',
+    'sub.user' => 'User', 'sub.user_help' => 'The username of a registered user.', 'sub.institution' => 'Institution Name', 'sub.mailing' => 'Institution Mailing Address', 'sub.domain' => 'Domain', 'sub.ip_ranges' => 'IP Ranges',
+    'sub.ip_help' => 'One entry per line: an address (192.168.1.5), a range (192.168.1.1-192.168.1.50), a CIDR block (192.168.0.0/16) or a wildcard (192.168.*).',
+    'sub.type' => 'Subscription Type', 'sub.status' => 'Status', 'sub.start' => 'Start', 'sub.end' => 'End', 'sub.end_help' => 'Leave empty to use the type\'s duration; empty for non-expiring types means no end date.',
+    'sub.membership' => 'Membership', 'sub.reference' => 'Reference Number', 'sub.notes' => 'Notes',
+    'sub.status_active' => 'Active', 'sub.status_needs_information' => 'Needs Information', 'sub.status_needs_approval' => 'Needs Approval', 'sub.status_awaiting_manual' => 'Awaiting Manual Payment', 'sub.status_awaiting_online' => 'Awaiting Online Payment', 'sub.status_other' => 'Other',
+    'sub.format_online' => 'Online', 'sub.format_print' => 'Print', 'sub.format_print_online' => 'Print and Online',
+    'sub.type_create' => 'Create New Subscription Type', 'sub.type_edit' => 'Edit Subscription Type', 'sub.type_name' => 'Subscription type', 'sub.description' => 'Description', 'sub.cost' => 'Cost', 'sub.currency' => 'Currency (e.g. USD)',
+    'sub.duration' => 'Duration', 'sub.duration_months' => 'Duration (months)', 'sub.duration_help' => 'Leave empty for a non-expiring subscription.', 'sub.format' => 'Format', 'sub.institutional_col' => 'Institutional', 'sub.disable_public' => 'Do not show this subscription type on the public Subscriptions page',
+    'sub.type_confirm_delete' => 'Warning! All subscriptions with this subscription type will also be deleted. Are you sure you want to continue and delete this subscription type?',
+    'sub.non_expiring' => 'Non-expiring', 'sub.year' => 'year', 'sub.years' => 'years', 'sub.month' => 'month', 'sub.months' => 'months',
+    'sub.expiry' => 'Subscription Expiry', 'sub.expiry_help' => 'Upon subscription expiry, readers may be denied access to all subscription content or may continue to retain access to subscription content published prior to the subscription expiry date.',
+    'sub.expiry_partial' => 'Partial expiry', 'sub.expiry_partial_help' => 'Readers are denied access to recently published subscription content, but retain access to subscription content published prior to the subscription expiry date.',
+    'sub.contact' => 'Subscription Contact', 'sub.contact_name' => 'Name', 'sub.contact_email' => 'Email', 'sub.additional_info' => 'Additional Information', 'sub.oa_where' => 'Delayed open access and author self-archiving are set under',
+    'sub.err_type_name' => 'A subscription type name is required.', 'sub.err_cost' => 'A cost of zero or more is required.', 'sub.err_duration' => 'The duration must be a whole number of months.', 'sub.err_currency' => 'Enter a three-letter currency code.', 'sub.err_format' => 'Choose a format.',
+    'sub.err_type' => 'Choose a subscription type.', 'sub.err_user' => 'No user has that username.', 'sub.err_institution' => 'An institution name is required.', 'sub.err_domain_or_ip' => 'Enter a domain or at least one IP range.',
+    'sub.err_start' => 'A start date is required.', 'sub.err_end' => 'The end date must not be before the start date.', 'sub.err_status' => 'Choose a status.',
+    'sub.restricted' => 'Requires Subscription', 'sub.login_required' => 'Please log in to access subscription content.', 'sub.public_title' => 'Subscriptions', 'sub.public_individual_desc' => 'Individual subscriptions require login to access subscription content.',
+    'sub.public_institutional_desc' => 'Institutional subscriptions provide access by IP address or domain.', 'sub.col_name' => 'Name', 'sub.col_format' => 'Format', 'sub.col_duration' => 'Duration', 'sub.col_cost' => 'Cost',
+    'sub.no_access' => 'This content requires a subscription. Contact the journal to arrange access.', 'sub.access_status' => 'Access status', 'sub.open_access_date' => 'Open access date', 'sub.access_open' => 'Open', 'sub.access_subscription' => 'Subscription',
+    'sub.article_access' => 'Access status', 'sub.article_issue_default' => 'Use the issue default', 'sub.article_open' => 'Open access',
+];

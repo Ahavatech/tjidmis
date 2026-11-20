@@ -53,8 +53,8 @@ $kw = json_decode($a['keywords'] ?? '[]', true) ?: []; ?>
 					<h2 class="pkp_screen_reader"><?= e(t('art.downloads')) ?></h2>
 					<ul class="value galleys_links">
 						<?php foreach ($a['galleys'] as $g): ?><li>
-							<a class="obj_galley_link <?= e(strtolower($g['label'])) ?>" href="<?= e(url('article', 'view', [$a['sid'], $g['id']])) ?>">
-	<?= e($g['label']) ?>
+							<?php $rs = !\App\Services\SubscriptionService::hasAccess((int)$a['sid']); ?><a class="obj_galley_link <?= e(strtolower($g['label'])) ?><?= $rs ? ' restricted' : '' ?>" href="<?= e(url('article', 'view', [$a['sid'], $g['id']])) ?>">
+	<?= $rs ? '<span class="pkp_screen_reader">' . e(t('sub.restricted')) . '</span>' : '' ?><?= e($g['label']) ?>
 	</a>
 						</li><?php endforeach; ?>
 					</ul>

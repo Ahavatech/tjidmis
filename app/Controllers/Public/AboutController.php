@@ -20,6 +20,20 @@ class AboutController {
         }
         return $pre . $h;
     }
+    /** OJS About > Subscriptions: contact, then the individual and institutional subscription types (only in subscription mode). */
+    public function subscriptions(): void {
+        if (!\App\Services\SubscriptionService::enabled()) { http_response_code(404); View::render('public/error', ['code' => 404, 'message' => t('error.404'), 'title' => t('error.404.title')]); return; }
+        $jid = (int)Settings::journal()['id']; $h = '';
+        if (($n = Settings::get('subscriptionContactName', '')) || ($m = Settings::get('subscriptionContactEmail', ''))) $h .= '<p>' . e($n ?: '') . ($m ?? Settings::get('subscriptionContactEmail', '') ? ' <a href="mailto:' . e(Settings::get('subscriptionContactEmail', '')) . '">' . e(Settings::get('subscriptionContactEmail', '')) . '</a>' : '') . '</p>';
+        $h .= Settings::get('subscriptionAdditionalInformation', '');
+        foreach ([false => ['sub.individual', 'sub.public_individual_desc'], true => ['sub.institutional', 'sub.public_institutional_desc']] as $inst => [$hd, $ds]) {
+            $types = \App\Services\SubscriptionService::types($jid, (bool)$inst, true); if (!$types) continue;
+            $h .= '<div class="subscriptions_' . ($inst ? 'institutional' : 'individual') . '"><h3>' . e(t($hd)) . '</h3><p>' . e(t($ds)) . '</p><table class="cmp_table"><tr><th>' . e(t('sub.col_name')) . '</th><th>' . e(t('sub.col_format')) . '</th><th>' . e(t('sub.col_duration')) . '</th><th>' . e(t('sub.col_cost')) . '</th></tr>';
+            foreach ($types as $ty) $h .= '<tr><td><div class="subscription_name">' . e($ty['name']) . '</div><div class="subscription_description">' . ($ty['description'] ?? '') . '</div></td><td>' . e(t(\App\Services\SubscriptionService::FORMATS[$ty['format']])) . '</td><td>' . e(\App\Services\SubscriptionService::duration($ty['duration'] === null ? null : (int)$ty['duration'])) . '</td><td>' . e(number_format((float)$ty['cost'], 2)) . '&nbsp;(' . e($ty['currency']) . ')</td></tr>';
+            $h .= '</table></div>';
+        }
+        View::render('public/page_simple', ['title' => t('sub.public_title'), 'bodyClass' => 'about', 'crumb' => t('sub.public_title'), 'html' => $h ?: '<p>' . e(t('sub.no_access')) . '</p>', 'cls' => 'page_subscriptions']);
+    }
     public function editorialTeam(): void {
         $html = Settings::get('editorialTeam', '');
         View::render('public/page_simple', ['title' => t('about.editorial'), 'bodyClass' => 'about', 'crumb' => t('about.editorial'), 'html' => $html, 'cls' => 'page_editorial_team']);

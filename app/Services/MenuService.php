@@ -7,6 +7,7 @@ class MenuService {
         $r = Auth::roles(); $has = fn(array $k) => (bool)array_intersect($k, $r);
         $m = [['key' => 'submissions', 'label' => t('menu.submissions'), 'href' => url('submissions')]];
         if ($has(['editor', 'manager', 'site_admin'])) $m[] = ['key' => 'issues', 'label' => t('menu.issues'), 'href' => url('manageIssues')];
+        if ($has(['manager', 'site_admin']) && SubscriptionService::enabled()) $m[] = ['key' => 'subscriptions', 'label' => t('sub.menu'), 'href' => url('subscription')];
         if ($has(['manager', 'site_admin'])) $m[] = ['key' => 'settings', 'label' => t('menu.settings'), 'href' => url('settings', 'index', ['journal']), 'children' => [
             ['label' => t('menu.settings_journal'), 'href' => url('settings', 'index', ['journal'])], ['label' => t('menu.settings_website'), 'href' => url('settings', 'index', ['website'])],
             ['label' => t('menu.settings_workflow'), 'href' => url('settings', 'index', ['workflow'])], ['label' => t('menu.settings_distribution'), 'href' => url('settings', 'index', ['distribution'])],

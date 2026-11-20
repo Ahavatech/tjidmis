@@ -6,8 +6,8 @@
     <?php if (!empty($a['pages'])): ?><div class="pages"><?= e($a['pages']) ?></div><?php endif; ?>
   </div>
   <?php if (!empty($a['galleys'])): ?><ul class="galleys_links"><?php foreach ($a['galleys'] as $g): ?>
-    <li><a class="obj_galley_link <?= e(strtolower($g['label'])) ?>" href="<?= e(url('article', 'view', [$a['sid'], $g['id']])) ?>" aria-labelledby="article-<?= (int)$a['sid'] ?>">
-	<?= e($g['label']) ?>
+    <?php $rs = !\App\Services\SubscriptionService::hasAccess((int)$a['sid']); ?><li><a class="obj_galley_link <?= e(strtolower($g['label'])) ?><?= $rs ? ' restricted' : '' ?>" href="<?= e(url('article', 'view', [$a['sid'], $g['id']])) ?>" aria-labelledby="article-<?= (int)$a['sid'] ?>">
+	<?= $rs ? '<span class="pkp_screen_reader">' . e(t('sub.restricted')) . '</span>' : '' ?><?= e($g['label']) ?>
 	</a></li>
   <?php endforeach; ?></ul><?php endif; ?>
 </div>

@@ -66,7 +66,7 @@ $er = fn($k) => $errors[$k] ?? ''; ?>
 <hr><h2><?= e(t('pub.issue_data')) ?></h2>
 <form class="cmp_form be_form" method="post" enctype="multipart/form-data" action="<?= e($save) ?>"><?= csrf_field() ?><fieldset <?= $locked ? 'disabled' : '' ?> class="be_plain"><div class="fields">
 <?= field(t('wizard.section'), 'section_id', $pub['section_id'], ['type' => 'select', 'options' => array_column($sections, 'title', 'id'), 'required' => true]) ?><?= field(t('pub.pages'), 'pages', $pub['pages'] ?? '', ['maxlength' => 50]) ?>
-<?= field(t('pub.url_path'), 'url_path', $pub['url_path'] ?? '', ['maxlength' => 64]) ?><?= field(t('pub.date_published'), 'date_published', $pub['date_published'] ?? '', ['type' => 'date']) ?>
+<?= field(t('pub.url_path'), 'url_path', $pub['url_path'] ?? '', ['maxlength' => 64]) ?><?php if (\App\Services\SubscriptionService::enabled()): ?><?= field(t('sub.article_access'), 'access_status', (string)($pub['access_status'] ?? 0), ['type' => 'select', 'options' => ['0' => t('sub.article_issue_default'), '1' => t('sub.article_open')]]) ?><?php endif; ?><?= field(t('pub.date_published'), 'date_published', $pub['date_published'] ?? '', ['type' => 'date']) ?>
 <?php if ($pub['cover_image']): ?><p><img src="<?= e(public_url($pub['cover_image'])) ?>" alt="" height="80"></p><?php endif; ?><div><label><span class="label"><?= e(t('pub.cover')) ?></span><input type="file" name="cover" accept="image/png,image/jpeg,image/gif"></label></div></div>
 <div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></fieldset></form>
 

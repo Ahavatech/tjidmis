@@ -8,6 +8,12 @@ class ArticleController {
     private function requireLoginForContent(): void {
         if (Settings::get('restrictArticleAccess', '0') === '1' && !\App\Core\Auth::user()) redirect(url('login', null, [], ['source' => $_SERVER['REQUEST_URI'] ?? '']));
     }
+    /** OJS ArticleHandler::userCanViewGalley(): subscription content sends visitors to log in, logged-in non-subscribers to About > Subscriptions. */
+    private function requireSubscription(int $sid): void {
+        if (\App\Services\SubscriptionService::canRead($sid)) return;
+        if (!\App\Core\Auth::user()) redirect(url('login', null, [], ['source' => $_SERVER['REQUEST_URI'] ?? '']));
+        redirect(url('about', 'subscriptions'));
+    }
     private function notFound(): void { http_response_code(404); View::render('public/error', ['code' => 404, 'message' => t('error.404'), 'title' => t('error.404.title')]); }
     public function view(string $id = '', string $galleyId = '', string $fileId = ''): void {
         $jid = (int)Settings::journal()['id'];
@@ -16,7 +22,7 @@ class ArticleController {
         if ($galleyId !== '') {
             $g = Catalog::galley((int)$a['pid'], (int)$galleyId);
             if (!$g) { $this->notFound(); return; }
-            $this->requireLoginForContent();
+            $this->requireLoginForContent(); $this->requireSubscription((int)$a['sid']);
             if ($g['remote_url']) redirect($g['remote_url']);
             MetricsService::hit($jid, (int)$a['sid'], 'galley_download', (int)$g['id']);
             View::render('public/galley', ['a' => $a, 'g' => $g], null);
@@ -34,6 +40,7 @@ class ArticleController {
         $a = Catalog::article($jid, (int)$id);
         $g = $a ? Catalog::galley((int)$a['pid'], (int)$galleyId) : null;
         if (!$g || empty($g['stored_name'])) { $this->notFound(); return; }
+        $this->requireSubscription((int)$a['sid']);
         $path = Upload::baseDir() . "/journals/$jid/submissions/{$g['submission_id']}/{$g['file_stage']}/{$g['stored_name']}";
         if (!is_file($path)) { $this->notFound(); return; }
         $inline = !empty($_GET['inline']);

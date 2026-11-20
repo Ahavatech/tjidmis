@@ -39,6 +39,7 @@ class IssueManageController {
                     'show_volume' => empty($p['show_volume']) ? 0 : 1, 'show_number' => empty($p['show_number']) ? 0 : 1, 'show_year' => empty($p['show_year']) ? 0 : 1, 'show_title' => empty($p['show_title']) ? 0 : 1,
                     'description' => Sanitizer::clean((string)($p['description'] ?? '')) ?: null, 'cover_image' => $cover, 'url_path' => $slug ?: null];
                 if ($ipid !== null) $row['publisher_id'] = $ipid ?: null;
+                if (\App\Services\SubscriptionService::enabled()) { $row['access_status'] = (int)($p['access_status'] ?? 1) === 2 ? 2 : 1; $oad = trim((string)($p['open_access_date'] ?? '')); $row['open_access_date'] = preg_match('/^\d{4}-\d{2}-\d{2}$/', $oad) ? $oad : null; }
                 if ($i) { DB::exec('UPDATE issues SET ' . implode(',', array_map(fn($k) => "`$k`=?", array_keys($row))) . ' WHERE id=?', array_merge(array_values($row), [$i['id']])); $nid = (int)$i['id']; }
                 else { $row += ['journal_id' => $jid, 'published' => 0, 'is_current' => 0, 'seq' => 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM issues WHERE journal_id=? AND published=0', [$jid]), 'created_at' => date('Y-m-d H:i:s')]; $nid = DB::insert('issues', $row); }
                 flash(t('iss.saved')); redirect(url('manageIssues', 'edit', [$nid]));

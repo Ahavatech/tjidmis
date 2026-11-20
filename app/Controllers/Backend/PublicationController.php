@@ -76,6 +76,7 @@ class PublicationController {
                 $cover = DB::val('SELECT cover_image FROM publications WHERE id=?', [$pid]);
                 if (!empty($_FILES['cover']['name'])) { try { $new = Upload::storePublic($_FILES['cover'], 'covers'); if ($cover) @unlink(ROOT . '/public/' . $cover); $cover = $new; } catch (\RuntimeException $x) { flash($x->getMessage(), 'error'); $this->back($sub, $tab); } }
                 DB::exec('UPDATE publications SET section_id=?, pages=?, url_path=?, date_published=?, cover_image=? WHERE id=?', [$sec, mb_substr(trim((string)($p['pages'] ?? '')), 0, 50) ?: null, $slug ?: null, $date ?: null, $cover, $pid]);
+                if (\App\Services\SubscriptionService::enabled()) DB::exec('UPDATE publications SET access_status=? WHERE id=?', [(int)($p['access_status'] ?? 0) === 1 ? 1 : 0, $pid]);
                 DB::exec('UPDATE submissions SET section_id=? WHERE id=?', [$sec, $sid]);
                 if ($pubIssue = DB::val('SELECT issue_id FROM publications WHERE id=?', [$pid])) PublishingService::issueOrder((int)$pubIssue, $sec);
                 break;

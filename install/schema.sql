@@ -68,7 +68,7 @@ CREATE TABLE section_editors (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE issues (
-  publisher_id VARCHAR(255) NULL,
+  publisher_id VARCHAR(255) NULL, access_status TINYINT NOT NULL DEFAULT 1, open_access_date DATE NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, journal_id INT UNSIGNED NOT NULL, volume INT NULL, number VARCHAR(20) NULL, year INT NULL,
   title VARCHAR(255) NULL, show_volume TINYINT NOT NULL DEFAULT 1, show_number TINYINT NOT NULL DEFAULT 1, show_year TINYINT NOT NULL DEFAULT 1,
   show_title TINYINT NOT NULL DEFAULT 0, description TEXT NULL, cover_image VARCHAR(255) NULL, url_path VARCHAR(64) NULL,
@@ -136,7 +136,7 @@ CREATE TABLE publications (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, submission_id INT UNSIGNED NOT NULL, version INT NOT NULL DEFAULT 1, title VARCHAR(500) NOT NULL DEFAULT '',
   subtitle VARCHAR(500) NULL, prefix VARCHAR(50) NULL, abstract MEDIUMTEXT NULL, keywords JSON NULL, subjects JSON NULL, references_text MEDIUMTEXT NULL,
   publisher_id VARCHAR(255) NULL, coverage TEXT NULL, rights TEXT NULL, `source` VARCHAR(500) NULL, dc_type VARCHAR(255) NULL, dc_languages VARCHAR(255) NULL, disciplines JSON NULL, agencies JSON NULL,
-  issue_id INT UNSIGNED NULL, section_id INT UNSIGNED NULL, pages VARCHAR(50) NULL, url_path VARCHAR(64) NULL, cover_image VARCHAR(255) NULL,
+  issue_id INT UNSIGNED NULL, section_id INT UNSIGNED NULL, pages VARCHAR(50) NULL, url_path VARCHAR(64) NULL, cover_image VARCHAR(255) NULL, access_status TINYINT NOT NULL DEFAULT 0,
   doi VARCHAR(255) NULL, copyright_holder TEXT NULL, copyright_year INT NULL, license_url VARCHAR(255) NULL,
   status ENUM('unscheduled','scheduled','published') NOT NULL DEFAULT 'unscheduled', date_published DATE NULL, seq INT NOT NULL DEFAULT 0,
   primary_contact_id INT UNSIGNED NULL, KEY (submission_id), KEY (issue_id), KEY (section_id), FULLTEXT KEY ft_pub (title, abstract),
@@ -203,6 +203,19 @@ CREATE TABLE review_assignments (
   KEY (submission_id), KEY (review_round_id), KEY (reviewer_id),
   FOREIGN KEY (submission_id) REFERENCES submissions(id) ON DELETE CASCADE, FOREIGN KEY (review_round_id) REFERENCES review_rounds(id) ON DELETE CASCADE,
   FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE subscription_types (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, journal_id INT UNSIGNED NOT NULL, name VARCHAR(255) NOT NULL, description TEXT NULL, cost DECIMAL(10,2) NOT NULL DEFAULT 0, currency VARCHAR(3) NOT NULL DEFAULT 'USD',
+  duration INT NULL, format TINYINT NOT NULL DEFAULT 1, institutional TINYINT(1) NOT NULL DEFAULT 0, membership TINYINT(1) NOT NULL DEFAULT 0, disable_public_display TINYINT(1) NOT NULL DEFAULT 0, seq INT NOT NULL DEFAULT 0,
+  KEY (journal_id), FOREIGN KEY (journal_id) REFERENCES journals(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE subscriptions (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, journal_id INT UNSIGNED NOT NULL, type_id INT UNSIGNED NOT NULL, user_id INT UNSIGNED NULL, institution_name VARCHAR(255) NULL, institution_mailing TEXT NULL,
+  domain VARCHAR(255) NULL, ip_ranges TEXT NULL, status TINYINT NOT NULL DEFAULT 1, date_start DATE NULL, date_end DATE NULL, membership VARCHAR(40) NULL, reference_number VARCHAR(40) NULL, notes TEXT NULL,
+  KEY (journal_id), KEY (type_id), KEY (user_id), FOREIGN KEY (journal_id) REFERENCES journals(id) ON DELETE CASCADE, FOREIGN KEY (type_id) REFERENCES subscription_types(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE review_forms (

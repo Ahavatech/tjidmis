@@ -1,0 +1,11 @@
+<?php use App\Services\SubscriptionService as SS; $er = fn($k) => $errors[$k] ?? ''; $v = fn($k) => $sub[$k] ?? ''; ?>
+<div class="be_page"><div class="be_pagehead"><h1><?= e(t(!empty($sub['id']) ? 'sub.edit' : 'sub.create')) ?></h1></div><div class="be_card"><?= errors_summary($errors) ?>
+<form class="cmp_form be_form" method="post" action="<?= e(url('subscription', 'edit', array_filter([$inst ? 'institutional' : 'individual', $sub['id'] ?? null]))) ?>"><?= csrf_field() ?><div class="fields">
+<?php if ($inst): ?><?= field(t('sub.institution'), 'institution_name', $v('institution_name'), ['required' => true, 'maxlength' => 255, 'error' => $er('institution_name')]) ?><?= field(t('sub.mailing'), 'institution_mailing', $v('institution_mailing'), ['type' => 'textarea', 'rows' => 3]) ?>
+<?= field(t('sub.domain'), 'domain', $v('domain'), ['maxlength' => 255, 'error' => $er('domain')]) ?><?= field(t('sub.ip_ranges'), 'ip_ranges', $v('ip_ranges'), ['type' => 'textarea', 'rows' => 3, 'help' => t('sub.ip_help')]) ?>
+<?php else: ?><?= field(t('sub.user'), 'username', $uname, ['required' => true, 'maxlength' => 32, 'error' => $er('username'), 'help' => t('sub.user_help')]) ?><?php endif; ?>
+<?= field(t('sub.type'), 'type_id', $v('type_id'), ['type' => 'select', 'required' => true, 'error' => $er('type_id'), 'options' => array_column($types, 'name', 'id')]) ?>
+<?= field(t('sub.status'), 'status', $v('status'), ['type' => 'select', 'required' => true, 'error' => $er('status'), 'options' => array_map(fn($k) => t($k), SS::STATUSES)]) ?>
+<?= field(t('sub.start'), 'date_start', $v('date_start'), ['type' => 'date', 'required' => true, 'error' => $er('date_start')]) ?><?= field(t('sub.end'), 'date_end', $v('date_end'), ['type' => 'date', 'error' => $er('date_end'), 'help' => t('sub.end_help')]) ?>
+<?= field(t('sub.membership'), 'membership', $v('membership'), ['maxlength' => 40]) ?><?= field(t('sub.reference'), 'reference_number', $v('reference_number'), ['maxlength' => 40]) ?><?= field(t('sub.notes'), 'notes', $v('notes'), ['type' => 'textarea', 'rows' => 3]) ?>
+</div><div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button><a href="<?= e(url('subscription', 'index', [$inst ? 'institutional' : 'individual'])) ?>"><?= e(t('wizard.cancel')) ?></a></div></form></div></div>
