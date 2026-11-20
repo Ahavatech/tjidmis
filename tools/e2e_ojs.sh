@@ -2,7 +2,8 @@
 # End-to-end workflow check against the LOCAL OJS 3.3 (docker compose --profile reference up -d).
 # author submits -> editor sends to review -> reviewer reviews -> editor accepts -> production -> publish.
 # Usage: bash tools/e2e_ojs.sh [--keep]     (default: deletes the test submission at the end)
-# Needs the demo accounts (editor, author, reviewer1, admin; password Demo@12345) and curl + docker compose.
+# Needs the demo accounts (bash tools/ojs_demo_users.sh create; password Demo@12345), curl and docker compose.
+# Section, Author group and current issue are looked up in the database, so only B and PW may need changing.
 set -u
 cd "$(dirname "$0")/.."; export MSYS_NO_PATHCONV=1
 B=${B:-http://localhost:8082/jidmis}; PW=${PW:-Demo@12345}
@@ -27,9 +28,12 @@ printf '%%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pag
 echo "Logging in"; for u in author editor reviewer1 admin; do login $u; done; ok "4 accounts"
 REVIEWER=$(DB "select user_id from users where username='reviewer1'")
 ISSUE=$(DB "select issue_id from issues where current=1 limit 1")
+SECTION=$(DB "select min(section_id) from sections")
+AUTHOR_GROUP=$(DB "select min(user_group_id) from user_groups where role_id=65536 and context_id=1")
+[ -n "$ISSUE" ] && [ -n "$SECTION" ] && [ -n "$AUTHOR_GROUP" ] || die "need a current issue, a section and an Author group in OJS"
 
 echo "1. Author submits (wizard steps 1-4)"
-r=$(post author $B/submission/saveStep/1 -d locale=en_US -d sectionId=1 -d userGroupId=14 -d checklist-0=1 -d checklist-1=1 -d checklist-2=1 -d checklist-3=1 -d checklist-4=1 -d copyrightNoticeAgree=1 -d privacyConsent=1 -d commentsToEditor=e2e)
+r=$(post author $B/submission/saveStep/1 -d locale=en_US -d sectionId=$SECTION -d userGroupId=$AUTHOR_GROUP -d checklist-0=1 -d checklist-1=1 -d checklist-2=1 -d checklist-3=1 -d checklist-4=1 -d copyrightNoticeAgree=1 -d privacyConsent=1 -d commentsToEditor=e2e)
 S=$(echo "$r" | grep -o 'submissionId=[0-9]*' | head -1 | cut -d= -f2); [ -n "$S" ] || die "step 1: $r"; ok "submission $S created"
 r=$(api author -X POST $B/api/v1/submissions/$S/files -F fileStage=2 -F genreId=1 -F "name[en_US]=manuscript.pdf" -F "file=@$T/test.pdf;type=application/pdf"); expect "$r" '"id"' "file upload"
 post author $B/submission/saveStep/2 -d submissionId=$S -o /dev/null
@@ -62,9 +66,9 @@ post editor "$CALL/modals/editor-decision/editor-decision/save-promote?decision=
 echo "6. Galley, issue, publish"
 post editor "$CALL/grid/article-galleys/article-galley-grid/update-galley?submissionId=$S&publicationId=$P&representationId=" -d label=PDF -d galleyLocale=en_US -o /dev/null
 GAL=$(DB "select max(galley_id) from publication_galleys where publication_id=$P"); [ -n "$GAL" ] && ok "galley $GAL" || die "no galley"
-r=$(api editor -X POST $B/api/v1/submissions/$S/files -F fileStage=10 -F genreId=1 -F assocType=521 -F assocId=$GAL -F "name[en_US]=article.pdf" -F "file=@$T/test.pdf;type=application/pdf"); expect "$r" '"id"' "galley file upload"
-# NOTE: the API upload does not link the file to the galley by itself; set the link directly.
-DB "update publication_galleys set submission_file_id=(select max(submission_file_id) from submission_files where submission_id=$S and file_stage=10) where galley_id=$GAL"
+# Same endpoint the galley "Upload file" button uses; OJS links the file to the galley itself.
+r=$(curl -s -b $T/editor -H "$X" -H "X-Csrf-Token: $(cat $T/editor.tok)" "$CALL/wizard/file-upload/file-upload-wizard/upload-file?submissionId=$S&stageId=5&fileStage=10&assocType=521&assocId=$GAL" -F genreId=1 -F "uploadedFile=@$T/test.pdf;type=application/pdf;filename=article.pdf"); expect "$r" 'status":true' "galley file upload: $r"
+[ -n "$(DB "select submission_file_id from publication_galleys where galley_id=$GAL and submission_file_id is not null")" ] && ok "galley linked to its PDF" || die "galley not linked to file"
 api editor -X PUT $B/api/v1/submissions/$S/publications/$P -H "Content-Type: application/json" -d "{\"issueId\":$ISSUE,\"pages\":\"601-612\"}" -o /dev/null
 api editor -X PUT $B/api/v1/submissions/$S/publications/$P/publish -H "Content-Type: application/json" -d "{\"issueId\":$ISSUE}" -o /dev/null
 [ "$(DB "select status from publications where publication_id=$P")" = 3 ] && ok "published" || die "not published"
