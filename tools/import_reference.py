@@ -197,7 +197,7 @@ def page_html(path):
         return None
     s = soup(f)
     pg = s.select_one('div.page')
-    return inner(pg, drop=['nav.cmp_breadcrumbs', 'h1'])
+    return inner(pg, drop=['nav.cmp_breadcrumbs', 'h1:first-of-type'])
 nav_rows = []
 for pos, li in enumerate(nav.find_all('li', recursive=False), 1):
     a = li.find('a', recursive=False)
