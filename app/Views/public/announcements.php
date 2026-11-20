@@ -1,4 +1,9 @@
-<div class="page page_announcements"><?= breadcrumb([[t('nav.announcements'), null]]) ?><h1><?= e(t('nav.announcements')) ?></h1>
+<div class="page page_announcements"><?= breadcrumb([[t('nav.announcements'), null]]) ?>
+
+	<h1>
+		<?= e(t('nav.announcements')) ?>
+	</h1>
+	
 <?= rich(\App\Core\Settings::get('announcementsIntro', '')) ?>
 <p><a href="<?= e(url('user', 'register')) ?>"><?= e(t('ann.signup')) ?></a> <?= e(t('ann.signup_tail')) ?></p>
 <ul class="cmp_announcements"><?php foreach ($items as $n): ?><li><article class="obj_announcement_summary">

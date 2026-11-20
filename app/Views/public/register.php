@@ -1,5 +1,10 @@
 <?php use App\Core\Countries; $er = fn($k) => $errors[$k] ?? ''; ?>
-<div class="page page_register"><?= breadcrumb([[t('nav.register'), null]]) ?><h1><?= e(t('nav.register')) ?></h1>
+<div class="page page_register"><?= breadcrumb([[t('nav.register'), null]]) ?>
+
+	<h1>
+		<?= e(t('nav.register')) ?>
+	</h1>
+	
 <p><?= e(t('form.required_note')) ?> <abbr class="required" title="<?= e(t('form.required_title')) ?>">*</abbr></p>
 <?= errors_summary($errors) ?>
 <form class="cmp_form register" id="register" method="post" action="<?= e(url('user', 'register')) ?>"><?= csrf_field() ?>

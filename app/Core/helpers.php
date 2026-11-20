@@ -143,3 +143,9 @@ function cc_license(string $url): array {
     $type = strtolower($m[1]);
     return ['Creative Commons ' . ($names[$type] ?? strtoupper($type)) . ' ' . $m[2] . ' International License', '//i.creativecommons.org/l/' . $type . '/' . $m[2] . '/88x31.png'];
 }
+
+/** OJS-style e-mail obfuscation: the link is written by a script from a percent-encoded string, so scrapers do not see the address. */
+function obfuscate_mailto(string $email): string {
+    $html = '<a href="mailto:' . $email . '" >' . $email . '</a>';
+    return implode('', array_map(fn($c) => '%' . bin2hex($c), str_split($html)));
+}

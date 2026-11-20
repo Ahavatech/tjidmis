@@ -1,4 +1,9 @@
-<div class="page page_lost_password"><?= breadcrumb([[t('lost.title'), null]]) ?><h1><?= e(t('lost.title')) ?></h1>
+<div class="page page_lost_password"><?= breadcrumb([[t('lost.title'), null]]) ?>
+
+	<h1>
+		<?= e(t('lost.title')) ?>
+	</h1>
+	
 <p><?= e(t('lost.intro')) ?></p>
 <?php if ($error): ?><div class="cmp_notification error" role="alert"><?= e($error) ?></div><?php endif; ?>
 <form class="cmp_form lost_password" id="lostPasswordForm" action="<?= e(url('login', 'requestResetPassword')) ?>" method="post"><?= csrf_field() ?>

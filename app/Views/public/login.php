@@ -1,4 +1,9 @@
-<div class="page page_login"><?= breadcrumb([[t('nav.login'), null]]) ?><h1><?= e(t('nav.login')) ?></h1>
+<div class="page page_login"><?= breadcrumb([[t('nav.login'), null]]) ?>
+
+	<h1>
+		<?= e(t('nav.login')) ?>
+	</h1>
+	
 <p><?= e(t('form.required_note')) ?> <abbr class="required" title="<?= e(t('form.required_title')) ?>">*</abbr></p>
 <?php if ($error): ?><div class="cmp_notification error" role="alert"><?= e($error) ?></div><?php endif; ?>
 <form class="cmp_form cmp_form login" id="login" method="post" action="<?= e(url('login', 'signIn')) ?>"><?= csrf_field() ?>

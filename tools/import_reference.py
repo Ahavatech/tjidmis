@@ -82,9 +82,16 @@ S['privacyStatement'] = inner(pv, drop=['nav.cmp_breadcrumbs', 'h1'])
 ct = soup(H('contact'))
 S['contactName'] = text(ct.select_one('.contact.primary .name'))
 S['supportName'] = text(ct.select_one('.contact.support .name'))
-S['contactEmail'] = ''   # not published on the reference site
+def _email(block):
+    sc = block.select_one('.email script') if block else None
+    m = re.search(r"unescape\('([^']*)'\)", sc.string or sc.get_text()) if sc else None
+    if not m: return ''
+    import urllib.parse
+    d = urllib.parse.unquote(m.group(1)); e = re.search(r'mailto:([^"]+)"', d)
+    return e.group(1) if e else ''
+S['contactEmail'] = _email(ct.select_one('.contact.primary'))
 S['mailFrom'] = 'noreply@localhost'   # sender address for outgoing mail; set under Settings
-S['supportEmail'] = ''
+S['supportEmail'] = _email(ct.select_one('.contact.support'))
 sub = soup(H('submissions'))
 S['submissionChecklist'] = json.dumps([text(li) for li in sub.select('.submission_checklist li')])
 S['authorGuidelines'] = inner(sub.select_one('.author_guidelines'), drop=['h2'])
