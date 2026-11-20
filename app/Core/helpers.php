@@ -56,10 +56,16 @@ function breadcrumb(array $crumbs): string {
 function paginate(int $total, int $page, int $per, callable $urlFor): string {
     $pages = (int)ceil($total / max(1, $per)); if ($pages <= 1) return '';
     $h = '<div class="cmp_pagination" aria-label="' . e(t('page.label')) . '">';
-    if ($page > 1) $h .= '<a class="prev" href="' . e($urlFor($page - 1)) . '">' . e(t('page.prev')) . '</a>';
-    $h .= '<span class="current">' . (($page - 1) * $per + 1) . '-' . min($total, $page * $per) . ' of ' . $total . '</span>';
-    if ($page < $pages) $h .= '<a class="next" href="' . e($urlFor($page + 1)) . '">' . e(t('page.next')) . '</a>';
-    return $h . '</div>';
+    if ($page > 1) $h .= "
+				" . '<a class="prev" href="' . e($urlFor($page - 1)) . '">' . e(t('page.prev')) . '</a>';
+    $h .= "
+				" . '<span class="current">' . "
+			" . (($page - 1) * $per + 1) . '-' . min($total, $page * $per) . ' of ' . $total . "
+		" . '</span>';
+    if ($page < $pages) $h .= "
+					" . '<a class="next" href="' . e($urlFor($page + 1)) . '">' . e(t('page.next')) . '</a>';
+    return $h . "
+			" . '</div>';
 }
 /** Absolute URL for e-mails and feeds. Uses 'base_url' from config.php (written by the installer) so a forged Host header can never poison reset links. */
 function abs_url(string $path): string {
