@@ -172,3 +172,7 @@ form.is_busy button[type=submit],form.is_busy input[type=submit]{opacity:.6;curs
 #formErrors .pkp_form_error{font-weight:600;color:#b42318}
 #formErrors ul{margin:.4rem 0 0 1.1rem;padding:0}
 .backend_anon .be_journal{display:inline;font-weight:600}
+
+.be_areahead{font-family:var(--font-head);font-size:1.25rem;margin:.2rem 0 .8rem}
+.be_group{font-family:var(--font-head);font-size:1rem;margin:1.4rem 0 .4rem;padding-bottom:.3rem;border-bottom:1px solid var(--line)}
+.be_group:first-child{margin-top:0}

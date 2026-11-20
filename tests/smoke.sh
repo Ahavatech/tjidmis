@@ -62,7 +62,7 @@ ISS=$(loc | grep -o '[0-9]*$'); ok "$([ -n "$ISS" ] && echo y)" y "issue created
 FORM=/publication/index/$S/issue; code editor $FORM >/dev/null; post editor /publication/save/$S/issue -d section_id=1 -d pages=1-9 >/dev/null; post editor /publication/schedule/$S -d issue_id=$ISS >/dev/null
 ok "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/article/view/$S")" 404 "hidden while scheduled"
 echo "== DOI pattern and APC tracking"
-FORM=/settings/index/distribution/doi; code admin $FORM >/dev/null; post admin /settings/save/distribution/doi -d doiPrefix=10.59543/jidmis -d 'doiPattern=v%vi%i.%a' -d doiAutoAssign=1 >/dev/null
+FORM=/settings/index/website/doi; code admin $FORM >/dev/null; post admin /settings/save/website/doi -d doiPrefix=10.59543/jidmis -d 'doiPattern=v%vi%i.%a' -d doiAutoAssign=1 >/dev/null
 FORM=/settings/index/distribution/payments; code admin $FORM >/dev/null; post admin /settings/save/distribution/payments -d apcEnabled=1 -d apcFee=250 -d apcCurrency=usd >/dev/null
 FORM=/publication/index/$S/identifiers; code editor $FORM >/dev/null; post editor /publication/assignDoi/$S >/dev/null; code editor $FORM >/dev/null
 ok "$(has "10.59543/jidmis.v99i1.$S")" 1 "DOI generated from the pattern"
@@ -79,9 +79,11 @@ ok "$(curl -s "$BASE" | grep -c 'Vol. 99 No. 1 (2099)' | sed 's/[2-9]/1/')" 1 "h
 
 echo "== admin settings reach the public site"
 ORIG_FOOTER=$(db "select value from journal_settings where name='pageFooter' and journal_id=1" | head -c 4000)
-FORM=/settings/index/website/appearance; code admin $FORM >/dev/null; post admin /settings/save/website/appearance -d themeColor=#1a7f5a -d "pageFooter=<p>Smoke footer</p>" >/dev/null
+FORM=/settings/index/website/theme; code admin $FORM >/dev/null; post admin /settings/save/website/theme -d themeColor=#1a7f5a >/dev/null
+FORM=/settings/index/website/appearanceSetup; code admin $FORM >/dev/null; post admin /settings/save/website/appearanceSetup --data-urlencode "pageFooter=<p>Smoke footer</p>" >/dev/null
 ok "$(curl -s "$BASE" | grep -c 'css/theme?v=')" 1 "recoloured theme linked"; ok "$(curl -s "$BASE/css/theme" | grep -ci '#1a7f5a' | sed 's/^[1-9][0-9]*$/1/')" 1 "theme css recoloured"; ok "$(curl -s "$BASE" | grep -c 'Smoke footer')" 1 "footer updated"
-post admin /settings/save/website/appearance -d themeColor=#d79f24 --data-urlencode "pageFooter=${ORIG_FOOTER:-<p>Journal footer</p>}" >/dev/null
+post admin /settings/save/website/theme -d themeColor=#d79f24 >/dev/null
+FORM=/settings/index/website/appearanceSetup; code admin $FORM >/dev/null; post admin /settings/save/website/appearanceSetup --data-urlencode "pageFooter=${ORIG_FOOTER:-<p>Journal footer</p>}" >/dev/null
 ok "$(curl -s "$BASE" | grep -c 'assets/css/theme.css')" 1 "original colour uses the static stylesheet again"
 ok "$(code admin /users)" 200 "users"; ok "$(code admin /statistics)" 200 "statistics"; ok "$(code admin /admin/index/system)" 200 "system information"
 

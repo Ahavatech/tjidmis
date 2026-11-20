@@ -1,12 +1,13 @@
 <?php use App\Controllers\Backend\SettingsController as SC;
 $areas = ['journal' => 'menu.settings_journal', 'website' => 'menu.settings_website', 'workflow' => 'menu.settings_workflow', 'distribution' => 'menu.settings_distribution'];
-$tabs = SC::tabsFor($area); $er = fn($k) => $errors[$k] ?? ''; $post = url('settings', 'save', [$area, $tab]);
+$nav = SC::NAV[$area] ?? []; $top = ''; foreach ($nav as $tk => $leaves) if (in_array($tab, $leaves, true)) $top = $tk; $er = fn($k) => $errors[$k] ?? ''; $post = url('settings', 'save', [$area, $tab]);
 $lbl = fn($k) => t('set.' . $k); $help = function ($k) { $h = t('set.' . $k . '_help'); return $h === 'set.' . $k . '_help' ? '' : $h; };
 $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_array($f[1], ['image', 'css'], true)); ?>
 <div class="be_page"><div class="be_pagehead"><h1><?= e(t('menu.settings')) ?></h1></div>
-<ul class="be_tabs"><?php foreach ($areas as $a => $l): ?><li class="<?= $a === $area ? 'active' : '' ?>"><a href="<?= e(url('settings', 'index', [$a])) ?>"><?= e(t($l)) ?></a></li><?php endforeach; ?></ul>
+<h2 class="be_areahead"><?= e(t($areas[$area])) ?></h2>
+<ul class="be_tabs"><?php foreach ($nav as $tk => $leaves): ?><li class="<?= $tk === $top ? 'active' : '' ?>"><a href="<?= e(url('settings', 'index', [$area, $leaves[0]])) ?>"><?= e(t('set.top_' . $tk)) ?></a></li><?php endforeach; ?></ul>
 <div class="be_card">
-<ul class="be_subtabs"><?php foreach ($tabs as $tb): ?><li class="<?= $tb === $tab ? 'active' : '' ?>"><a href="<?= e(url('settings', 'index', [$area, $tb])) ?>"><?= e(t('set.tab_' . $tb)) ?></a></li><?php endforeach; ?></ul>
+<?php if (count($nav[$top] ?? []) > 1): ?><ul class="be_subtabs"><?php foreach ($nav[$top] as $tb): ?><li class="<?= $tb === $tab ? 'active' : '' ?>"><a href="<?= e(url('settings', 'index', [$area, $tb])) ?>"><?= e(t('set.tab_' . $tb)) ?></a></li><?php endforeach; ?></ul><?php endif; ?>
 <?= $errors ? errors_summary(array_values($errors)) : '' ?>
 
 <?php if ($tab === 'sections'): ?>
@@ -46,8 +47,10 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 
 <?php else: ?>
 <?php if ($area === 'website' && $tab === 'announcements'): ?><p><a class="be_btn be_btn_primary" href="<?= e(url('manageAnnouncements')) ?>"><?= e(t('menu.announcements')) ?></a></p><?php endif; ?>
+<?php if ($fields): ?>
 <form class="cmp_form be_form" method="post" action="<?= e($post) ?>"<?= $multipart ? ' enctype="multipart/form-data"' : '' ?>><?= csrf_field() ?><div class="fields">
 <?php foreach ($fields as $f): [$k, $type] = $f; $o = $f[2] ?? []; $val = $values[$k] ?? ''; ?>
+<?php if (!empty($o['group'])): ?><h3 class="be_group"><?= e(t($o['group'])) ?></h3><?php endif; ?>
 <?php switch ($type):
 case 'text': case 'email': case 'number': ?><?= field($lbl($k), $k, $val, ['type' => $type, 'maxlength' => 255, 'required' => !empty($o['required']), 'error' => $er($k), 'help' => $help($k)]) ?><?php break;
 case 'textarea': case 'lines': ?><?= field($lbl($k), $k, $val, ['type' => 'textarea', 'rows' => $type === 'lines' ? 7 : 5, 'error' => $er($k), 'help' => $help($k)]) ?><?php break;
@@ -59,14 +62,15 @@ case 'image': ?><div class="image"><label><span class="label"><?= e($lbl($k)) ?>
 case 'css': ?><div class="css"><label><span class="label"><?= e($lbl($k)) ?></span></label><?php if ($val): ?><p class="muted"><?= e(t('set.css_current')) ?>: <a href="<?= e(public_url($val)) ?>" target="_blank"><?= e($val) ?></a></p><?php endif; ?><input type="file" name="<?= e($k) ?>" accept=".css,text/css"><?= $val ? checkbox($k . '_remove', e(t('set.remove_file')), false) : '' ?><?= $er($k) ? '<span class="field_error">' . e($er($k)) . '</span>' : '' ?></div><?php break;
 endswitch; ?>
 <?php endforeach; ?></div><div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></form>
+<?php endif; ?>
 
-<?php if ($area === 'website' && $tab === 'appearance'): ?>
+<?php if ($area === 'website' && $tab === 'appearanceSetup'): ?>
 <hr id="sidebar"><h2><?= e(t('set.sidebar')) ?></h2><p class="muted"><?= e(t('set.sidebar_help')) ?></p>
 <div class="be_two"><div><h3><?= e(t('set.sidebar_on')) ?></h3><ul class="be_list"><?php $sn = count($sidebarOn); foreach ($sidebarOn as $i => [$key, $label]): ?><li><span><?= e($label) ?></span><form class="be_inline" method="post"><?= csrf_field() ?>
 <button class="be_btn be_small" type="submit" formaction="<?= e(url('settings', 'sidebar', ['up', rawurlencode($key)])) ?>"<?= $i === 0 ? ' disabled' : '' ?>>&uarr;</button><button class="be_btn be_small" type="submit" formaction="<?= e(url('settings', 'sidebar', ['down', rawurlencode($key)])) ?>"<?= $i === $sn - 1 ? ' disabled' : '' ?>>&darr;</button>
 <button class="be_btn be_btn_danger be_small" type="submit" formaction="<?= e(url('settings', 'sidebar', ['remove', rawurlencode($key)])) ?>"><?= e(t('part.remove')) ?></button></form></li><?php endforeach; ?></ul></div>
 <div><h3><?= e(t('set.sidebar_off')) ?></h3><ul class="be_list"><?php foreach ($sidebarOff as [$key, $label]): ?><li><span><?= e($label) ?></span><form class="be_inline" method="post" action="<?= e(url('settings', 'sidebar', ['add', rawurlencode($key)])) ?>"><?= csrf_field() ?><button class="be_btn be_small" type="submit"><?= e(t('set.add')) ?></button></form></li><?php endforeach; ?><?php if (!$sidebarOff): ?><li class="muted"><?= e(t('set.none')) ?></li><?php endif; ?></ul></div></div>
-<?php elseif ($area === 'workflow' && $tab === 'emails'): ?>
+<?php elseif ($area === 'workflow' && $tab === 'templates'): ?>
 <hr><h2><?= e(t('set.email_templates')) ?></h2><table class="be_table"><thead><tr><th><?= e(t('set.email_key')) ?></th><th><?= e(t('wf.subject')) ?></th><th></th></tr></thead><tbody>
 <?php foreach ($templates as $tp): ?><tr class="<?= $tp['enabled'] ? '' : 'be_muted_row' ?>"><td><code><?= e($tp['email_key']) ?></code><?= $tp['is_custom'] ? ' <span class="be_chip">' . e(t('set.edited')) . '</span>' : '' ?><?= $tp['enabled'] ? '' : ' <span class="be_chip">' . e(t('set.disabled')) . '</span>' ?></td><td><?= e($tp['subject']) ?></td>
 <td class="be_actions"><form class="be_inline" method="post"><?= csrf_field() ?><a class="be_btn" href="<?= e(url('content', 'email', [$tp['id']])) ?>"><?= e(t('wizard.edit')) ?></a><?php if ($tp['is_custom']): ?><button class="be_btn" type="submit" formaction="<?= e(url('content', 'emailReset', [$tp['id']])) ?>" onclick="return confirm('<?= e(t('set.confirm_reset')) ?>')"><?= e(t('set.reset')) ?></button><?php endif; ?></form></td></tr><?php endforeach; ?></tbody></table>

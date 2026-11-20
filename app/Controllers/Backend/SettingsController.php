@@ -5,35 +5,57 @@ use App\Core\{View, Auth, DB, Settings, Request, Upload, Sanitizer};
 /** Settings > Journal / Website / Workflow / Distribution. Plain forms are driven by SCHEMA; special tabs have their own screens. */
 class SettingsController {
     const ROLES = ['manager', 'site_admin'];
-    /** area => tab => list of [key, type, options]. Types: text, email, number, textarea, html, checkbox, select, color, image, css, lines. */
+    /** area => leaf => list of [key, type, options]. Types: text, email, number, textarea, html, checkbox, select, color, image, css, lines.
+     *  Option 'group' puts a heading above that field. The leaves are shown under the tab layout in NAV, which mirrors OJS 3.3. */
     const SCHEMA = [
         'journal' => [
-            'masthead' => [['name', 'text', ['required' => 1]], ['initials', 'text'], ['abbreviation', 'text'], ['publisher', 'text'], ['eissn', 'text'], ['issn', 'text'], ['description', 'html'], ['editorialTeam', 'html'], ['about', 'html']],
-            'contact' => [['contactName', 'text'], ['contactEmail', 'email'], ['contactPhone', 'text'], ['contactAffiliation', 'text'], ['contactMailingAddress', 'textarea'], ['supportName', 'text'], ['supportEmail', 'email'], ['supportPhone', 'text']],
+            'masthead' => [['name', 'text', ['required' => 1, 'group' => 'set.group_identity']], ['initials', 'text'], ['abbreviation', 'text'],
+                ['publisher', 'text', ['group' => 'set.group_publishing']], ['publisherUrl', 'text'], ['eissn', 'text'], ['issn', 'text'],
+                ['description', 'html', ['group' => 'set.group_keyinfo']], ['editorialTeam', 'html'], ['about', 'html', ['group' => 'set.group_description']]],
+            'contact' => [['contactName', 'text', ['required' => 1, 'group' => 'set.group_principal']], ['contactEmail', 'email', ['required' => 1]], ['contactPhone', 'text'], ['contactAffiliation', 'text'], ['contactMailingAddress', 'textarea'],
+                ['supportName', 'text', ['required' => 1, 'group' => 'set.group_technical']], ['supportEmail', 'email', ['required' => 1]], ['supportPhone', 'text']],
             'sections' => [],
         ],
         'website' => [
-            'appearance' => [['themeColor', 'color'], ['logo', 'image'], ['favicon', 'image'], ['homepageImage', 'image'], ['additionalHomeContent', 'html'], ['pageFooter', 'html'], ['journalStyleSheet', 'css']],
+            'theme' => [['themeColor', 'color']],
+            'appearanceSetup' => [['logo', 'image'], ['homepageImage', 'image'], ['pageFooter', 'html']],
+            'appearanceAdvanced' => [['journalStyleSheet', 'css'], ['favicon', 'image'], ['additionalHomeContent', 'html']],
             'information' => [['readerInfo', 'html'], ['authorInfo', 'html'], ['librarianInfo', 'html']],
-            'navigation' => [], 'staticPages' => [], 'blocks' => [], 'plugins' => [],
+            'navigation' => [],
             'announcements' => [['announcementsEnabled', 'checkbox'], ['announcementsIntro', 'html'], ['numAnnouncementsHomepage', 'number', ['min' => 0, 'max' => 10]]],
             'lists' => [['itemsPerPage', 'number', ['min' => 5, 'max' => 100]]],
             'privacy' => [['privacyStatement', 'html']],
             'datetime' => [['dateFormat', 'select', ['options' => ['Y-m-d' => '2026-01-15', 'd/m/Y' => '15/01/2026', 'm/d/Y' => '01/15/2026', 'j F Y' => '15 January 2026', 'F j, Y' => 'January 15, 2026']]]],
+            'plugins' => [], 'staticPages' => [], 'blocks' => [],
+            'doi' => [['doiPrefix', 'text'], ['doiPattern', 'text'], ['doiAutoAssign', 'checkbox']],
         ],
         'workflow' => [
-            'submission' => [['submissionsDisabled', 'checkbox'], ['authorGuidelines', 'html'], ['submissionChecklist', 'lines'], ['metaKeywords', 'checkbox'], ['metaReferences', 'checkbox'], ['components', 'lines']],
-            'review' => [['defaultReviewMode', 'select', ['options' => ['anonymous' => 'review.method_anonymous', 'double_anonymous' => 'review.method_double', 'open' => 'review.method_open'], 'translate' => 1]],
-                ['numWeeksPerResponse', 'number', ['min' => 1, 'max' => 26]], ['numWeeksPerReview', 'number', ['min' => 1, 'max' => 52]], ['numDaysBeforeInviteReminder', 'number', ['min' => 0, 'max' => 90]], ['numDaysBeforeSubmitReminder', 'number', ['min' => 0, 'max' => 90]], ['reviewGuidelines', 'html'], ['competingInterests', 'html'], ['reviewerUploads', 'checkbox']],
-            'emails' => [['emailSignature', 'textarea'], ['mailFrom', 'email']],
+            'disableSubmissions' => [['submissionsDisabled', 'checkbox']],
+            'metadata' => [['metaKeywords', 'checkbox'], ['metaReferences', 'checkbox']],
+            'components' => [['components', 'lines']],
+            'checklist' => [['submissionChecklist', 'lines']],
+            'authorGuidelines' => [['authorGuidelines', 'html'], ['copyrightNotice', 'html']],
+            'reviewSetup' => [['defaultReviewMode', 'select', ['options' => ['anonymous' => 'review.method_anonymous', 'double_anonymous' => 'review.method_double', 'open' => 'review.method_open'], 'translate' => 1]],
+                ['reviewerUploads', 'checkbox'], ['numWeeksPerResponse', 'number', ['min' => 1, 'max' => 26]], ['numWeeksPerReview', 'number', ['min' => 1, 'max' => 52]],
+                ['numDaysBeforeInviteReminder', 'number', ['min' => 0, 'max' => 90]], ['numDaysBeforeSubmitReminder', 'number', ['min' => 0, 'max' => 90]]],
+            'reviewerGuidance' => [['reviewGuidelines', 'html'], ['competingInterests', 'html']],
+            'emailSetup' => [['emailSignature', 'textarea'], ['mailFrom', 'email']],
+            'templates' => [],
         ],
         'distribution' => [
             'license' => [['copyrightHolderType', 'select', ['options' => ['author' => 'set.holder_author', 'journal' => 'set.holder_journal', 'other' => 'set.holder_other'], 'translate' => 1]], ['copyrightHolderOther', 'text'],
-                ['licenseUrl', 'text'], ['copyrightYearBasis', 'select', ['options' => ['issue' => 'set.year_issue', 'submission' => 'set.year_submission'], 'translate' => 1]], ['copyrightNotice', 'html'], ['licenseTerms', 'html']],
+                ['licenseUrl', 'text'], ['copyrightYearBasis', 'select', ['options' => ['issue' => 'set.year_issue', 'submission' => 'set.year_submission'], 'translate' => 1]], ['licenseTerms', 'html']],
             'indexing' => [['searchDescription', 'textarea'], ['customHeaders', 'textarea']],
-            'doi' => [['doiPrefix', 'text'], ['doiPattern', 'text'], ['doiAutoAssign', 'checkbox']],
-            'payments' => [['apcEnabled', 'checkbox'], ['apcFee', 'number', ['min' => 0, 'max' => 1000000]], ['apcCurrency', 'text'], ['apcInstructions', 'html']], 'access' => [],
+            'payments' => [['apcEnabled', 'checkbox'], ['apcFee', 'number', ['min' => 0, 'max' => 1000000]], ['apcCurrency', 'text'], ['apcInstructions', 'html']],
+            'access' => [],
         ],
+    ];
+    /** The tab layout, as in OJS 3.3: area => [tab => [sub-tab leaves]]. A tab with one leaf has no second row. */
+    const NAV = [
+        'journal' => ['masthead' => ['masthead'], 'contact' => ['contact'], 'sections' => ['sections']],
+        'website' => ['appearance' => ['theme', 'appearanceSetup', 'appearanceAdvanced'], 'setup' => ['information', 'navigation', 'announcements', 'lists', 'privacy', 'datetime'], 'plugins' => ['plugins', 'staticPages', 'blocks', 'doi']],
+        'workflow' => ['submission' => ['disableSubmissions', 'metadata', 'components', 'checklist', 'authorGuidelines'], 'review' => ['reviewSetup', 'reviewerGuidance'], 'emails' => ['emailSetup', 'templates']],
+        'distribution' => ['license' => ['license'], 'searchIndexing' => ['indexing'], 'payments' => ['payments'], 'access' => ['access']],
     ];
     const DEFAULT_ON = ['announcementsEnabled', 'metaKeywords', 'metaReferences', 'reviewerUploads'];
     const FEATURES = ['staticPages', 'customBlocks', 'webFeeds', 'googleScholar', 'usageStats', 'orcid'];
@@ -50,14 +72,15 @@ class SettingsController {
         $jid = $this->jid();
         switch ("$area/$tab") {
             case 'journal/sections': $data['sections'] = DB::all('SELECT s.*, (SELECT COUNT(*) FROM submissions x WHERE x.section_id=s.id) used FROM sections s WHERE s.journal_id=? ORDER BY s.seq,s.id', [$jid]); break;
-            case 'website/appearance': $data += $this->sidebarData($jid); break;
+            case 'website/appearanceSetup': $data += $this->sidebarData($jid); break;
             case 'website/navigation': $data['items'] = $this->navTree($jid); $data['pages'] = DB::all('SELECT id,title FROM static_pages WHERE journal_id=? ORDER BY title', [$jid]); break;
             case 'website/staticPages': $data['pages'] = DB::all('SELECT * FROM static_pages WHERE journal_id=? ORDER BY title', [$jid]); break;
             case 'website/blocks': $data['blocks'] = DB::all('SELECT * FROM custom_blocks WHERE journal_id=? ORDER BY title', [$jid]); break;
             case 'website/plugins': $data['features'] = array_merge(array_fill_keys(self::FEATURES, true), Settings::json('enabledFeatures', [])); break;
-            case 'workflow/emails': $data['templates'] = DB::all('SELECT id,email_key,subject,enabled,is_custom FROM email_templates WHERE journal_id=? ORDER BY email_key', [$jid]); break;
+            case 'workflow/templates': $data['templates'] = DB::all('SELECT id,email_key,subject,enabled,is_custom FROM email_templates WHERE journal_id=? ORDER BY email_key', [$jid]); break;
         }
-        if (in_array($tab, ['submission'], true) && $area === 'workflow') { $data['values']['submissionChecklist'] = implode("\n", Settings::json('submissionChecklist', [])); $data['values']['components'] = implode("\n", Settings::json('components', \App\Controllers\Backend\SubmissionWizardController::COMPONENTS)); }
+        if ($area === 'workflow' && $tab === 'checklist') $data['values']['submissionChecklist'] = implode("\n", Settings::json('submissionChecklist', []));
+        if ($area === 'workflow' && $tab === 'components') $data['values']['components'] = implode("\n", Settings::json('components', SubmissionWizardController::COMPONENTS));
         View::render('backend/settings', $data, 'backend');
     }
     private function values(array $fields): array {
@@ -109,7 +132,7 @@ class SettingsController {
                     } break;
             }
         }
-        if ($area === 'workflow' && $tab === 'emails' && ($write['mailFrom'] ?? '') === '') $errors['mailFrom'] = t('form.email_invalid');
+        if ($area === 'workflow' && $tab === 'emailSetup' && ($write['mailFrom'] ?? '') === '') $errors['mailFrom'] = t('form.email_invalid');
         if ($area === 'distribution' && $tab === 'license' && isset($write['licenseUrl']) && $write['licenseUrl'] !== '' && !preg_match('#^https?://#i', $write['licenseUrl'])) $errors['licenseUrl'] = t('profile.url_invalid');
         if ($tab === 'indexing' && isset($write['customHeaders'])) $write['customHeaders'] = implode("\n", array_filter(preg_split('/\R/', $write['customHeaders']), fn($l) => preg_match('/^\s*<meta\s[^<>]*>\s*$/i', $l) && !preg_match('/http-equiv|javascript:|on\w+\s*=/i', $l)));
         if ($errors) { $_SESSION['set_errors'] = $errors; flash(t('set.fix'), 'error'); }
@@ -143,7 +166,7 @@ class SettingsController {
             elseif (in_array($op, ['up', 'down'], true) && $i !== false) { $j = $op === 'up' ? $i - 1 : $i + 1; if ($j >= 0 && $j < count($list)) [$list[$i], $list[$j]] = [$list[$j], $list[$i]]; }
             Settings::set('sidebarBlocks', json_encode(array_values($list)), $jid);
         }
-        redirect(url('settings', 'index', ['website', 'appearance']) . '#sidebar');
+        redirect(url('settings', 'index', ['website', 'appearanceSetup']) . '#sidebar');
     }
     // ---------------------------------------------------------------- navigation helpers
     private function navTree(int $jid): array {

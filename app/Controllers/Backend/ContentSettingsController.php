@@ -149,7 +149,7 @@ class ContentSettingsController {
         if (Request::isPost()) {
             $sub = trim((string)($_POST['subject'] ?? '')); $body = trim((string)($_POST['body'] ?? ''));
             if ($sub === '') $errors['subject'] = t('form.required_field'); if ($body === '') $errors['body'] = t('form.required_field');
-            if (!$errors) { DB::exec('UPDATE email_templates SET subject=?, body=?, enabled=?, is_custom=1 WHERE id=?', [mb_substr($sub, 0, 255), $body, empty($_POST['enabled']) ? 0 : 1, $e['id']]); flash(t('profile.saved')); $this->back('workflow', 'emails'); }
+            if (!$errors) { DB::exec('UPDATE email_templates SET subject=?, body=?, enabled=?, is_custom=1 WHERE id=?', [mb_substr($sub, 0, 255), $body, empty($_POST['enabled']) ? 0 : 1, $e['id']]); flash(t('profile.saved')); $this->back('workflow', 'templates'); }
             $e = array_merge($e, $_POST);
         }
         View::render('backend/email_form', ['title' => t('set.email_template'), 'menu' => 'settings', 'area' => 'workflow', 'tab' => 'emails', 'e' => $e, 'errors' => $errors], 'backend');
@@ -160,6 +160,6 @@ class ContentSettingsController {
             $defaults = json_decode((string)@file_get_contents(ROOT . '/install/email_defaults.json'), true) ?: [];
             if (isset($defaults[$e['email_key']])) { DB::exec('UPDATE email_templates SET subject=?, body=?, enabled=1, is_custom=0 WHERE id=?', [$defaults[$e['email_key']][0], $defaults[$e['email_key']][1], $e['id']]); flash(t('set.email_reset')); }
         }
-        $this->back('workflow', 'emails');
+        $this->back('workflow', 'templates');
     }
 }
