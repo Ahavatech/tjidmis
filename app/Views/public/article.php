@@ -23,19 +23,27 @@ $kw = json_decode($a['keywords'] ?? '[]', true) ?: []; ?>
 					</ul>
 				</section><?php endif; ?>
 				<?php if ($a['doi']): ?><section class="item doi">
-					<h2 class="label"><?= e(t('art.doi')) ?></h2>
+					<h2 class="label">
+						<?= e(t('art.doi')) ?>
+					</h2>
 					<span class="value"><a href="https://doi.org/<?= e($a['doi']) ?>">https://doi.org/<?= e($a['doi']) ?></a></span>
 				</section><?php endif; ?>
 				<?php if ($kw): ?><section class="item keywords">
-					<h2 class="label"><?= e(t('art.keywords')) ?></h2>
+					<h2 class="label">
+						<?= e(t('art.keywords')) ?>
+					</h2>
 					<span class="value"><?= e(implode('; ', $kw)) ?></span>
 				</section><?php endif; ?>
 				<?php if ($a['abstract']): ?><section class="item abstract">
-					<h2 class="label"><?= e(t('art.abstract')) ?></h2>
+					<h2 class="label">
+						<?= e(t('art.abstract')) ?>
+					</h2>
 					<?= rich($a['abstract']) ?>
 				</section><?php endif; ?>
 				<?php if ($a['references_text']): ?><section class="item references">
-					<h2 class="label"><?= e(t('art.references')) ?></h2>
+					<h2 class="label">
+						<?= e(t('art.references')) ?>
+					</h2>
 					<div class="value"><?= rich($a['references_text']) ?></div>
 				</section><?php endif; ?>
 			</div><!-- .main_entry -->
@@ -45,38 +53,52 @@ $kw = json_decode($a['keywords'] ?? '[]', true) ?: []; ?>
 					<h2 class="pkp_screen_reader"><?= e(t('art.downloads')) ?></h2>
 					<ul class="value galleys_links">
 						<?php foreach ($a['galleys'] as $g): ?><li>
-							<a class="obj_galley_link <?= e(strtolower($g['label'])) ?>" href="<?= e(url('article', 'view', [$a['sid'], $g['id']])) ?>"><?= e($g['label']) ?></a>
+							<a class="obj_galley_link <?= e(strtolower($g['label'])) ?>" href="<?= e(url('article', 'view', [$a['sid'], $g['id']])) ?>">
+	<?= e($g['label']) ?>
+	</a>
 						</li><?php endforeach; ?>
 					</ul>
 				</div><?php endif; ?>
 				<div class="item published">
 					<section class="sub_item">
-						<h2 class="label"><?= e(t('art.published')) ?></h2>
+						<h2 class="label">
+						<?= e(t('art.published')) ?>
+					</h2>
 						<div class="value"><span><?= e(fmt_date($a['date_published'])) ?></span></div>
 					</section>
 				</div>
-				<?php if (Settings::get('showHowToCite', '0') === '1'): ?><div class="item citation"><section class="sub_item citation_display"><h2 class="label"><?= e(t('art.how_to_cite')) ?></h2>
+				<?php if (Settings::get('showHowToCite', '0') === '1'): ?><div class="item citation"><section class="sub_item citation_display"><h2 class="label">
+						<?= e(t('art.how_to_cite')) ?>
+					</h2>
 					<div class="value">
 						<?php foreach ($cites as $k => $html): ?><div class="csl-bib-body" data-style="<?= e($k) ?>"<?= $k !== 'apa' ? ' hidden' : '' ?>><?= $html ?></div><?php endforeach; ?>
 						<label class="cite_style"><span><?= e(t('art.cite_format')) ?></span><select id="citeStyle" aria-label="<?= e(t('art.cite_format')) ?>"><?php foreach (\App\Services\CitationService::STYLES as $k => $lbl): ?><option value="<?= e($k) ?>"><?= e($lbl) ?></option><?php endforeach; ?></select></label>
 					</div></section></div><?php endif; ?>
 				<div class="item issue">
 					<?php if ($iss): ?><section class="sub_item">
-						<h2 class="label"><?= e(t('art.issue')) ?></h2>
+						<h2 class="label">
+						<?= e(t('art.issue')) ?>
+					</h2>
 						<div class="value"><a class="title" href="<?= e(url('issue', 'view', [$iss['id']])) ?>"><?= e(Catalog::issueLabel($iss)) ?></a></div>
 					</section><?php endif; ?>
 					<?php if ($a['sectitle']): ?><section class="sub_item">
-						<h2 class="label"><?= e(t('art.section')) ?></h2>
+						<h2 class="label">
+						<?= e(t('art.section')) ?>
+					</h2>
 						<div class="value"><?= e($a['sectitle']) ?></div>
 					</section><?php endif; ?>
 				</div>
 				<?php if ($a['license_url'] || ($lt = Settings::get('licenseTerms', ''))): $lt = Settings::get('licenseTerms', ''); ?><div class="item copyright">
-					<h2 class="label"><?= e(t('art.license')) ?></h2>
+					<h2 class="label">
+						<?= e(t('art.license')) ?>
+					</h2>
 					<?php if (!empty($a['copyright_holder'])): ?><p><?= e('Copyright (c) ' . $a['copyright_year'] . ' ' . $a['copyright_holder']) ?></p><?php endif; ?>
 					<?php if ($a['license_url']): [$ccName, $ccImg] = cc_license($a['license_url']); ?><a rel="license" href="<?= e($a['license_url']) ?>"><?php if ($ccImg): ?><img alt="Creative Commons License" src="<?= e($ccImg) ?>" /><?php endif; ?></a><p><?= e(t('art.licensed_under')) ?> <a rel="license" href="<?= e($a['license_url']) ?>"><?= e($ccName) ?></a>.</p><?php endif; ?>
 					<?= rich($lt) ?>
 				</div><?php endif; ?>
-				<?php if (Settings::get('showMetrics', '0') === '1'): ?><div class="item metrics"><h2 class="label"><?= e(t('art.metrics')) ?></h2><p><?= e(t('art.views', $metrics['abstract_view'])) ?><br><?= e(t('art.downloads_count', $metrics['galley_download'])) ?></p></div><?php endif; ?>
+				<?php if (Settings::get('showMetrics', '0') === '1'): ?><div class="item metrics"><h2 class="label">
+						<?= e(t('art.metrics')) ?>
+					</h2><p><?= e(t('art.views', $metrics['abstract_view'])) ?><br><?= e(t('art.downloads_count', $metrics['galley_download'])) ?></p></div><?php endif; ?>
 			</div><!-- .entry_details -->
 		</div><!-- .row -->
 	</article>

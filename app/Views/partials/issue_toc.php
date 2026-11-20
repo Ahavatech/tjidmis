@@ -3,7 +3,12 @@
   <div class="heading">
     <?php if (!empty($issue['cover_image'])): ?><a class="cover" href="<?= e(url('issue', 'view', [$issue['id']])) ?>"><img src="<?= e(public_url($issue['cover_image'])) ?>" alt="<?= e(\App\Models\Catalog::issueLabel($issue)) ?>"></a><?php endif; ?>
     <?php if (!empty($issue['description'])): ?><div class="description"><?= $issue['description'] ?></div><?php endif; ?>
-    <div class="published"><span class="label"><?= e(t('issue.published')) ?></span> <span class="value"><?= e(fmt_date($issue['date_published'])) ?></span></div>
+    <div class="published"><span class="label">
+				<?= e(t('issue.published')) ?>
+			</span>
+			<span class="value">
+				<?= e(fmt_date($issue['date_published'])) ?>
+			</span></div>
   </div>
   <div class="sections">
     <?php foreach ($toc as $sec): ?><div class="section">
