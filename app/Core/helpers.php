@@ -47,7 +47,15 @@ function paginate(int $total, int $page, int $per, callable $urlFor): string {
     if ($page < $pages) $h .= '<a class="next" href="' . e($urlFor($page + 1)) . '">' . e(t('page.next')) . '</a>';
     return $h . '</div>';
 }
-function abs_url(string $path): string { $s = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; return $s . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $path; }
+/** Absolute URL for e-mails and feeds. Uses 'base_url' from config.php (written by the installer) so a forged Host header can never poison reset links. */
+function abs_url(string $path): string {
+    $base = (string)config('base_url', '');
+    if ($base === '') {   // fallback for old installs: only a syntactically valid host is accepted
+        $host = (string)($_SERVER['HTTP_HOST'] ?? 'localhost'); if (!preg_match('/^[A-Za-z0-9.-]+(:\d{1,5})?$/', $host)) $host = 'localhost';
+        $base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . $host;
+    }
+    return rtrim($base, '/') . $path;
+}
 
 /** Only allow same-site relative paths as post-login redirect targets (prevents open redirects). */
 function safe_source(?string $s): string {

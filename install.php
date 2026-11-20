@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $cfg = [
                 'db' => ['host' => $v['db_host'], 'name' => $v['db_name'], 'user' => $v['db_user'], 'pass' => $v['db_pass'], 'charset' => 'utf8mb4'],
-                'files_dir' => $fd, 'url_mode' => 'path', 'pretty_urls' => false, 'default_journal' => 'jidmis', 'timezone' => 'Africa/Lagos',
+                'files_dir' => $fd, 'base_url' => ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . preg_replace('/[^A-Za-z0-9.:-]/', '', (string)($_SERVER['HTTP_HOST'] ?? 'localhost')), 'url_mode' => 'path', 'pretty_urls' => false, 'default_journal' => 'jidmis', 'timezone' => 'Africa/Lagos',
                 'debug' => false, 'demo_mode' => !empty($v['demo']),
                 'smtp' => ['host' => '', 'port' => 587, 'user' => '', 'pass' => '', 'secure' => 'tls', 'from' => ''],
             ];

@@ -32,4 +32,13 @@ Set `'demo_mode' => false` in `config.php` to hide the credentials box on the lo
 
 ## Status by phase
 1 core + installer, 2 public site, 3 accounts, 4 dashboard + author submission wizard, 5 editorial workflow + peer review, 6 copyediting/production/publication/issues, 7 settings/users/statistics/admin: done.
-8 polish and hardening: next.
+8 polish and hardening: done (see the checklist below and `DEMO.md`).
+
+## Deploy and security checklist
+1. Upload everything (including `vendor/`), run `install.php` once, then **delete `install.php`** (the installer also writes `install.lock`).
+2. Keep `files_dir` outside the web root; make sure `public/.htaccess` is uploaded (it blocks script execution in uploads).
+3. In `config.php`: `'debug' => false`, `'demo_mode' => false`, set `base_url` to your real https address (used in e-mail links).
+4. Change or delete the demo accounts (`Demo@12345`).
+5. Set the `smtp` block, then check it: `php tools/smtp_check.php you@example.org`.
+6. Optional: `php tools/sanitizer_check.php` (XSS payloads), `php tools/audit_routes.php` (route list for review).
+7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 52 checks, submit to publish).

@@ -24,6 +24,7 @@ class Upload {
         if (!isset($allowed[$ext])) throw new \RuntimeException(t('upload.bad_type'));
         $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
         if (!in_array($mime, $allowed[$ext], true)) throw new \RuntimeException(t('upload.bad_type'));
+        if (strpos($mime, 'image/') === 0 && preg_match('/<\?(php|=)|<script|<%/i', (string)file_get_contents($file['tmp_name']))) throw new \RuntimeException(t('upload.bad_type'));   // image polyglots
         $dir = self::baseDir() . '/' . trim($subdir, '/');
         if (!is_dir($dir)) mkdir($dir, 0775, true);
         $stored = bin2hex(random_bytes(16)) . '.' . $ext;
@@ -38,10 +39,16 @@ class Upload {
         $map = ['jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'];
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if (!isset($map[$ext]) || (new \finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']) !== $map[$ext] || !@getimagesize($file['tmp_name'])) throw new \RuntimeException(t('upload.bad_type'));
+        $raw = (string)file_get_contents($file['tmp_name']);
+        if (preg_match('/<\?(php|=)|<script|<%/i', $raw)) throw new \RuntimeException(t('upload.bad_type'));   // polyglot images carrying code
         $dir = ROOT . '/public/' . trim($subdir, '/');
         if (!is_dir($dir) && !@mkdir($dir, 0775, true)) throw new \RuntimeException(t('upload.error'));
-        $name = bin2hex(random_bytes(16)) . '.' . $ext;
-        if (!move_uploaded_file($file['tmp_name'], $dir . '/' . $name)) throw new \RuntimeException(t('upload.error'));
+        $name = bin2hex(random_bytes(16)) . '.' . $ext; $dest = $dir . '/' . $name;
+        if (extension_loaded('gd') && ($im = @imagecreatefromstring($raw)) !== false) {   // re-encode: drops metadata and any appended payload
+            imagealphablending($im, false); imagesavealpha($im, true);
+            $ok = match ($map[$ext]) { 'image/png' => imagepng($im, $dest), 'image/gif' => imagegif($im, $dest), default => imagejpeg($im, $dest, 90) };
+            imagedestroy($im); if (!$ok) throw new \RuntimeException(t('upload.error'));
+        } elseif (!move_uploaded_file($file['tmp_name'], $dest)) throw new \RuntimeException(t('upload.error'));
         return trim($subdir, '/') . '/' . $name;
     }
 }

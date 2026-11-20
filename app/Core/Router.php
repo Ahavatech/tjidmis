@@ -40,7 +40,10 @@ class Router {
         Request::parse();
         $seg = Request::segments();
         $journal = Settings::journal();
-        if (Request::isPost() && !Csrf::check()) { http_response_code(400); echo t('error.csrf'); return; }
+        if (Request::isPost() && !$_POST && !$_FILES && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {   // body larger than post_max_size is dropped by PHP
+            http_response_code(413); View::render('public/error', ['code' => 413, 'message' => t('upload.too_big') . ' (' . ini_get('post_max_size') . ')', 'title' => t('error.413.title')]); return;
+        }
+        if (Request::isPost() && !Csrf::check()) { http_response_code(400); View::render('public/error', ['code' => 400, 'message' => t('error.csrf'), 'title' => t('error.400.title')]); return; }
         if (!$journal) {
             if (($seg[0] ?? '') === 'index' || !$seg) redirect(url(null, null, [], [], config('default_journal')));
             http_response_code(404); header('Content-Type: text/plain; charset=utf-8'); echo 'Not found'; return;

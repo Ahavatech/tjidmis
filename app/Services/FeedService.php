@@ -8,7 +8,7 @@ class FeedService {
         if ($issue) foreach (Catalog::toc((int)$issue['id']) as $sec) foreach ($sec['articles'] as $a) $items[] = $a;
         return [$issue, $items];
     }
-    private static function abs(string $u): string { $s = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http'; return $s . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $u; }
+    private static function abs(string $u): string { return abs_url($u); }
     public static function render(int $jid, string $fmt): array {
         [$issue, $items] = self::items($jid);
         $name = Settings::get('name'); $home = self::abs(url()); $x = fn($s) => htmlspecialchars((string)$s, ENT_XML1 | ENT_QUOTES, 'UTF-8');

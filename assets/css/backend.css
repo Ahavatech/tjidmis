@@ -141,3 +141,18 @@ hr{border:0;border-top:1px solid var(--line);margin:1.5rem 0}
 .be_tools{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}.be_tools form{border:1px solid var(--line);border-radius:var(--radius);padding:1rem}
 .be_pre{background:#fafbfc;border:1px solid var(--line);border-radius:6px;padding:1rem;white-space:pre-wrap;font-family:monospace;font-size:.85rem}
 @media (max-width:991px){.be_two,.be_tools{grid-template-columns:1fr}}
+
+/* ---------- Phase 8: busy states, small screens ---------- */
+form.is_busy button[type=submit],form.is_busy input[type=submit]{opacity:.6;cursor:progress}
+.be_btn:focus-visible,.be_tabs a:focus-visible,.be_menu a:focus-visible,button:focus-visible{outline:2px solid var(--theme-color);outline-offset:2px}
+@media (max-width:991px){
+  .be_card{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .be_table{min-width:520px}
+  .be_pagehead{flex-wrap:wrap}.be_pagehead h1{font-size:1.35rem}
+  .be_filters input[type=search]{min-width:0;width:100%}
+  .be_headright{flex-wrap:wrap}
+  .be_actions{white-space:normal}
+  .be_tabs,.be_stagetabs{overflow-x:auto;flex-wrap:nowrap}
+  .be_tabs a,.be_stagetabs a,.be_stagetabs span{white-space:nowrap}
+  .cmp_form input[type=text],.cmp_form input[type=email],.cmp_form input[type=password],.cmp_form select,.cmp_form textarea{max-width:100%}
+}

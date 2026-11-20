@@ -34,7 +34,7 @@ return [
     'be.view_site' => 'View Site', 'be.profile' => 'View Profile',
     'dash.my_queue' => 'My Queue', 'dash.unassigned' => 'Unassigned', 'dash.all_active' => 'All Active', 'dash.archives' => 'Archives',
     'dash.empty' => 'No submissions to show.', 'dash.phase_note' => 'Submission lists are built in Phase 4 and the editorial workflow in Phase 5.',
-    'dash.author_note' => 'The author submission wizard arrives in Phase 4.', 'stub.text' => 'This screen is built in Phase %s.',
+    'dash.author_note' => 'The author submission wizard arrives in Phase 4.', 'stub.text' => 'Import and export are not part of this installation.',
     'notif.title' => 'Notifications', 'notif.mark_read' => 'Mark all as read', 'notif.none' => 'You have no notifications.',
     'users.note' => 'Read-only list for now. The full Users & Roles screens (add, edit, roles, disable) are built in Phase 7.', 'users.name' => 'Name', 'users.roles' => 'Roles',
     'users.disabled' => 'disabled', 'users.login_as' => 'Login As',

@@ -40,6 +40,6 @@ return [
     // errors / upload
     'error.404' => 'The page you requested could not be found.', 'error.404.title' => 'Page not found',
     'error.403' => 'You do not have permission to view this page.', 'error.csrf' => 'Invalid or expired form token. Go back, reload the page and try again.',
-    'error.home' => 'Back to the home page',
+    'error.home' => 'Back to the home page', 'error.400.title' => 'Request not accepted', 'error.413.title' => 'File too large', 'error.500' => 'Something went wrong on our side. The error has been logged.',
     'upload.error' => 'The file could not be uploaded.', 'upload.too_big' => 'The file is too large.', 'upload.bad_type' => 'This file type is not allowed.',
 ];

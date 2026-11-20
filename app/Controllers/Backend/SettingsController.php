@@ -110,7 +110,7 @@ class SettingsController {
         }
         if ($area === 'workflow' && $tab === 'emails' && ($write['mailFrom'] ?? '') === '') $errors['mailFrom'] = t('form.email_invalid');
         if ($area === 'distribution' && $tab === 'license' && isset($write['licenseUrl']) && $write['licenseUrl'] !== '' && !preg_match('#^https?://#i', $write['licenseUrl'])) $errors['licenseUrl'] = t('profile.url_invalid');
-        if ($tab === 'indexing' && isset($write['customHeaders'])) $write['customHeaders'] = implode("\n", array_filter(preg_split('/\R/', $write['customHeaders']), fn($l) => preg_match('/^\s*<meta\s[^<>]*>\s*$/i', $l)));
+        if ($tab === 'indexing' && isset($write['customHeaders'])) $write['customHeaders'] = implode("\n", array_filter(preg_split('/\R/', $write['customHeaders']), fn($l) => preg_match('/^\s*<meta\s[^<>]*>\s*$/i', $l) && !preg_match('/http-equiv|javascript:|on\w+\s*=/i', $l)));
         if ($errors) { $_SESSION['set_errors'] = $errors; flash(t('set.fix'), 'error'); }
         else { foreach ($write as $k => $v) Settings::set($k, $v, $jid); flash(t('profile.saved')); }
         redirect(url('settings', 'index', [$area, $tab]));
