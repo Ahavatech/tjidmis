@@ -1,58 +1,102 @@
-# JIDMIS journal site: OJS 3.3 clone (custom PHP)
+# JIDMIS on Open Journal Systems
 
-A school-project clone of https://jidmis.org/index.php/jidmis built as our own PHP 8.1 + MySQL app (no OJS install, no framework, PDO only).
-It reproduces the OJS 3.3 markup, URLs (`/index.php/jidmis/article/view/182`), CSS, fonts and content of the reference site.
-Local use only: not for public hosting under the real journal's identity.
+The application to host is PKP Open Journal Systems (OJS) 3.3.0-22, not the
+custom PHP clone in this repository. OJS is the publishing platform used by the
+reference journal and provides the submission, editorial, review, publication,
+OAI-PMH, and Google Scholar metadata workflows.
 
-## Run it locally (Docker, recommended)
+The custom PHP source is being retained temporarily as a rollback/reference
+copy until the shared-host OJS installation and its backup are confirmed. Do
+not upload or expose that clone as the journal site.
+
+## JIDMIS OJS theme
+
+The installable OJS 3.3 theme is in [ojs-theme/jidmis](./ojs-theme/jidmis).
+It inherits OJS's default theme behavior and applies the clone's project-owned
+public styling, so submissions, issue pages, article pages, and OJS metadata
+remain native.
+
+For local use, start OJS with the `reference` profile; Docker mounts the theme
+into the OJS theme directory. In OJS, open **Website > Appearance**, select
+**JIDMIS**, and enable **Show journal description on homepage**. Keep the
+homepage image setting off as a header background so it remains in the page
+content.
+
+For cPanel, upload `ojs-theme/jidmis` to
+`plugins/themes/jidmis`, then activate it through the OJS Website settings.
+Upload the theme's included stylesheet and font assets with the plugin
+directory. Do not upload the custom PHP app as a second public site.
+
+## Local OJS
+
+Start the database and OJS services without starting the legacy PHP app:
+
+```powershell
+docker compose --profile reference up -d db ojs
 ```
-docker compose up -d                          # our app (PHP 8.1 + Apache) and MariaDB
-ADMIN_PASS='Your@Pass123' bash tools/dev_install.sh   # once; also resets the app database
-```
-Open http://localhost:8081/index.php/jidmis (admin account: `admin` and the password you gave). Data lives in Docker volumes and survives restarts.
 
-The real OJS 3.3.0-22 can run beside it as a private reference for comparing behaviour (never the journal's identity on the public internet):
-```
-docker compose --profile reference up -d
-ADMIN_PASS='Your@Pass123' bash tools/dev_install_ojs.sh   # once; creates the journal "jidmis"
-```
-OJS is at http://localhost:8082/jidmis. Our OAI endpoint (`/oai`) and sitemap (`/sitemap`) follow its output.
+Open `http://localhost:8082/jidmis`. The existing local OJS database already
+contains the migrated content. Do not run `tools/dev_install_ojs.sh` against
+that database; it is only for a fresh local installation.
 
-Without Docker: `php -S localhost:8000 router.php`, then open http://localhost:8000/install.php and enter a MySQL/MariaDB database and an admin account.
+## Imported content
 
-## Deploy to cPanel
-1. Upload the project (Extract in `public_html`).
-2. cPanel > MySQL Databases: create a DB and user (ALL PRIVILEGES).
-3. cPanel > Select PHP Version: 8.1 with `pdo_mysql`, `mbstring`, `fileinfo`, `dom`, `gd`. Raise `upload_max_filesize` / `post_max_size` to at least 20M for manuscript uploads.
-4. Create `/home/USER/journal_files` OUTSIDE `public_html` (writable); `public/` must be writable for profile photos.
-5. Visit `/install.php`, finish the form, then delete `install.php` (it also locks itself with `install.lock`).
-6. If PATH_INFO URLs 404, set `'url_mode' => 'query'` in `config.php`; with mod_rewrite use `'pretty_urls' => true`.
+The [OJS migration package](./jidmis-ojs-import.zip) contains the Native XML
+export and its associated PDFs. It preserves 26 published issues, 76 published
+articles, and 76 article PDFs. Twenty-five issues have three articles; the
+remaining issue has one. The OJS import was checked against the issue archive,
+current issue, article page, PDF download, and OAI-PMH Identify response.
 
-## What is where
-- `app/` controllers, services, views (`Views/layouts/public.php` mirrors the OJS page template), `lang/en*.php` (all UI strings)
-- `assets/css/theme.css` + `fontawesome.css` + `public/journals/1/styleSheet.css`: the reference site's CSS, loaded in the same order; `assets/js/lib/` is its jQuery/Bootstrap-dropdown/main.js
-- `install/seed.sql`, `install/seed_demo.sql`: generated from the saved reference site by `python tools/import_reference.py`
-- `tools/diff_page.py`: compares our rendered HTML with the saved original page, tag by tag
-- `tools/crawl_reference.md`: how to fetch more article pages (about 30% have abstracts so far, the rest show title/authors/pages)
+Article author names and metadata are imported, but author/editor/reviewer
+login accounts and unpublished workflow records are not. Create the required
+OJS users and roles after installation.
 
-## Demo accounts (demo data only), password `Demo@12345`
-editor, sectioneditor, reviewer1, reviewer2, author, reader, copyeditor, layouteditor, proofreader. The admin account is the one you create in the installer.
-The login page matches the live site exactly and shows no credentials; the accounts are listed here and in `DEMO.md`.
+## Deploying to cPanel
 
-## Status by phase
-1 core + installer, 2 public site, 3 accounts, 4 dashboard + author submission wizard, 5 editorial workflow + peer review, 6 copyediting/production/publication/issues, 7 settings/users/statistics/admin: done.
-8 polish and hardening: done (see the checklist below and `DEMO.md`).
-9 stretch features: done. DOI pattern (Settings > Distribution > DOI: prefix, suffix pattern with %j %v %i %Y %a %p, optional auto-assign on publish) and manual APC tracking (Settings > Distribution > Payments, then a box on each submission's workflow page). No Crossref deposit and no payment gateway. Back-end screens checked at 390px (tables and tab bars scroll inside their cards). Remaining markup differences from the reference are deliberate (autocomplete and security attributes, the demo-accounts note, the PDF preview iframe source).
+1. Use an official PKP OJS distribution, configure it for the assigned HTTPS
+   test domain, and create its MySQL/MariaDB database and administrator account.
+   Verify the host's PHP version and required extensions against the exact OJS
+   release. OJS 3.3.0-22 is an older maintenance line; review current PKP
+   security guidance before exposing it publicly.
+2. Set OJS `files_dir` to a writable directory outside `public_html`. Configure
+   the assigned test-domain SMTP account in OJS; do not reuse the live journal's
+   mail credentials. Do not use `localhost` URLs in the deployed OJS config.
+3. Import only into an empty OJS journal. Upload and extract
+   `jidmis-ojs-import.zip` so `import.xml` and its sibling `files` directory
+   remain together. From the OJS installation directory, run:
 
-## Deploy and security checklist
-1. Upload everything (including `vendor/`), run `install.php` once, then **delete `install.php`** (the installer also writes `install.lock`).
-2. Keep `files_dir` outside the web root; make sure `public/.htaccess` is uploaded (it blocks script execution in uploads).
-3. In `config.php`: `'debug' => false`, set `base_url` to your real https address (used in e-mail links).
-4. Change or delete the demo accounts (`Demo@12345`).
-5. Set the `smtp` block, then check it: `php tools/smtp_check.php you@example.org`.
-6. Optional: `php tools/sanitizer_check.php` (XSS payloads), `php tools/audit_routes.php` (route list for review).
-7. Regression: `BASE=http://host/index.php/jidmis ADMIN_PASS=... bash tests/smoke.sh` (needs curl; 185 checks, submit to publish).
+   ```sh
+   php tools/importExport.php NativeImportExportPlugin import /path/to/import.xml jidmis admin
+   ```
 
-## Also in place (after phase 9)
-OAI-PMH endpoint and XML sitemap (same shapes as OJS), automated review reminders run from page requests like OJS's acron (Workflow > Review > Setup), the back-end menu is ordered like OJS (Submissions, Issues, Settings, Statistics, Tools, Administration) and Statistics has Articles, Editorial Activity, Users and Reports (CSV downloads).
-Still different from OJS: the back-end look (own design), only the `oai_dc` metadata format, no Crossref deposit, English only.
+   Replace `admin` with the OJS administrator username. The import is not
+   idempotent; do not run it a second time on an already populated journal.
+   The local OJS 3.3 importer printed filter-validation/tempnam warnings even
+   though records and files persisted. If these occur, verify the OJS counts
+   and pages before deciding what to do; never retry the import blindly.
+4. Copy [ojs_post_import.php](./tools/ojs_post_import.php) into OJS's `tools/`
+   directory, then run:
+
+   ```sh
+   php tools/ojs_post_import.php /path/to/import.xml jidmis 10.59543
+   ```
+
+   This restores the current-issue flag and the 44 existing publication DOI
+   identifiers. The source contains both `10.59543` and legacy `10.17762` DOI
+   prefixes; the third argument configures the journal's active prefix without
+   changing those existing identifiers.
+5. Verify the current issue, archive, several article pages and PDF downloads,
+   then back up the OJS database and `files_dir` before removing any legacy
+   source or data.
+
+## Search and indexing
+
+The local OJS article page emits Google Scholar citation metadata for the title,
+authors, date, abstract, PDF URL, and stored DOI. Keep article pages and PDFs
+publicly crawlable, set the correct canonical HTTPS base URL, avoid password
+protection or `noindex`, and add the test-domain property in Search Console.
+OAI-PMH is available at `/jidmis/oai`. OJS metadata helps discovery but cannot
+guarantee Google Scholar inclusion or ranking.
+
+Do not point the test installation at `jidmis.org` or present it as the live
+journal. Keep the assigned test domain and project authorization in place.

@@ -22,6 +22,7 @@ services:
     depends_on: { db: { condition: service_healthy } }
     ports: ["8082:80"]
     volumes:
+      - ./ojs-theme/jidmis:/var/www/html/plugins/themes/jidmis:ro
       - ojs_files:/var/www/files
       - ojs_public:/var/www/html/public
 volumes: { db_data: {}, journal_files: {}, ojs_files: {}, ojs_public: {} }
