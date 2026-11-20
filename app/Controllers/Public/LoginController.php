@@ -13,9 +13,9 @@ class LoginController {
         $user = trim((string)($_POST['username'] ?? ''));
         $res = Auth::attempt($user, (string)($_POST['password'] ?? ''), !empty($_POST['remember']));
         if ($res === 'ok') { if (Auth::user()['must_change_password']) { flash(t('login.must_change')); redirect(url('user', 'profile', ['password'])); } redirect($source ?: url('submissions')); }
-        http_response_code($res === 'locked' ? 429 : 200);
+        // repeated failures are throttled silently: OJS shows its normal error and has no lock-out message
         View::render('public/login', ['title' => t('nav.login'), 'bodyClass' => 'login', 'source' => $source, 'username' => $user,
-            'error' => t(['invalid' => 'login.invalid', 'disabled' => 'login.disabled', 'locked' => 'login.locked'][$res])]);
+            'error' => t(['invalid' => 'login.invalid', 'disabled' => 'login.disabled', 'locked' => 'login.invalid'][$res])]);
     }
     public function signOut(): void { Auth::logout(); flash(t('login.signed_out')); redirect(url()); }
     public function signOutAsUser(): void { Auth::signOutAs(); redirect(url('submissions')); }

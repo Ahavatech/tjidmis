@@ -11,6 +11,6 @@
 				<?= e($error) ?>
 			</div>
 		<?php endif; ?>
-  <div class="fields"><?= field(t('lost.email'), 'email', '', ['type' => 'email', 'required' => true, 'maxlength' => 190, 'autocomplete' => 'email']) ?>
+  <div class="fields"><?= field(t('lost.email'), 'email', '', ['type' => 'email', 'required' => true]) ?>
   <div class="buttons"><button class="submit" type="submit"><?= e(t('lost.title')) ?></button> <a href="<?= e(url('user', 'register')) ?>" class="register"><?= e(t('nav.register')) ?></a></div></div>
 </form></div>

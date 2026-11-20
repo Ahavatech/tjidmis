@@ -94,7 +94,7 @@ function field(string $label, string $name, $value = '', array $o = []): string 
     } elseif ($type === 'textarea') {
         $h .= '<textarea name="' . e($name) . '" id="' . e($name) . '" rows="' . (int)($o['rows'] ?? 5) . '">' . e($value) . '</textarea>';
     } else {
-        $h .= '<input type="' . e($type) . '" name="' . e($name) . '" id="' . e($name) . '" value="' . ($type === 'password' ? '' : e($value)) . '"'
+        $h .= '<input type="' . e($type) . '" name="' . e($name) . '" id="' . e($name) . '"' . ($type === 'password' ? ' password="true"' : ' value="' . e($value) . '"')
             . (isset($o['maxlength']) ? ' maxlength="' . (int)$o['maxlength'] . '"' : '') . (isset($o['autocomplete']) ? ' autocomplete="' . e($o['autocomplete']) . '"' : '')
             . ($req ? ' required aria-required="true"' : '') . '>';
     }

@@ -20,12 +20,12 @@
 			<div id="loginFields" class="pkp_form_area">
 				<div class="pkp_form_section">
 					<label for="password"><?= e(t('reset.new')) ?> <span class="req">*</span></label>
-					<input type="password" id="password" name="password" required maxlength="32" autocomplete="new-password">
+					<input type="password" id="password" name="password" required maxlength="32">
 					<label class="field_hint" for="password"><?= e(t('form.password_short', (int)\App\Core\Settings::site('minPasswordLength', '8'))) ?></label>
 				</div>
 				<div class="pkp_form_section">
 					<label for="password2"><?= e(t('reset.new2')) ?> <span class="req">*</span></label>
-					<input type="password" id="password2" name="password2" required maxlength="32" autocomplete="new-password">
+					<input type="password" id="password2" name="password2" required maxlength="32">
 				</div>
 
 				<input type="hidden" id="username" name="username" value="<?= e($username) ?>">
