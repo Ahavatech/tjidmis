@@ -5,8 +5,12 @@
 	</h1>
 	
 <p><?= e(t('form.required_note')) ?> <abbr class="required" title="<?= e(t('form.required_title')) ?>">*</abbr></p>
-<?php if ($error): ?><div class="cmp_notification error" role="alert"><?= e($error) ?></div><?php endif; ?>
 <form class="cmp_form cmp_form login" id="login" method="post" action="<?= e(url('login', 'signIn')) ?>"><?= csrf_field() ?>
+<?php if ($error): ?>
+			<div class="pkp_form_error">
+				<?= e($error) ?>
+			</div>
+		<?php endif; ?>
   <input type="hidden" name="source" value="<?= e($source) ?>">
   <fieldset class="fields"><legend class="pkp_screen_reader"><?= e(t('nav.login')) ?></legend>
     <?= field(t('login.username'), 'username', $username, ['required' => true, 'maxlength' => 190, 'autocomplete' => 'username']) ?>

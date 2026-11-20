@@ -7,7 +7,7 @@ return [
     'form.password_mismatch' => 'The passwords do not match.',
     // login
     'login.username' => 'Username', 'login.password' => 'Password', 'login.forgot' => 'Forgot your password?', 'login.remember' => 'Keep me logged in',
-    'login.invalid' => 'Invalid username or password. Please try again.', 'login.disabled' => 'This account has been disabled. Contact the journal.',
+    'login.invalid' => 'Invalid username or password. Please try again.', 'login.disabled' => 'Your account has been disabled. Please contact the administrator for more information.',
     'login.locked' => 'Too many failed attempts. Please wait a few minutes and try again.', 'login.signed_out' => 'You have been logged out.',
     'login.demo' => 'Demo accounts:', 'auth.login_required' => 'Please log in to continue.',
     // lost / reset password
