@@ -26,7 +26,7 @@ class SettingsController {
             'lists' => [['itemsPerPage', 'number', ['min' => 5, 'max' => 100]]],
             'privacy' => [['privacyStatement', 'html']],
             'datetime' => [['dateFormat', 'select', ['options' => ['Y-m-d' => '2026-01-15', 'd/m/Y' => '15/01/2026', 'm/d/Y' => '01/15/2026', 'j F Y' => '15 January 2026', 'F j, Y' => 'January 15, 2026']]]],
-            'plugins' => [], 'staticPages' => [], 'blocks' => [],
+            'plugins' => [], 'pluginGallery' => [], 'staticPages' => [], 'blocks' => [],
             'doi' => [['doiPrefix', 'text'], ['doiPattern', 'text'], ['doiAutoAssign', 'checkbox']],
         ],
         'workflow' => [
@@ -48,14 +48,15 @@ class SettingsController {
             'indexing' => [['searchDescription', 'textarea'], ['customHeaders', 'textarea']],
             'payments' => [['apcEnabled', 'checkbox'], ['apcFee', 'number', ['min' => 0, 'max' => 1000000]], ['apcCurrency', 'text'], ['apcInstructions', 'html']],
             'access' => [['enableOai', 'checkbox']],
+            'archiving' => [['enableLockss', 'checkbox'], ['lockssLicense', 'html'], ['enableClockss', 'checkbox'], ['clockssLicense', 'html']],
         ],
     ];
     /** The tab layout, as in OJS 3.3: area => [tab => [sub-tab leaves]]. A tab with one leaf has no second row. */
     const NAV = [
         'journal' => ['masthead' => ['masthead'], 'contact' => ['contact'], 'sections' => ['sections'], 'categories' => ['categories']],
-        'website' => ['appearance' => ['theme', 'appearanceSetup', 'appearanceAdvanced'], 'setup' => ['information', 'languages', 'navigation', 'announcements', 'lists', 'privacy', 'datetime'], 'plugins' => ['plugins', 'staticPages', 'blocks', 'doi']],
+        'website' => ['appearance' => ['theme', 'appearanceSetup', 'appearanceAdvanced'], 'setup' => ['information', 'languages', 'navigation', 'announcements', 'lists', 'privacy', 'datetime'], 'plugins' => ['plugins', 'pluginGallery', 'staticPages', 'blocks', 'doi']],
         'workflow' => ['submission' => ['disableSubmissions', 'metadata', 'components', 'checklist', 'authorGuidelines'], 'review' => ['reviewSetup', 'reviewerGuidance', 'reviewForms'], 'library' => ['library'], 'emails' => ['emailSetup', 'templates']],
-        'distribution' => ['license' => ['license'], 'searchIndexing' => ['indexing'], 'payments' => ['payments'], 'access' => ['access']],
+        'distribution' => ['license' => ['license'], 'searchIndexing' => ['indexing'], 'payments' => ['payments'], 'access' => ['access'], 'archiving' => ['archiving']],
     ];
     const DEFAULT_ON = ['enableOai', 'announcementsEnabled', 'reviewerUploads'];
     const FEATURES = ['staticPages', 'customBlocks', 'webFeeds', 'googleScholar', 'usageStats', 'orcid'];
@@ -89,7 +90,7 @@ class SettingsController {
     private function values(array $fields): array {
         $v = [];
         foreach ($fields as [$k, $type]) {
-            $val = Settings::get($k, in_array($k, self::DEFAULT_ON, true) ? '1' : ($k === 'dateFormat' ? 'Y-m-d' : ''));
+            $val = Settings::get($k, in_array($k, self::DEFAULT_ON, true) ? '1' : ($k === 'dateFormat' ? 'Y-m-d' : ($k === 'lockssLicense' ? t('arch.default_lockss') : ($k === 'clockssLicense' ? t('arch.default_clockss') : ''))));
             $v[$k] = $val;
         }
         return $v;

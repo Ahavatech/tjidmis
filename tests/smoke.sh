@@ -162,6 +162,14 @@ code editor /publication/index/$S/identifiers >/dev/null; ok "$(has 'name="publi
 FORM=/manageIssues/form; post editor /manageIssues/form -d volume=98 -d number=1 -d year=2098 -d publisher_id=ISS-1 >/dev/null
 ok "$(post editor /manageIssues/form -d volume=98 -d number=2 -d year=2098 -d publisher_id=ISS-1)" 200 "duplicate Publisher ID is refused"
 FORM=/settings/index/workflow/metadata; post admin /settings/save/workflow/metadata -d keywords_on=1 -d keywords_mode=request -d citations_on=1 -d citations_mode=request >/dev/null
+echo "== plugin gallery and archiving (Website > Plugins, Distribution > Archiving)"
+FORM=/settings/index/website/pluginGallery; ok "$(code admin $FORM)" 200 "plugin gallery tab"; ok "$(has 'Plugin Gallery')" 1 "gallery tab labelled"
+ok "$(code anon /gateway/lockss)" 404 "LOCKSS manifest off by default"
+FORM=/settings/index/distribution/archiving; ok "$(code admin $FORM)" 200 "archiving tab"; ok "$(has 'LOCKSS')" 1 "archiving tab shows LOCKSS"
+post admin /settings/save/distribution/archiving -d enableLockss=1 -d 'lockssLicense=<p>Custom LOCKSS licence text.</p>' >/dev/null
+ok "$(code anon /gateway/lockss)" 200 "LOCKSS manifest on when enabled"; ok "$(has 'permission to collect, preserve')" 1 "manifest carries the permission statement"
+ok "$(has 'issue/view')" 1 "manifest lists issues"; ok "$(code anon /gateway/clockss)" 404 "CLOCKSS still off"
+code anon /about >/dev/null; ok "$(has 'Custom LOCKSS licence text')" 1 "licence shown under Archiving on About"
 echo "== indexing feeds and reports (same shapes as OJS 3.3)"
 ok "$(curl -s "$BASE/oai?verb=Identify" | grep -c '<repositoryName>')" 1 "OAI Identify"
 ok "$(curl -s "$BASE/oai?verb=ListSets" | grep -c 'setSpec')" 2 "OAI sets (journal and Articles)"

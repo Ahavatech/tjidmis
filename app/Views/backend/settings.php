@@ -40,6 +40,10 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 <button class="be_btn be_btn_danger" type="submit" formaction="<?= e(url('content', 'reviewFormDelete', [$f['id']])) ?>" onclick="return confirm('<?= e(t('rf.confirm_delete')) ?>')"><?= e(t('wizard.delete')) ?></button></form></td></tr>
 <?php endforeach; ?><?php if (!$forms): ?><tr><td colspan="5" class="muted"><?= e(t('rf.none_created')) ?></td></tr><?php endif; ?></tbody></table>
 
+<?php elseif ($tab === 'pluginGallery'): ?>
+<table class="be_table"><thead><tr><th><?= e(t('gal.name')) ?></th><th><?= e(t('gal.summary')) ?></th><th><?= e(t('gal.status')) ?></th></tr></thead><tbody><tr><td colspan="3" class="muted"><?= e(t('gal.none')) ?></td></tr></tbody></table>
+<p class="muted be_small"><?= e(t('gal.offline')) ?></p>
+
 <?php elseif ($tab === 'library'): ?>
 <p><a class="be_btn be_btn_primary" href="<?= e(url('content', 'library')) ?>"><?= e(t('lib.add')) ?></a></p>
 <table class="be_table"><thead><tr><th><?= e(t('cat.name')) ?></th><th><?= e(t('lib.type')) ?></th><th><?= e(t('lib.date')) ?></th><th><?= e(t('lib.public')) ?></th><th></th></tr></thead><tbody>
@@ -87,6 +91,7 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 
 
 <?php else: ?>
+<?php if ($area === 'distribution' && $tab === 'archiving'): ?><p class="muted"><?= e(t('arch.intro')) ?></p><p><?= t('arch.lockss_url', e(abs_url(url('gateway', 'lockss')))) ?><br><?= t('arch.clockss_url', e(abs_url(url('gateway', 'clockss')))) ?></p><h3 class="be_group"><?= e(t('arch.pn')) ?></h3><p class="muted"><?= e(t('arch.pn_text')) ?> <?= e(t('arch.pn_missing')) ?></p><?php endif; ?>
 <?php if ($area === 'distribution' && $tab === 'access'): ?><p><?= e(t('set.access_text')) ?></p><?php endif; ?>
 <?php if ($area === 'website' && $tab === 'announcements'): ?><p><a class="be_btn be_btn_primary" href="<?= e(url('manageAnnouncements')) ?>"><?= e(t('menu.announcements')) ?></a></p><?php endif; ?>
 <?php if ($fields): ?>

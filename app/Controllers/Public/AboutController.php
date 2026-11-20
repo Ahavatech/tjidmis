@@ -4,7 +4,14 @@ use App\Core\{View, Settings, DB};
 use App\Models\Catalog;
 class AboutController {
     public function index(): void {
-        View::render('public/about', ['title' => t('about.title'), 'bodyClass' => 'about', 'html' => Settings::get('about', '')]);
+        View::render('public/about', ['title' => t('about.title'), 'bodyClass' => 'about', 'html' => Settings::get('about', '') . $this->archiving()]);
+    }
+    /** OJS shows the LOCKSS / CLOCKSS licence under "Archiving" in About the Journal once the archive is enabled. */
+    private function archiving(): string {
+        $h = '';
+        foreach ([['enableLockss', 'lockssLicense', 'arch.default_lockss'], ['enableClockss', 'clockssLicense', 'arch.default_clockss']] as [$on, $lic, $def])
+            if (Settings::get($on, '') === '1') $h .= '<p>' . (Settings::get($lic, '') ?: t($def)) . '</p>';
+        return $h ? '<h2>' . e(t('arch.about_heading')) . '</h2>' . $h : '';
     }
     public function editorialTeam(): void {
         $html = Settings::get('editorialTeam', '');
