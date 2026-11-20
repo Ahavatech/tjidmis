@@ -68,6 +68,7 @@ CREATE TABLE section_editors (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE issues (
+  publisher_id VARCHAR(255) NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, journal_id INT UNSIGNED NOT NULL, volume INT NULL, number VARCHAR(20) NULL, year INT NULL,
   title VARCHAR(255) NULL, show_volume TINYINT NOT NULL DEFAULT 1, show_number TINYINT NOT NULL DEFAULT 1, show_year TINYINT NOT NULL DEFAULT 1,
   show_title TINYINT NOT NULL DEFAULT 0, description TEXT NULL, cover_image VARCHAR(255) NULL, url_path VARCHAR(64) NULL,
@@ -134,7 +135,7 @@ CREATE TABLE apc_payments (
 CREATE TABLE publications (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, submission_id INT UNSIGNED NOT NULL, version INT NOT NULL DEFAULT 1, title VARCHAR(500) NOT NULL DEFAULT '',
   subtitle VARCHAR(500) NULL, prefix VARCHAR(50) NULL, abstract MEDIUMTEXT NULL, keywords JSON NULL, subjects JSON NULL, references_text MEDIUMTEXT NULL,
-  coverage TEXT NULL, rights TEXT NULL, `source` VARCHAR(500) NULL, dc_type VARCHAR(255) NULL, dc_languages VARCHAR(255) NULL, disciplines JSON NULL, agencies JSON NULL,
+  publisher_id VARCHAR(255) NULL, coverage TEXT NULL, rights TEXT NULL, `source` VARCHAR(500) NULL, dc_type VARCHAR(255) NULL, dc_languages VARCHAR(255) NULL, disciplines JSON NULL, agencies JSON NULL,
   issue_id INT UNSIGNED NULL, section_id INT UNSIGNED NULL, pages VARCHAR(50) NULL, url_path VARCHAR(64) NULL, cover_image VARCHAR(255) NULL,
   doi VARCHAR(255) NULL, copyright_holder TEXT NULL, copyright_year INT NULL, license_url VARCHAR(255) NULL,
   status ENUM('unscheduled','scheduled','published') NOT NULL DEFAULT 'unscheduled', date_published DATE NULL, seq INT NOT NULL DEFAULT 0,
@@ -151,7 +152,7 @@ CREATE TABLE publication_categories (
 
 CREATE TABLE authors (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, publication_id INT UNSIGNED NOT NULL, given_name VARCHAR(1000) NOT NULL, family_name VARCHAR(120) NOT NULL DEFAULT '',
-  email VARCHAR(190) NULL, country CHAR(2) NULL, affiliation VARCHAR(255) NULL, orcid VARCHAR(40) NULL, url VARCHAR(255) NULL, bio TEXT NULL,
+  email VARCHAR(190) NULL, country CHAR(2) NULL, affiliation VARCHAR(255) NULL, orcid VARCHAR(40) NULL, url VARCHAR(255) NULL, bio TEXT NULL, competing_interests TEXT NULL,
   user_group ENUM('author','translator') NOT NULL DEFAULT 'author', include_in_browse TINYINT NOT NULL DEFAULT 1, seq INT NOT NULL DEFAULT 0,
   KEY (publication_id), FOREIGN KEY (publication_id) REFERENCES publications(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -172,6 +173,7 @@ CREATE TABLE library_files (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE galleys (
+  publisher_id VARCHAR(255) NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, publication_id INT UNSIGNED NOT NULL, label VARCHAR(30) NOT NULL, submission_file_id INT UNSIGNED NULL,
   remote_url VARCHAR(500) NULL, seq INT NOT NULL DEFAULT 0, KEY (publication_id), KEY (submission_file_id),
   FOREIGN KEY (publication_id) REFERENCES publications(id) ON DELETE CASCADE, FOREIGN KEY (submission_file_id) REFERENCES submission_files(id) ON DELETE SET NULL

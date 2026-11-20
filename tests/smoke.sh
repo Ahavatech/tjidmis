@@ -123,6 +123,18 @@ code admin /publication/index/182/metadata >/dev/null; ok "$(has 'name="meta_dis
 ok "$(grep -c 'publication/index/182/references' "$T/out")" 0 "References tab hidden when references are off"
 post admin /settings/save/workflow/metadata -d keywords_on=1 -d keywords_mode=request -d citations_on=1 -d citations_mode=request >/dev/null
 code admin /publication/index/182/metadata >/dev/null; ok "$(has 'name="meta_disciplines"')" 0 "switched off again"
+echo "== competing interests and publisher ID (Workflow > Submission > Metadata)"
+FORM=/settings/index/workflow/metadata; post admin /settings/save/workflow/metadata -d keywords_on=1 -d keywords_mode=request -d citations_on=1 -d citations_mode=request -d requireAuthorCompetingInterests=1 -d pubid_publication=1 -d pubid_issue=1 >/dev/null
+FORM=/submission/wizard; post author /submission/wizard -d section_id=1 -d "checklist[0]=1" -d "checklist[1]=1" -d "checklist[2]=1" -d "checklist[3]=1" -d "checklist[4]=1" -d privacyConsent=1 -d copyrightAgree=1 >/dev/null
+CS2=$(loc | grep -o 'wizard/[0-9]*' | cut -d/ -f2)
+FORM=/submission/contributor/$CS2; post author /submission/contributor/$CS2 -d given_name=Cy -d family_name=Co -d email=cy@example.com -d country=NG >/dev/null
+ok "$(has 'This field is required')" 1 "contributor without a competing interests statement is refused"
+post author /submission/contributor/$CS2 -d given_name=Cy -d family_name=Co -d email=cy@example.com -d country=NG --data-urlencode "competing_interests=None declared" >/dev/null
+ok "$(loc | grep -c 'wizard')" 1 "contributor with the statement is saved"
+code editor /publication/index/$S/identifiers >/dev/null; ok "$(has 'name="publisher_id"')" 1 "Publisher ID field on the Identifiers tab"
+FORM=/manageIssues/form; post editor /manageIssues/form -d volume=98 -d number=1 -d year=2098 -d publisher_id=ISS-1 >/dev/null
+ok "$(post editor /manageIssues/form -d volume=98 -d number=2 -d year=2098 -d publisher_id=ISS-1)" 200 "duplicate Publisher ID is refused"
+FORM=/settings/index/workflow/metadata; post admin /settings/save/workflow/metadata -d keywords_on=1 -d keywords_mode=request -d citations_on=1 -d citations_mode=request >/dev/null
 echo "== indexing feeds and reports (same shapes as OJS 3.3)"
 ok "$(curl -s "$BASE/oai?verb=Identify" | grep -c '<repositoryName>')" 1 "OAI Identify"
 ok "$(curl -s "$BASE/oai?verb=ListSets" | grep -c 'setSpec')" 2 "OAI sets (journal and Articles)"

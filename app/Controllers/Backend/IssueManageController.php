@@ -30,12 +30,15 @@ class IssueManageController {
             if (strlen($num) > 20) $errors['number'] = t('iss.err_long');
             if ($vol === '' && $num === '' && $yr === '' && $title === '') $errors['volume'] = t('iss.err_any');
             if ($slug !== '' && (!preg_match('/^[A-Za-z0-9_-]{1,64}$/', $slug) || DB::val('SELECT 1 FROM issues WHERE journal_id=? AND url_path=? AND id<>?', [$jid, $slug, (int)($i['id'] ?? 0)]))) $errors['url_path'] = t('pub.err_slug');
+            $ipid = \App\Services\MetadataService::publisherIdOn('issue') ? trim((string)($p['publisher_id'] ?? '')) : null;
+            if ($ipid && ($err = \App\Services\MetadataService::checkPublisherId('issues', $ipid, (int)($i['id'] ?? 0)))) $errors['publisher_id'] = $err;
             $cover = $i['cover_image'] ?? null;
             if (!$errors && !empty($_FILES['cover']['name'])) { try { $new = Upload::storePublic($_FILES['cover'], 'covers'); if ($cover) @unlink(ROOT . '/public/' . $cover); $cover = $new; } catch (\RuntimeException $x) { $errors['cover'] = $x->getMessage(); } }
             if (!$errors) {
                 $row = ['volume' => $vol === '' ? null : (int)$vol, 'number' => $num === '' ? null : $num, 'year' => $yr === '' ? null : (int)$yr, 'title' => $title === '' ? null : mb_substr($title, 0, 255),
                     'show_volume' => empty($p['show_volume']) ? 0 : 1, 'show_number' => empty($p['show_number']) ? 0 : 1, 'show_year' => empty($p['show_year']) ? 0 : 1, 'show_title' => empty($p['show_title']) ? 0 : 1,
                     'description' => Sanitizer::clean((string)($p['description'] ?? '')) ?: null, 'cover_image' => $cover, 'url_path' => $slug ?: null];
+                if ($ipid !== null) $row['publisher_id'] = $ipid ?: null;
                 if ($i) { DB::exec('UPDATE issues SET ' . implode(',', array_map(fn($k) => "`$k`=?", array_keys($row))) . ' WHERE id=?', array_merge(array_values($row), [$i['id']])); $nid = (int)$i['id']; }
                 else { $row += ['journal_id' => $jid, 'published' => 0, 'is_current' => 0, 'seq' => 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM issues WHERE journal_id=? AND published=0', [$jid]), 'created_at' => date('Y-m-d H:i:s')]; $nid = DB::insert('issues', $row); }
                 flash(t('iss.saved')); redirect(url('manageIssues', 'edit', [$nid]));

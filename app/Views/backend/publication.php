@@ -43,12 +43,12 @@ $er = fn($k) => $errors[$k] ?? ''; ?>
 <?php elseif ($tab === 'galleys'): ?>
 <table class="be_table"><thead><tr><th><?= e(t('pub.label')) ?></th><th><?= e(t('wizard.file')) ?></th><th></th></tr></thead><tbody>
 <?php foreach ($galleys as $g): ?><tr><td><?= e($g['label']) ?></td><td><?php if ($g['submission_file_id']): ?><a href="<?= e(url('workflow', 'download', [$sid, $g['submission_file_id']])) ?>"><?= e($g['original_name']) ?></a> <span class="muted">(<?= e(number_format($g['size'] / 1024, 1)) ?> KB)</span><?php else: ?><a href="<?= e($g['remote_url']) ?>" target="_blank" rel="noopener"><?= e($g['remote_url']) ?></a><?php endif; ?></td>
-<td class="be_actions"><?php if (!$locked): ?><form class="be_inline" method="post" action="<?= e(url('publication', 'renameGalley', [$sid, $g['id']])) ?>"><?= csrf_field() ?><input type="text" name="label" value="<?= e($g['label']) ?>" maxlength="30" aria-label="<?= e(t('pub.label')) ?>"><button class="be_btn" type="submit"><?= e(t('wizard.rename')) ?></button></form>
+<td class="be_actions"><?php if (!$locked): ?><form class="be_inline" method="post" action="<?= e(url('publication', 'renameGalley', [$sid, $g['id']])) ?>"><?= csrf_field() ?><input type="text" name="label" value="<?= e($g['label']) ?>" maxlength="30" aria-label="<?= e(t('pub.label')) ?>"><?php if (\App\Services\MetadataService::publisherIdOn('galley')): ?> <input type="text" name="publisher_id" value="<?= e($g['publisher_id'] ?? '') ?>" maxlength="255" placeholder="<?= e(t('pubid.label')) ?>" aria-label="<?= e(t('pubid.label')) ?>"><?php endif; ?><button class="be_btn" type="submit"><?= e(t('wizard.rename')) ?></button></form>
 <form class="be_inline" method="post" action="<?= e(url('publication', 'deleteGalley', [$sid, $g['id']])) ?>"><?= csrf_field() ?><button class="be_btn be_btn_danger" type="submit"><?= e(t('wizard.delete')) ?></button></form><?php endif; ?></td></tr><?php endforeach; ?>
 <?php if (!$galleys): ?><tr><td colspan="3" class="muted"><?= e(t('pub.no_galleys')) ?></td></tr><?php endif; ?></tbody></table>
 <?php if (!$locked): ?><form class="cmp_form be_form be_upload" method="post" enctype="multipart/form-data" action="<?= e($act('addGalley')) ?>"><?= csrf_field() ?><div class="fields">
 <?= field(t('pub.label'), 'label', 'PDF', ['required' => true, 'maxlength' => 30, 'help' => t('pub.label_help')]) ?><div><label><span class="label"><?= e(t('wizard.choose_file')) ?></span><input type="file" name="file"></label></div>
-<?= field(t('pub.remote_url'), 'remote_url', '', ['help' => t('pub.remote_help')]) ?></div><div class="buttons"><button class="be_btn be_btn_primary" type="submit"><?= e(t('pub.add_galley')) ?></button></div></form><?php endif; ?>
+<?= field(t('pub.remote_url'), 'remote_url', '', ['help' => t('pub.remote_help')]) ?><?php if (\App\Services\MetadataService::publisherIdOn('galley')): ?><?= field(t('pubid.label'), 'publisher_id', '', ['maxlength' => 255]) ?><?php endif; ?></div><div class="buttons"><button class="be_btn be_btn_primary" type="submit"><?= e(t('pub.add_galley')) ?></button></div></form><?php endif; ?>
 
 <?php elseif ($tab === 'permissions'): ?>
 <form class="cmp_form be_form" method="post" action="<?= e($save) ?>"><?= csrf_field() ?><fieldset <?= $locked ? 'disabled' : '' ?> class="be_plain"><div class="fields">
@@ -73,7 +73,7 @@ $er = fn($k) => $errors[$k] ?? ''; ?>
 
 <?php else: ?>
 <h2><?= e(t('pub.doi')) ?></h2>
-<form class="cmp_form be_form" method="post" action="<?= e($save) ?>"><?= csrf_field() ?><fieldset <?= $locked ? 'disabled' : '' ?> class="be_plain"><div class="fields"><?= field(t('pub.doi'), 'doi', $pub['doi'] ?? '', ['help' => t('pub.doi_help')]) ?></div>
+<form class="cmp_form be_form" method="post" action="<?= e($save) ?>"><?= csrf_field() ?><fieldset <?= $locked ? 'disabled' : '' ?> class="be_plain"><div class="fields"><?= field(t('pub.doi'), 'doi', $pub['doi'] ?? '', ['help' => t('pub.doi_help')]) ?><?php if (\App\Services\MetadataService::publisherIdOn('publication')): ?><?= field(t('pubid.label'), 'publisher_id', $pub['publisher_id'] ?? '', ['maxlength' => 255]) ?><?php endif; ?></div>
 <div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></fieldset></form>
 <?php if (!$locked && empty($pub['doi']) && Settings::get('doiPrefix', '')): ?><form method="post" action="<?= e($act('assignDoi')) ?>"><?= csrf_field() ?><button class="be_btn" type="submit"><?= e(t('pub.assign_doi', \App\Services\DoiService::build($sid) ?? '')) ?></button></form><?php endif; ?>
 <?php endif; ?></div></div>

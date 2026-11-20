@@ -62,6 +62,11 @@ class PublicationController {
                 $doi = trim((string)($p['doi'] ?? '')); $doi = preg_replace('#^https?://(dx\.)?doi\.org/#i', '', $doi);
                 if ($doi !== '' && !preg_match('#^10\.\d{4,9}/\S+$#', $doi)) { flash(t('pub.err_doi'), 'error'); $this->back($sub, $tab); }
                 if ($doi !== '' && DB::val('SELECT 1 FROM publications WHERE doi=? AND id<>?', [$doi, $pid])) { flash(t('pub.err_doi_dup'), 'error'); $this->back($sub, $tab); }
+                if (\App\Services\MetadataService::publisherIdOn('publication')) {
+                    $pubId = trim((string)($p['publisher_id'] ?? '')); $err = \App\Services\MetadataService::checkPublisherId('publications', $pubId, $pid);
+                    if ($err) { flash($err, 'error'); $this->back($sub, $tab); }
+                    DB::exec('UPDATE publications SET publisher_id=? WHERE id=?', [$pubId ?: null, $pid]);
+                }
                 DB::exec('UPDATE publications SET doi=? WHERE id=?', [$doi ?: null, $pid]); break;
             case 'issue':
                 $sec = (int)($p['section_id'] ?? 0); $slug = trim((string)($p['url_path'] ?? ''));
@@ -107,9 +112,10 @@ class PublicationController {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors['email'] = t('form.email_invalid');
             if (!isset(Countries::all()[$p['country'] ?? ''])) $errors['country'] = t('form.required_field');
             if ($orcid !== '') { if (preg_match('#^(?:https?://orcid\.org/)?(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$#', $orcid, $mm)) $orcid = 'https://orcid.org/' . $mm[1]; else $errors['orcid'] = t('profile.orcid_invalid'); }
+            if (\App\Services\MetadataService::requireAuthorCI() && trim(strip_tags((string)($p['competing_interests'] ?? ''))) === '') $errors['competing_interests'] = t('form.required_field');
             if (!$errors) {
                 $row = ['given_name' => mb_substr($given, 0, 120), 'family_name' => mb_substr(trim((string)($p['family_name'] ?? '')), 0, 120), 'email' => $email, 'country' => $p['country'], 'affiliation' => mb_substr(trim((string)($p['affiliation'] ?? '')), 0, 255) ?: null,
-                    'orcid' => $orcid ?: null, 'url' => trim((string)($p['url'] ?? '')) ?: null, 'bio' => Sanitizer::clean((string)($p['bio'] ?? '')) ?: null, 'user_group' => ($p['role'] ?? '') === 'translator' ? 'translator' : 'author', 'include_in_browse' => empty($p['include_in_browse']) ? 0 : 1];
+                    'orcid' => $orcid ?: null, 'url' => trim((string)($p['url'] ?? '')) ?: null, 'bio' => Sanitizer::clean((string)($p['bio'] ?? '')) ?: null, 'competing_interests' => Sanitizer::clean((string)($p['competing_interests'] ?? '')) ?: null, 'user_group' => ($p['role'] ?? '') === 'translator' ? 'translator' : 'author', 'include_in_browse' => empty($p['include_in_browse']) ? 0 : 1];
                 if ($a) { DB::exec('UPDATE authors SET ' . implode(',', array_map(fn($k) => "`$k`=?", array_keys($row))) . ' WHERE id=?', array_merge(array_values($row), [$a['id']])); $aid = (int)$a['id']; }
                 else { $row['publication_id'] = $pid; $row['seq'] = 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM authors WHERE publication_id=?', [$pid]); $aid = DB::insert('authors', $row); }
                 if (!empty($p['primary']) || !DB::val('SELECT primary_contact_id FROM publications WHERE id=?', [$pid])) DB::exec('UPDATE publications SET primary_contact_id=? WHERE id=?', [$aid, $pid]);
@@ -153,14 +159,22 @@ class PublicationController {
                 $fid = DB::insert('submission_files', ['submission_id' => $sub['id'], 'file_stage' => 'galley', 'genre' => 'Galley', 'original_name' => $f['original_name'], 'stored_name' => $f['stored_name'], 'mime' => $f['mime'], 'size' => $f['size'],
                     'uploader_user_id' => Auth::id(), 'viewable' => 1, 'created_at' => date('Y-m-d H:i:s')]);
             }
-            DB::insert('galleys', ['publication_id' => $sub['pid'], 'label' => $label, 'submission_file_id' => $fid, 'remote_url' => $remote ?: null, 'seq' => 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM galleys WHERE publication_id=?', [$sub['pid']])]);
+            $gpid = \App\Services\MetadataService::publisherIdOn('galley') ? trim((string)($_POST['publisher_id'] ?? '')) : '';
+            if ($gpid !== '' && ($err = \App\Services\MetadataService::checkPublisherId('galleys', $gpid, 0))) throw new \RuntimeException($err);
+            DB::insert('galleys', ['publication_id' => $sub['pid'], 'publisher_id' => $gpid ?: null, 'label' => $label, 'submission_file_id' => $fid, 'remote_url' => $remote ?: null, 'seq' => 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM galleys WHERE publication_id=?', [$sub['pid']])]);
             SubmissionRepo::log((int)$sub['id'], Auth::id(), 'galley_added', $label); flash(t('pub.galley_added'));
         } catch (\RuntimeException $x) { flash($x->getMessage(), 'error'); }
         $this->back($sub, 'galleys');
     }
     public function renameGalley(string $id = '', string $galleyId = ''): void {
         $sub = $this->ctx($id); $label = trim((string)($_POST['label'] ?? ''));
-        if (Request::isPost() && !$this->locked($sub) && $label !== '' && mb_strlen($label) <= 30) { DB::exec('UPDATE galleys SET label=? WHERE id=? AND publication_id=?', [$label, (int)$galleyId, $sub['pid']]); flash(t('pub.galley_renamed')); }
+        if (Request::isPost() && !$this->locked($sub) && $label !== '' && mb_strlen($label) <= 30) {
+            if (\App\Services\MetadataService::publisherIdOn('galley')) {
+                $gpid = trim((string)($_POST['publisher_id'] ?? '')); $err = \App\Services\MetadataService::checkPublisherId('galleys', $gpid, (int)$galleyId);
+                if ($err) { flash($err, 'error'); $this->back($sub, 'galleys'); }
+                DB::exec('UPDATE galleys SET publisher_id=? WHERE id=? AND publication_id=?', [$gpid ?: null, (int)$galleyId, $sub['pid']]);
+            }
+            DB::exec('UPDATE galleys SET label=? WHERE id=? AND publication_id=?', [$label, (int)$galleyId, $sub['pid']]); flash(t('pub.galley_renamed')); }
         $this->back($sub, 'galleys');
     }
     public function deleteGalley(string $id = '', string $galleyId = ''): void {

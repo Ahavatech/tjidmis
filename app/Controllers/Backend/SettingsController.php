@@ -105,6 +105,8 @@ class SettingsController {
                 $mode = (string)($_POST[$mf . '_mode'] ?? 'enable');
                 Settings::set($mf, !empty($_POST[$mf . '_on']) && in_array($mode, \App\Services\MetadataService::MODES, true) ? $mode : '0', $this->jid());
             }
+            Settings::set('requireAuthorCompetingInterests', empty($_POST['requireAuthorCompetingInterests']) ? '0' : '1', $this->jid());
+            Settings::set('enablePublisherId', json_encode(array_values(array_filter(['publication', 'galley', 'issue'], fn($o) => !empty($_POST['pubid_' . $o])))), $this->jid());
             flash(t('profile.saved')); redirect(url('settings', 'index', ['workflow', 'metadata']));
         }
         $jid = $this->jid(); $errors = []; $write = [];

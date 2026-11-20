@@ -1,5 +1,10 @@
 <?php
 return [
+    'meta.ci' => 'Competing Interests', 'meta.ci_require' => 'Require submitting Authors to file a Competing Interest (CI) statement with their submission.',
+    'meta.pubid' => 'Publisher ID', 'meta.pubid_desc' => 'The publisher ID may be used to record the ID from an external database. For example, items exported for deposit to PubMed may include the publisher ID. This should not be used for DOIs.',
+    'meta.pubid_publication' => 'Enable for Publications', 'meta.pubid_galley' => 'Enable for Galleys', 'meta.pubid_issue' => 'Enable for Issues',
+    'author.ci' => 'Competing Interests', 'author.ci_desc' => 'Please disclose any competing interests this author may have with the research subject.', 'wizard.err_ci' => 'Every contributor needs a competing interests statement.',
+    'pubid.label' => 'Publisher ID', 'pubid.dup' => 'The Publisher ID is already in use. Please choose a different one.',
     'meta.coverage' => 'Coverage', 'meta.coverage_desc' => 'Coverage will typically indicate a work\'s spatial location (a place name or geographic coordinates), temporal period (a period label, date, or date range) or jurisdiction (such as a named administrative entity).', 'meta.enable_coverage' => 'Enable coverage metadata',
     'meta.coverage_enable' => 'Do not request coverage metadata from the author during submission.',
     'meta.coverage_request' => 'Ask the author to suggest coverage metadata during submission.',

@@ -16,7 +16,12 @@ $hasForm = (bool)$fields; $multipart = (bool)array_filter($fields, fn($f) => in_
 <fieldset class="be_metafield"><legend><?= e(t('meta.' . $mf)) ?></legend><p class="muted"><?= e(t('meta.' . $mf . '_desc')) ?></p>
 <div class="optin"><label><input type="checkbox" name="<?= $mf ?>_on" value="1"<?= $mode !== '0' ? ' checked' : '' ?>> <?= e(t('meta.enable_' . $mf)) ?></label></div>
 <?php foreach (\App\Services\MetadataService::MODES as $m): ?><div class="optin be_metamode"><label><input type="radio" name="<?= $mf ?>_mode" value="<?= $m ?>"<?= ($mode === $m || ($mode === '0' && $m === 'enable')) ? ' checked' : '' ?>> <?= e(t('meta.' . $mf . '_' . $m)) ?></label></div><?php endforeach; ?></fieldset>
-<?php endforeach; ?></div><div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></form>
+<?php endforeach; ?>
+<fieldset class="be_metafield"><legend><?= e(t('meta.ci')) ?></legend>
+<div class="optin"><label><input type="checkbox" name="requireAuthorCompetingInterests" value="1"<?= \App\Services\MetadataService::requireAuthorCI() ? ' checked' : '' ?>> <?= e(t('meta.ci_require')) ?></label></div></fieldset>
+<fieldset class="be_metafield"><legend><?= e(t('meta.pubid')) ?></legend><p class="muted"><?= e(t('meta.pubid_desc')) ?></p>
+<?php foreach (['publication' => 'meta.pubid_publication', 'galley' => 'meta.pubid_galley', 'issue' => 'meta.pubid_issue'] as $obj => $ol): ?><div class="optin"><label><input type="checkbox" name="pubid_<?= $obj ?>" value="1"<?= \App\Services\MetadataService::publisherIdOn($obj) ? ' checked' : '' ?>> <?= e(t($ol)) ?></label></div><?php endforeach; ?></fieldset>
+</div><div class="buttons"><button class="submit" type="submit"><?= e(t('wizard.save')) ?></button></div></form>
 
 <?php elseif ($tab === 'languages'): ?>
 <p class="muted"><?= e(t('lang.instructions')) ?></p>

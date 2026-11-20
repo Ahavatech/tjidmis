@@ -19,6 +19,16 @@ class MetadataService {
     public static function enabled(string $f): bool { return self::mode($f) !== '0'; }
     public static function asked(string $f): bool { return in_array(self::mode($f), ['request', 'require'], true); }
     public static function required(string $f): bool { return self::mode($f) === 'require'; }
+    /** "Require submitting Authors to file a Competing Interest (CI) statement with their submission." */
+    public static function requireAuthorCI(): bool { return Settings::get('requireAuthorCompetingInterests', '0') === '1'; }
+    /** Publisher ID can be switched on per object: publication, galley, issue. */
+    public static function publisherIdOn(string $obj): bool { return in_array($obj, (array)Settings::json('enablePublisherId', []), true); }
+    /** A Publisher ID must be unique among the objects of its type; returns an error text or null. */
+    public static function checkPublisherId(string $table, string $value, int $exceptId): ?string {
+        if ($value === '') return null;
+        if (\App\Core\DB::val("SELECT 1 FROM `$table` WHERE publisher_id=? AND id<>?", [$value, $exceptId])) return t('pubid.dup');
+        return null;
+    }
     public static function column(string $f): string { return self::FIELDS[$f][0]; }
     public static function shape(string $f): string { return self::FIELDS[$f][1]; }
     /** Form value -> database value. */

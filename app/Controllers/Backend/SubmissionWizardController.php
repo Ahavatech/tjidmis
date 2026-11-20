@@ -175,10 +175,11 @@ class SubmissionWizardController {
             if (!isset(Countries::all()[$p['country'] ?? ''])) $errors['country'] = t('form.required_field');
             if ($orcid !== '') { if (preg_match('#^(?:https?://orcid\.org/)?(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$#', $orcid, $mm)) $orcid = 'https://orcid.org/' . $mm[1]; else $errors['orcid'] = t('profile.orcid_invalid'); }
             if (!empty($p['url']) && !preg_match('#^https?://#i', trim($p['url']))) $errors['url'] = t('profile.url_invalid');
+            if (\App\Services\MetadataService::requireAuthorCI() && trim(strip_tags((string)($p['competing_interests'] ?? ''))) === '') $errors['competing_interests'] = t('form.required_field');
             if (!$errors) {
                 $row = ['given_name' => mb_substr($given, 0, 120), 'family_name' => mb_substr(trim((string)($p['family_name'] ?? '')), 0, 120), 'email' => $email, 'country' => $p['country'],
                     'affiliation' => mb_substr(trim((string)($p['affiliation'] ?? '')), 0, 255) ?: null, 'orcid' => $orcid ?: null, 'url' => trim((string)($p['url'] ?? '')) ?: null,
-                    'bio' => Sanitizer::clean((string)($p['bio'] ?? '')) ?: null, 'user_group' => ($p['role'] ?? '') === 'translator' ? 'translator' : 'author', 'include_in_browse' => empty($p['include_in_browse']) ? 0 : 1];
+                    'bio' => Sanitizer::clean((string)($p['bio'] ?? '')) ?: null, 'competing_interests' => Sanitizer::clean((string)($p['competing_interests'] ?? '')) ?: null, 'user_group' => ($p['role'] ?? '') === 'translator' ? 'translator' : 'author', 'include_in_browse' => empty($p['include_in_browse']) ? 0 : 1];
                 if ($a) { $set = implode(',', array_map(fn($k) => "`$k`=?", array_keys($row))); DB::exec("UPDATE authors SET $set WHERE id=?", array_merge(array_values($row), [$a['id']])); $aid = (int)$a['id']; }
                 else { $row['publication_id'] = $pid; $row['seq'] = 1 + (int)DB::val('SELECT COALESCE(MAX(seq),0) FROM authors WHERE publication_id=?', [$pid]); $aid = DB::insert('authors', $row); }
                 if (!empty($p['primary']) || !DB::val('SELECT primary_contact_id FROM publications WHERE id=?', [$pid])) DB::exec('UPDATE publications SET primary_contact_id=? WHERE id=?', [$aid, $pid]);
@@ -219,6 +220,7 @@ class SubmissionWizardController {
         if (!$sub['abstract']) $m[] = t('wizard.err_abstract');
         foreach (array_keys(\App\Services\MetadataService::FIELDS) as $mf) if (\App\Services\MetadataService::required($mf) && trim((string)($sub[\App\Services\MetadataService::column($mf)] ?? '')) === '') $m[] = t('meta.' . $mf) . ': ' . t('form.required_field');
         if (!DB::val('SELECT COUNT(*) FROM authors WHERE publication_id=? AND email<>""', [$pid])) $m[] = t('wizard.err_contributor');
+        if (\App\Services\MetadataService::requireAuthorCI() && DB::val("SELECT COUNT(*) FROM authors WHERE publication_id=? AND (competing_interests IS NULL OR competing_interests='')", [$pid])) $m[] = t('wizard.err_ci');
         return $m;
     }
     public function finish(string $id = ''): void {

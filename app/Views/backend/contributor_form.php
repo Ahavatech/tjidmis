@@ -10,6 +10,7 @@
   <?= field(t('profile.orcid'), 'orcid', $v('orcid'), ['maxlength' => 60, 'error' => $er('orcid'), 'help' => t('profile.orcid_help')]) ?>
   <?= field(t('profile.url'), 'url', $v('url'), ['maxlength' => 255, 'error' => $er('url')]) ?>
   <?= field(t('profile.bio'), 'bio', strip_tags((string)$v('bio')), ['type' => 'textarea', 'rows' => 4]) ?>
+  <?= field(t('author.ci'), 'competing_interests', strip_tags((string)$v('competing_interests')), ['type' => 'textarea', 'rows' => 3, 'required' => \App\Services\MetadataService::requireAuthorCI(), 'error' => $er('competing_interests'), 'help' => t('author.ci_desc')]) ?>
   <div class="role"><label><span class="label"><?= e(t('wizard.role')) ?></span><select name="role"><option value="author"<?= ($v('user_group') ?: 'author') === 'author' ? ' selected' : '' ?>><?= e(t('wizard.role_author')) ?></option><option value="translator"<?= $v('user_group') === 'translator' ? ' selected' : '' ?>><?= e(t('wizard.role_translator')) ?></option></select></label></div>
   <?= checkbox('primary', e(t('wizard.primary_contact')), !empty($isPrimary)) ?>
   <?= checkbox('include_in_browse', e(t('wizard.include_browse')), $isEdit ? !empty($a['include_in_browse']) : true) ?>
