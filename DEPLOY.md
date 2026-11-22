@@ -30,7 +30,7 @@ name; use the full names below.
 3. Create a files directory **outside** the web root: `/home/USER/ojs_files` (writable by PHP, mode 755).
 4. Make these writable during install: `config.inc.php`, `cache/` (and sub-folders), `public/`.
 5. Open `https://example.org/index.php/index/install` and fill in:
-   - Admin username/password/email (use a strong password and a real address).
+   - Admin username/password/email (use a strong password; the email is `editor@tjidmis.org`).
    - Locale `English`.
    - **Files directory:** `/home/USER/ojs_files`
    - Database driver `MySQLi`, host `localhost`, the DB name/user/password from step 1.
@@ -145,10 +145,10 @@ Then clear the caches: delete the contents of `cache/t_cache`, `cache/t_compile`
 OJS sends editorial mail (review requests, decisions, password resets, registration). On shared hosting use
 **authenticated SMTP from a mailbox on your own domain**; PHP `mail()` often lands in spam.
 
-1. cPanel > *Email Accounts*: create e.g. `journal@example.org` (strong password). Note the mail server
+1. cPanel > *Email Accounts*: create e.g. `editor@tjidmis.org` (strong password). Note the mail server
    shown under *Connect Devices* (usually `mail.example.org`).
 2. cPanel > *Email Deliverability*: make sure **SPF and DKIM** are valid for the domain (click *Repair* if
-   not). Add a DMARC record (`_dmarc` TXT, e.g. `v=DMARC1; p=none; rua=mailto:journal@example.org`).
+   not). Add a DMARC record (`_dmarc` TXT, e.g. `v=DMARC1; p=none; rua=mailto:editor@tjidmis.org`).
 3. In `config.inc.php`, `[email]` section:
 
 ```ini
@@ -157,10 +157,10 @@ smtp = On
 smtp_server = mail.example.org
 smtp_port = 465
 smtp_auth = ssl                          ; port 587 -> tls
-smtp_username = journal@example.org
+smtp_username = editor@tjidmis.org
 smtp_password = "the-mailbox-password"
 allow_envelope_sender = On
-default_envelope_sender = journal@example.org
+default_envelope_sender = editor@tjidmis.org
 force_default_envelope_sender = On       ; avoids SPF/DMARC failures
 ; If users register with other domains (gmail etc.) also set:
 force_dmarc_compliant_from = On
@@ -171,9 +171,10 @@ dmarc_compliant_from_displayname = '%n via %s'
    SMTP on 465/587, use the host's documented relay or ask support to unblock.
    *Gmail/Workspace:* use an App Password (2-step verification on) with `smtp.gmail.com`, port 465, `ssl`, or
    the XOAUTH2 settings shown in the file's comments.
-4. In OJS (as admin/manager) set the real addresses, because the imported content used placeholders:
-   - *Settings > Journal > Contact*: principal contact name/email (this is the **From/Reply-To** of
-     system mail) and the technical support contact.
+4. `deploy/site-setup.sql` already sets `editor@tjidmis.org` as the principal contact, the technical support contact,
+   the envelope sender (journal level) and the site contact. Check it in OJS (as admin/manager):
+   - *Settings > Journal > Contact*: principal contact email (this is the **From/Reply-To** of
+     system mail) and the technical support contact; set the real names there.
    - *Settings > Workflow > Emails*: review and edit each template (review request, decision,
      registration) and the **email signature**; leave "Bcc" empty.
    - *Settings > Website > Setup*: nothing else is needed for mail.
