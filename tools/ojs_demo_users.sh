@@ -6,7 +6,7 @@
 set -eu
 cd "$(dirname "$0")/.."; export MSYS_NO_PATHCONV=1
 PW=${PW:-Demo@12345}
-DB(){ docker compose exec -T db mysql -uroot -proot -N ojs -e "$1" | tr -d '\r'; }
+DB(){ docker compose exec -T db mysql -uroot -proot -N ojs -e "$1" </dev/null | tr -d '\r'; }
 # username:role (matched against the group's English name)
 USERS="editor:Journal editor
 sectioneditor:Section editor
